@@ -6,7 +6,7 @@ const PLAYER_SCENE: PackedScene = preload("res://scenes/player/player.tscn")
 const BACKDROP_COLOR := Color(0.05, 0.05, 0.08)
 
 var _player: Player
-var _camera: Camera2D
+var _camera: TowerCamera
 
 
 func _ready() -> void:
@@ -22,15 +22,18 @@ func _ready() -> void:
 
 	_player = PLAYER_SCENE.instantiate() as Player
 	_player.position = Vector2.ZERO
+	_player.event.connect(_on_player_event)
 	add_child(_player)
 
-	_camera = Camera2D.new()
+	# Kamera oyuncudan sonra eklenir: oyuncu hareket ettikten sonra güncellenir.
+	_camera = TowerCamera.new()
 	_camera.name = "Camera"
 	_camera.position = Vector2(0.0, Tuning.GROUND_SCREEN_MARGIN - Tuning.VIEW_HEIGHT * 0.5)
+	_camera.target = _player
 	add_child(_camera)
 
 
-func _physics_process(_delta: float) -> void:
-	# GEÇİCİ: kamera oyuncuyu sadece yukarı doğru, ekran ortasında izler.
-	# Gerçek davranış (bekleme, hızlanan kayma, yakalama bölgesi) kamera maddesinde.
-	_camera.position.y = minf(_camera.position.y, _player.position.y)
+func _on_player_event(event_name: StringName, data: Dictionary) -> void:
+	if event_name == &"landed":
+		# Ulaşılan en yüksek kat; skor/kombo maddesinde skor sistemi de bunu kullanacak.
+		GameState.floor_number = maxi(GameState.floor_number, data["floor"])
