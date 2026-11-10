@@ -4,7 +4,7 @@
 
 | Ne | Kaynak | Lisans | Nerede |
 |---|---|---|---|
-| GUT — Godot Unit Testing 9.6.1 | https://godotengine.org/asset-library/asset/1709 (Tom "Butch" Wesley) | MIT | `addons/gut/` |
+| GUT — Godot Unit Testing 9.7.1 | https://github.com/bitwes/Gut/releases/tag/v9.7.1 (Tom "Butch" Wesley) | MIT | `addons/gut/` |
 
 ## Görseller
 
