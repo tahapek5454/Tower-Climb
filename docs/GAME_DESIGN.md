@@ -19,7 +19,7 @@ Zıplamayı oyuncu yapar (otomatik zıplama yok). Gamepad desteği sonra ekleneb
 ## Ekran
 - Temel (tasarım) çözünürlüğü: **1280 x 720**, stretch mode `canvas_items`, aspect `keep`. Bu, oyun dünyasının koordinat sistemidir; pencere boyutu değildir. Görüntü pencereye/ekrana ölçeklenir, 16:9 olmayan ekranlarda kenarlarda siyah bant kalır.
 - Oyun **büyütülmüş (maximized) pencerede** başlar. **F11** veya **Alt+Enter** tam ekranı açıp kapatır (`WindowManager` autoload'u). Kalıcı tam ekran ayarı Aşama 5'teki ayarlar menüsünde.
-- Oynanabilir kule genişliği: **640 px**, ekranın ortasında. Sol ve sağda duvarlar (duvar kalınlığı 48 px); duvarların dışı dekor alanı.
+- Oynanabilir kule genişliği: **896 px** (`TOWER_WIDTH`; ekranın %70'i), ekranın ortasında. Sol ve sağda duvarlar (duvar kalınlığı 48 px); duvarların dışı dekor alanı.
 
 ## Temel mekanikler
 

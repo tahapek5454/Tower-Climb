@@ -7,7 +7,7 @@ extends RefCounted
 const VIEW_WIDTH: float = 1280.0
 const VIEW_HEIGHT: float = 720.0
 ## Duvarlar arası oynanabilir genişlik.
-const TOWER_WIDTH: float = 640.0
+const TOWER_WIDTH: float = 896.0
 const WALL_THICKNESS: float = 48.0
 ## Duvar gövdesinin yüksekliği; duvarlar kamerayı takip ettiği için ekrandan uzun olması yeter.
 const WALL_HEIGHT: float = 2160.0
