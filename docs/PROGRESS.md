@@ -1,11 +1,11 @@
 # İlerleme
 
 **Aktif aşama:** 1 — Fizik prototipi
-**Durum:** Devam ediyor (1/11 madde)
+**Durum:** Devam ediyor (2/11 madde)
 
 ## Aşama 1 — Fizik prototipi
 - [x] Godot projesi + klasör yapısı + `.gitignore` + autoload'lar (`Events`, `GameState`)
-- [ ] `tuning.gd` (GAME_DESIGN.md'deki değerlerle)
+- [x] `tuning.gd` (GAME_DESIGN.md'deki değerlerle)
 - [ ] Kule duvarları + kutu karakter: koşma (ivme/sürtünme)
 - [ ] Zıplama: momentuma bağlı yükseklik, değişken zıplama, coyote time, jump buffer
 - [ ] Duvar sekmesi
