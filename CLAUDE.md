@@ -133,6 +133,7 @@ Tek yönlü çarpışma (alttan geçilir, üstüne basılır).
 - GUT sürümü Godot sürümüyle eşleşmeli (`addons/gut/versions.json`): Godot 4.7+ → GUT 9.7.x. Uyumsuz sürümde komut satırı çalışsa bile editördeki GUT paneli takılır. Godot güncellenirse GUT'u da kontrol et.
 - Test dosyaları `tests/test_*.gd`, `extends GutTest`. Ayarlar `.gutconfig.json`'da.
 - Çalıştırma (PowerShell; Bash'te `godot` PATH'te yok): `godot --headless --path . -s res://addons/gut/gut_cmdln.gd` → sonda "All tests passed" ve çıkış kodu 0 olmalı.
+- Editördeki GUT paneli `.gutconfig.json`'u okumaz; kendi ayarını `user://gut_temp_directory/gut_editor_config.json`'da tutar (kullanıcıya özel, repoda değil). Kullanıcının panelinde Test Directories = `res://tests`, Include Subdirs açık olarak ayarlı.
 - Beklenen değerleri `Tuning`'den türet; ayar değişince testler kırılmasın.
 - GUT dosyalarını düzenleme. Zip'ten kurulumda dosyalar `res://addons/gut/` altında olmalı (zip'in kök klasörü atlanmalı).
 
