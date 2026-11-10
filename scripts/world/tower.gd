@@ -16,7 +16,7 @@ func _ready() -> void:
 	add_child(_walls)
 
 	var interior_size := Vector2(Tuning.TOWER_WIDTH, Tuning.WALL_HEIGHT)
-	_walls.add_child(_make_rect_visual(interior_size, INTERIOR_COLOR))
+	_walls.add_child(make_rect_visual(interior_size, INTERIOR_COLOR))
 
 	var wall_size := Vector2(Tuning.WALL_THICKNESS, Tuning.WALL_HEIGHT)
 	var wall_x: float = (Tuning.TOWER_WIDTH + Tuning.WALL_THICKNESS) * 0.5
@@ -46,11 +46,12 @@ func _make_body(body_name: String, pos: Vector2, size: Vector2, color: Color) ->
 	collider.shape = shape
 	body.add_child(collider)
 
-	body.add_child(_make_rect_visual(size, color))
+	body.add_child(make_rect_visual(size, color))
 	return body
 
 
-func _make_rect_visual(size: Vector2, color: Color) -> Polygon2D:
+## Orijinde ortalanmış düz renkli dikdörtgen.
+static func make_rect_visual(size: Vector2, color: Color) -> Polygon2D:
 	var half: Vector2 = size * 0.5
 	var polygon := Polygon2D.new()
 	polygon.color = color

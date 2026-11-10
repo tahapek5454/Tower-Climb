@@ -16,12 +16,21 @@ func _ready() -> void:
 	tower.name = "Tower"
 	add_child(tower)
 
+	var spawner := PlatformSpawner.new()
+	spawner.name = "Platforms"
+	add_child(spawner)
+
 	_player = PLAYER_SCENE.instantiate() as Player
 	_player.position = Vector2.ZERO
 	add_child(_player)
 
-	# Sabit kamera; kayma davranışı kamera maddesinde eklenecek.
 	_camera = Camera2D.new()
 	_camera.name = "Camera"
 	_camera.position = Vector2(0.0, Tuning.GROUND_SCREEN_MARGIN - Tuning.VIEW_HEIGHT * 0.5)
 	add_child(_camera)
+
+
+func _physics_process(_delta: float) -> void:
+	# GEÇİCİ: kamera oyuncuyu sadece yukarı doğru, ekran ortasında izler.
+	# Gerçek davranış (bekleme, hızlanan kayma, yakalama bölgesi) kamera maddesinde.
+	_camera.position.y = minf(_camera.position.y, _player.position.y)

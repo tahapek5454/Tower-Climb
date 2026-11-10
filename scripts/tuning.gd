@@ -52,6 +52,16 @@ const PLATFORM_WIDTH_MAX: float = 360.0
 const PLATFORM_WIDTH_MIN: float = 140.0
 ## Her bu kadar katta bir tam genişlikte bölüm platformu.
 const SECTION_FLOOR_INTERVAL: int = 100
+## Platform genişliği bu kata kadar MAX'tan MIN'e doğrusal daralır.
+const PLATFORM_NARROW_FLOORS: int = 300
+## Ardışık iki platformun kenarları arasındaki en fazla yatay boşluk (ulaşılabilirlik).
+const PLATFORM_MAX_EDGE_GAP: float = 200.0
+## Ekranın üst kenarının bu kadar üstüne kadar platform hazır tutulur.
+const PLATFORM_SPAWN_AHEAD: float = VIEW_HEIGHT
+## Ekranın alt kenarından bu kadar aşağıda kalan platformlar silinir.
+const PLATFORM_DESPAWN_MARGIN: float = 256.0
+## Tek yönlü çarpışma payı; hızlı düşüşte platformun içinden geçmeyi önler.
+const PLATFORM_ONE_WAY_MARGIN: float = 8.0
 
 # --- Kamera ---
 ## Kamera bu kata ulaşılınca kaymaya başlar.
