@@ -1,0 +1,105 @@
+# Tower Climb — Oyun Tasarım Belgesi
+
+## Konsept
+Bir kulenin içindeyiz. Oyuncu karakteri sağa-sola koşturup zıplatarak platformlardan yukarı tırmanır.
+Kamera giderek hızlanarak yukarı kayar; ekranın altında kalan oyuncu kaybeder. Amaç: olabildiğince yükseğe çıkmak ve büyük kombolarla puan toplamak.
+Ruh hali: hızlı, akışkan, abartılı ve eğlenceli animasyonlar (takla, sekme, patlayan efektler).
+
+## Kontroller
+| Eylem | Klavye |
+|---|---|
+| Sola / sağa | ← → veya A D |
+| Zıpla | Space, ↑ veya W |
+| Duraklat | Esc |
+| Debug overlay | F3 |
+
+Zıplamayı oyuncu yapar (otomatik zıplama yok). Gamepad desteği sonra eklenebilir.
+
+## Ekran
+- Temel çözünürlük: **1280 x 720**, stretch mode `canvas_items`, aspect `keep`.
+- Oynanabilir kule genişliği: **640 px**, ekranın ortasında. Sol ve sağda duvarlar (duvar kalınlığı 48 px); duvarların dışı dekor alanı.
+
+## Temel mekanikler
+
+### Yatay hareket
+- Yerde ivmelenme ve sürtünme var; havada kontrol daha zayıf ama var.
+- Yüksek yatay hız = yüksek zıplama. **Oyunun kalbi bu.**
+
+### Zıplama
+- `jump_velocity = JUMP_BASE + abs(vx) * JUMP_SPEED_BONUS`
+- Değişken zıplama: tuş erken bırakılırsa yukarı hız kesilir.
+- Coyote time ve jump buffer var.
+
+### Duvar sekmesi
+- Karakter duvara `WALL_BOUNCE_MIN_SPEED` üzerinde bir hızla çarparsa: `vx = -vx * WALL_BOUNCE_DAMPING`.
+- Havadaysa küçük bir yukarı itme alır ve takla tetiklenir.
+
+### Platformlar
+- Tek yönlü (alttan geçilir).
+- Her "kat" sabit aralıkla dizilir; her katta bir platform.
+- Platform genişliği yükseldikçe daralır; her 100 katta bir tam genişlikte "bölüm platformu" (tema değişimi için).
+- Platform yatay konumu rastgele ama oynanabilir: bir önceki platformdan ulaşılamayacak bir yere konmaz.
+
+### Kamera
+- Oyuncu belli bir kata ulaşana kadar kamera bekler, sonra kaymaya başlar.
+- Kayma hızı zamanla artar (üst sınırı var).
+- Oyuncu ekranın üst bölgesine çıkarsa kamera onu yakalamak için hızlanır.
+- Oyuncu ekranın altından çıkarsa: **oyun biter**.
+
+### Skor ve kombo
+- Taban skor: ulaşılan en yüksek kat x 10.
+- **Kombo:** Tek zıplayışta **2 veya daha fazla kat** atlamak kombo başlatır/devam ettirir.
+  - Kombo süresi `COMBO_TIMEOUT` saniye; her kombo zıplayışı süreyi yeniler.
+  - Kombo; 2 kattan az atlanan bir inişte veya süre dolunca biter.
+  - Kombo bittiğinde: `kombo_puanı = (komboda atlanan toplam kat)^2`, eğer kombo en az 2 zıplayıştan oluştuysa.
+- Ekranda: kat, skor, aktif kombo sayacı + kalan süre çubuğu.
+
+### Taklalar
+- Görsel bir ödül; fizikle ilgili değil (`Visual` katmanında).
+- Tetikleyiciler: büyük zıplama (dikey hız eşiği aşılınca), duvar sekmesi, kombo zıplayışları.
+- Dönüş yönü yatay hareket yönüne göre; havada kalma süresine göre 1 veya daha fazla tur; inişte açı sıfırlanır.
+
+## Başlangıç ayar değerleri (`scripts/tuning.gd`)
+Bunlar başlangıç noktasıdır; oynayarak ayarlanacak.
+
+| Sabit | Değer | Not |
+|---|---|---|
+| `GRAVITY` | 2400 px/s² | |
+| `MAX_FALL_SPEED` | 1800 px/s | |
+| `MAX_RUN_SPEED` | 900 px/s | |
+| `GROUND_ACCEL` | 2600 px/s² | |
+| `GROUND_FRICTION` | 1800 px/s² | |
+| `AIR_ACCEL` | 1400 px/s² | |
+| `JUMP_BASE` | 900 px/s | |
+| `JUMP_SPEED_BONUS` | 0.6 | max hızda ~1440 px/s |
+| `JUMP_CUT_MULTIPLIER` | 0.5 | tuş erken bırakılınca |
+| `COYOTE_TIME` | 0.10 s | |
+| `JUMP_BUFFER_TIME` | 0.12 s | |
+| `WALL_BOUNCE_MIN_SPEED` | 300 px/s | |
+| `WALL_BOUNCE_DAMPING` | 0.85 | |
+| `WALL_BOUNCE_UP_BOOST` | 150 px/s | sadece havadayken |
+| `FLOOR_SPACING` | 128 px | katlar arası dikey mesafe |
+| `PLATFORM_WIDTH_MAX` | 360 px | başlangıçta |
+| `PLATFORM_WIDTH_MIN` | 140 px | yükseklerde |
+| `CAMERA_START_FLOOR` | 5 | kamera bu katta kaymaya başlar |
+| `CAMERA_START_SPEED` | 40 px/s | |
+| `CAMERA_SPEED_STEP` | +12 px/s her 30 s | |
+| `CAMERA_MAX_SPEED` | 260 px/s | |
+| `CAMERA_CATCHUP_ZONE` | ekranın üst %30'u | |
+| `COMBO_MIN_FLOORS` | 2 | |
+| `COMBO_TIMEOUT` | 3.0 s | |
+| `FLIP_VELOCITY_THRESHOLD` | 1200 px/s | dikey hız |
+
+## Juice listesi (Aşama 2)
+- Squash & stretch: zıplarken dikey uzama, inişte yatay ezilme (hıza orantılı).
+- Takla dönüşleri (tween), hareket izi (trail) ve hız çizgileri.
+- İniş ve duvar sekmesinde toz/kıvılcım parçacıkları.
+- Ekran sarsıntısı (büyük iniş, duvar sekmesi, kombo bitişi).
+- Hit-stop: kombo bitişinde ~60 ms zaman yavaşlaması.
+- Kombo yazısı: büyüyerek beliren, sallanan "COMBO x7!" etiketleri; skor sayacı tween ile.
+- Glow/bloom (WorldEnvironment) ve renk vurguları.
+
+## Görsel yön (Aşama 3–4'te netleşecek)
+- Karakter: Tripo ile üretilmiş 3D model, yan kamera, toon shader + outline.
+- Dünya: kodla/shader ile üretilen şık bir kule; parallax katmanlar; her 100 katta tema değişimi.
+- Şimdilik her şey düz renkli şekiller.
