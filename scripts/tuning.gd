@@ -74,6 +74,11 @@ const CAMERA_MAX_SPEED: float = 260.0
 ## Ekranın üstten bu oranı yakalama bölgesi.
 const CAMERA_CATCHUP_ZONE: float = 0.30
 
+# --- Oyun sonu ---
+## Oyun bittikten sonra yeniden başlatma tuşunun kabul edilmesi için beklenen süre
+## (düşerken basılı tutulan zıplama tuşu oyunu hemen yeniden başlatmasın).
+const GAME_OVER_RESTART_DELAY: float = 0.5
+
 # --- Skor ve kombo ---
 const SCORE_PER_FLOOR: int = 10
 ## Tek zıplayışta en az bu kadar kat atlanırsa kombo sayılır.

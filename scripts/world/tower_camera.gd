@@ -26,6 +26,17 @@ func _physics_process(delta: float) -> void:
 		position.y = minf(position.y, CameraRules.catchup_center_y(target.global_position.y))
 
 
+## Kaymayı durdurur (oyun bitince).
+func stop() -> void:
+	is_scrolling = false
+	speed = 0.0
+
+
+## Oyuncu ekranın altından tamamen çıktı mı?
+func is_below_screen(world_y: float) -> bool:
+	return CameraRules.is_below_screen(world_y, get_screen_center_position().y)
+
+
 func _on_floor_changed(floor_number: int) -> void:
 	if not is_scrolling and CameraRules.should_start(floor_number):
 		is_scrolling = true

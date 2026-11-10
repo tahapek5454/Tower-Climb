@@ -1,7 +1,7 @@
 # İlerleme
 
 **Aktif aşama:** 1 — Fizik prototipi
-**Durum:** Devam ediyor (7/11 madde)
+**Durum:** Devam ediyor (8/11 madde)
 
 ## Aşama 1 — Fizik prototipi
 - [x] Godot projesi + klasör yapısı + `.gitignore` + autoload'lar (`Events`, `GameState`)
@@ -11,7 +11,7 @@
 - [x] Duvar sekmesi
 - [x] Tek yönlü platformlar + sonsuz platform üretimi (eskileri temizleme)
 - [x] Kamera: bekleme, hızlanan kayma, yakalama bölgesi
-- [ ] Game over + yeniden başlatma
+- [x] Game over + yeniden başlatma
 - [ ] Skor + kombo sistemi (+ GUT testleri)
 - [ ] Basit HUD (kat, skor, kombo)
 - [ ] Debug overlay (F3)
@@ -31,6 +31,8 @@
 - Platform kuralları saf sınıfta (`scripts/world/platform_rules.gd`); GUT testleri `tests/test_platform_rules.gd` (7 test). Kamera kuralları `tests/test_camera_rules.gd` (6 test).
 - GUT 9.7.1 kurulu (`addons/gut/`, editörde eklenti etkin). AssetLib'deki 9.6.1 Godot 4.7 ile editörde çalışmadı; kullanıcı 9.7.1'i GitHub'dan indirdi.
 - Kamera: `TowerCamera` (`scripts/world/tower_camera.gd`), kuralları `CameraRules`'ta (GUT testli). Kat tespiti: `landed` olayı `floor` taşır; `main.gd` en yüksek katı `GameState.floor_number`'a yazar.
+- Oyun sonu: oyuncu ekranın altından tamamen çıkınca `GameState.end_game()`. Geçici yazı `scripts/ui/game_over_label.gd` (Aşama 5'te gerçek ekranla değişecek). Yeniden başlatma: R veya Space (0,5 s gecikmeyle) → `GameState.reset()` + sahneyi yeniden yükleme.
+- `project.godot`'u editör açıkken dışarıdan değiştirince kullanıcıya editörü yeniden açmasını söyle; yoksa editör eski hâlini geri yazabilir.
 - Headless simülasyonlar gerçek zamanlı çalışır; uzun süreli davranışları (ör. hız tavanı) saf kural testleriyle doğrula.
 - Dünya koordinatları: x=0 kule ortası, y=0 zeminin üstü, yukarı = -y. Oyuncunun orijini ayaklarında.
 - Duvarlar kamerayı dikeyde takip eder (`tower.gd`); kamera şimdilik sabit, kayma kamera maddesinde.

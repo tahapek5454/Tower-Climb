@@ -14,6 +14,12 @@ static func scroll_speed(elapsed: float) -> float:
 	return minf(Tuning.CAMERA_START_SPEED + steps * Tuning.CAMERA_SPEED_STEP, Tuning.CAMERA_MAX_SPEED)
 
 
+## Oyuncu ekranın altından tamamen çıktı mı? (player_y: ayakların y'si)
+static func is_below_screen(player_y: float, camera_center_y: float) -> bool:
+	var player_top: float = player_y - Tuning.PLAYER_HEIGHT
+	return player_top > camera_center_y + Tuning.VIEW_HEIGHT * 0.5
+
+
 ## Oyuncuyu yakalama bölgesinin alt sınırında tutan kamera merkezi y'si.
 ## Kamera merkezi bundan daha aşağıdaysa oyuncu bölgeye girmiş demektir.
 static func catchup_center_y(player_y: float) -> float:

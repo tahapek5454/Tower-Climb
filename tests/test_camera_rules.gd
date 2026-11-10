@@ -37,6 +37,15 @@ func test_speed_never_decreases() -> void:
 		prev = speed
 
 
+func test_below_screen_only_when_fully_out() -> void:
+	var center_y: float = -500.0
+	var screen_bottom: float = center_y + Tuning.VIEW_HEIGHT * 0.5
+	assert_false(CameraRules.is_below_screen(screen_bottom, center_y), "ayaklar alt kenarda: hâlâ görünüyor")
+	assert_false(CameraRules.is_below_screen(screen_bottom + Tuning.PLAYER_HEIGHT - 1.0, center_y),
+			"kafası hâlâ ekranda")
+	assert_true(CameraRules.is_below_screen(screen_bottom + Tuning.PLAYER_HEIGHT + 1.0, center_y))
+
+
 func test_catchup_keeps_player_at_zone_edge() -> void:
 	var player_y: float = -1000.0
 	var center_y: float = CameraRules.catchup_center_y(player_y)

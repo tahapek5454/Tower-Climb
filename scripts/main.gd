@@ -1,5 +1,5 @@
 extends Node2D
-## Ana sahne: kuleyi, oyuncuyu ve kamerayı kurar.
+## Ana sahne: kuleyi, oyuncuyu ve kamerayı kurar; oyun sonunu ve yeniden başlatmayı yönetir.
 
 const PLAYER_SCENE: PackedScene = preload("res://scenes/player/player.tscn")
 ## Duvarların dışındaki dekor alanının rengi.
@@ -32,8 +32,31 @@ func _ready() -> void:
 	_camera.target = _player
 	add_child(_camera)
 
+	var game_over_label := GameOverLabel.new()
+	game_over_label.name = "GameOverLabel"
+	game_over_label.restart_requested.connect(_restart)
+	add_child(game_over_label)
+
+	Events.game_over.connect(_on_game_over)
+
+
+func _physics_process(_delta: float) -> void:
+	if not GameState.is_game_over and _camera.is_below_screen(_player.global_position.y):
+		GameState.end_game()
+
 
 func _on_player_event(event_name: StringName, data: Dictionary) -> void:
 	if event_name == &"landed":
 		# Ulaşılan en yüksek kat; skor/kombo maddesinde skor sistemi de bunu kullanacak.
 		GameState.floor_number = maxi(GameState.floor_number, data["floor"])
+
+
+func _on_game_over(_final_score: int, _final_floor: int) -> void:
+	_player.set_physics_process(false)
+	_camera.stop()
+
+
+## Durumu sıfırlar ve sahneyi baştan yükler (platformlar, kamera, oyuncu yeniden kurulur).
+func _restart() -> void:
+	GameState.reset()
+	get_tree().reload_current_scene()
