@@ -4,19 +4,35 @@ extends CharacterBody2D
 ## Orijin ayakların ortasındadır.
 
 signal state_changed(new_state: State, old_state: State)
-@warning_ignore("unused_signal")
+## Olaylar: &"jumped" {speed, run_speed}, &"jump_cut" {}, &"landed" {speed}.
 signal event(name: StringName, data: Dictionary)
 
 enum State { IDLE, RUN, JUMP, FALL, LAND, WALL_BOUNCE, FLIP }
 
 var state: State = State.IDLE
 
+## Yerden ayrıldıktan sonra hâlâ zıplanabilecek kalan süre.
+var _coyote_timer: float = 0.0
+## Zıplama tuşuna basıldıktan sonra isteğin geçerli kaldığı süre.
+var _jump_buffer_timer: float = 0.0
+## Yükselirken tuş bırakılırsa hız bir kez kesilebilir.
+var _can_cut_jump: bool = false
+
 
 func _physics_process(delta: float) -> void:
-	var input_dir: float = Input.get_axis(&"move_left", &"move_right")
-	_apply_horizontal(input_dir, delta)
+	var was_on_floor: bool = is_on_floor()
+	_update_jump_timers(delta)
+	_apply_horizontal(Input.get_axis(&"move_left", &"move_right"), delta)
 	_apply_gravity(delta)
+	_try_jump()
+	_try_cut_jump()
+
+	var fall_speed: float = velocity.y
 	move_and_slide()
+
+	if is_on_floor() and not was_on_floor:
+		_can_cut_jump = false
+		event.emit(&"landed", {"speed": fall_speed})
 	_update_state()
 
 
@@ -42,6 +58,46 @@ func _apply_gravity(delta: float) -> void:
 	if is_on_floor():
 		return
 	velocity.y = minf(velocity.y + Tuning.GRAVITY * delta, Tuning.MAX_FALL_SPEED)
+
+
+func _update_jump_timers(delta: float) -> void:
+	if is_on_floor():
+		_coyote_timer = Tuning.COYOTE_TIME
+	else:
+		_coyote_timer = maxf(_coyote_timer - delta, 0.0)
+
+	if Input.is_action_just_pressed(&"jump"):
+		_jump_buffer_timer = Tuning.JUMP_BUFFER_TIME
+	else:
+		_jump_buffer_timer = maxf(_jump_buffer_timer - delta, 0.0)
+
+
+## Tamponda zıplama isteği varsa ve yerdeysek (veya coyote süresi içindeysek) zıplar.
+func _try_jump() -> void:
+	if _jump_buffer_timer <= 0.0 or _coyote_timer <= 0.0:
+		return
+	_jump_buffer_timer = 0.0
+	_coyote_timer = 0.0
+	_can_cut_jump = true
+	var run_speed: float = absf(velocity.x)
+	var jump_speed: float = jump_speed_for(run_speed)
+	velocity.y = -jump_speed
+	event.emit(&"jumped", {"speed": jump_speed, "run_speed": run_speed})
+
+
+## Değişken zıplama: yükselirken tuş basılı değilse yukarı hız bir kez kesilir.
+func _try_cut_jump() -> void:
+	if not _can_cut_jump or Input.is_action_pressed(&"jump"):
+		return
+	_can_cut_jump = false
+	if velocity.y < 0.0:
+		velocity.y *= Tuning.JUMP_CUT_MULTIPLIER
+		event.emit(&"jump_cut", {})
+
+
+## Yatay hıza göre zıplama hızı: oyunun kalbi.
+static func jump_speed_for(run_speed: float) -> float:
+	return Tuning.JUMP_BASE + run_speed * Tuning.JUMP_SPEED_BONUS
 
 
 func _update_state() -> void:
