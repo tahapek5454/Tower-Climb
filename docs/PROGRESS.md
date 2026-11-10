@@ -1,10 +1,10 @@
 # İlerleme
 
 **Aktif aşama:** 1 — Fizik prototipi
-**Durum:** Başlanmadı
+**Durum:** Devam ediyor (1/11 madde)
 
 ## Aşama 1 — Fizik prototipi
-- [ ] Godot projesi + klasör yapısı + `.gitignore` + autoload'lar (`Events`, `GameState`)
+- [x] Godot projesi + klasör yapısı + `.gitignore` + autoload'lar (`Events`, `GameState`)
 - [ ] `tuning.gd` (GAME_DESIGN.md'deki değerlerle)
 - [ ] Kule duvarları + kutu karakter: koşma (ivme/sürtünme)
 - [ ] Zıplama: momentuma bağlı yükseklik, değişken zıplama, coyote time, jump buffer
@@ -21,3 +21,5 @@
 
 ## Notlar
 - Kullanıcının kurulu araçları: Godot 4 Standard, Git, Node.js, godot-mcp. `gh` yok.
+- Godot sürümü 4.7.2. Renderer: `gl_compatibility` (web build uyumu için).
+- Giriş eylemleri (input map) henüz tanımlı değil; karakter maddesiyle birlikte eklenecek.

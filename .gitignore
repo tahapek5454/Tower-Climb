@@ -1,0 +1,30 @@
+# Godot 4 — motorun ürettiği önbellek
+.godot/
+
+# Export çıktıları
+build/
+*.exe
+*.pck
+*.apk
+*.aab
+*.zip
+
+# Geçici / yedek dosyalar
+*.tmp
+*.bak
+*~
+*.translation
+
+# Android / export kimlik bilgileri
+export_credentials.cfg
+android/
+
+# İşletim sistemi ve editör artıkları
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Claude Code yerel ayarları
+.claude/settings.local.json
