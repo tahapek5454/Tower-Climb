@@ -105,7 +105,7 @@ Player (CharacterBody2D)      ← scripts/player/player.gd — hareket, çarpı�
 ### Klasör yapısı
 ```
 scenes/        main.tscn, player/, world/, ui/, fx/
-scripts/       tuning.gd, autoload/, player/, world/, ui/, fx/
+scripts/       tuning.gd, autoload/, game/ (skor/kombo gibi saf oyun kuralları), player/, world/, ui/, fx/
 assets/        sprites/, models/, shaders/, audio/, fonts/
 tests/         GUT testleri
 tools/         yardımcı scriptler (ör. check_env.ps1)

@@ -55,6 +55,8 @@ Zıplamayı oyuncu yapar (otomatik zıplama yok). Gamepad desteği sonra ekleneb
   - Kombo süresi `COMBO_TIMEOUT` saniye; her kombo zıplayışı süreyi yeniler.
   - Kombo; 2 kattan az atlanan bir inişte veya süre dolunca biter.
   - Kombo bittiğinde: `kombo_puanı = (komboda atlanan toplam kat)^2`, eğer kombo en az 2 zıplayıştan oluştuysa.
+  - "Atlanan kat" = inilen kat − zıplanan kat (aşağı inişte negatif → kombo biter).
+  - Oyun biterken aktif bir kombo varsa puanı yine sayılır.
 - Ekranda: kat, skor, aktif kombo sayacı + kalan süre çubuğu.
 
 ### Taklalar

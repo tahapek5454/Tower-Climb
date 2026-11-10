@@ -47,8 +47,7 @@ func _physics_process(_delta: float) -> void:
 
 func _on_player_event(event_name: StringName, data: Dictionary) -> void:
 	if event_name == &"landed":
-		# Ulaşılan en yüksek kat; skor/kombo maddesinde skor sistemi de bunu kullanacak.
-		GameState.floor_number = maxi(GameState.floor_number, data["floor"])
+		GameState.register_landing(data["floor"])
 
 
 func _on_game_over(_final_score: int, _final_floor: int) -> void:

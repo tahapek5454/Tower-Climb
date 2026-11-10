@@ -1,7 +1,7 @@
 # İlerleme
 
 **Aktif aşama:** 1 — Fizik prototipi
-**Durum:** Devam ediyor (8/11 madde)
+**Durum:** Devam ediyor (9/11 madde)
 
 ## Aşama 1 — Fizik prototipi
 - [x] Godot projesi + klasör yapısı + `.gitignore` + autoload'lar (`Events`, `GameState`)
@@ -12,7 +12,7 @@
 - [x] Tek yönlü platformlar + sonsuz platform üretimi (eskileri temizleme)
 - [x] Kamera: bekleme, hızlanan kayma, yakalama bölgesi
 - [x] Game over + yeniden başlatma
-- [ ] Skor + kombo sistemi (+ GUT testleri)
+- [x] Skor + kombo sistemi (+ GUT testleri)
 - [ ] Basit HUD (kat, skor, kombo)
 - [ ] Debug overlay (F3)
 
@@ -28,7 +28,8 @@
 - `Player.event` olayları: `jumped`, `jump_cut`, `landed`, `wall_bounce`.
 - Kullanıcı kararı: ayarlar `const` kalacak, oyun içi canlı ayar paneli şimdilik yok. Güçlendirmeler ileride çalışma zamanı çarpanlarıyla eklenecek (bkz. GAME_DESIGN.md).
 - Doğrulama yöntemi: headless'ta simüle girişle sayısal kontrol + kullanıcının elle testi. Otomatik ekran görüntüsü şimdilik istenmiyor.
-- Platform kuralları saf sınıfta (`scripts/world/platform_rules.gd`); GUT testleri `tests/test_platform_rules.gd` (7 test). Kamera kuralları `tests/test_camera_rules.gd` (6 test).
+- Platform kuralları saf sınıfta (`scripts/world/platform_rules.gd`); GUT testleri `tests/test_platform_rules.gd` (7 test). Kamera kuralları `tests/test_camera_rules.gd` (7 test). Kombo `tests/test_combo_counter.gd` (11), skor `tests/test_game_state_score.gd` (5). Toplam 30 test.
+- Skor/kombo: kurallar `scripts/game/combo_counter.gd` (saf), durum `GameState`. `main.gd` iniş olayını `GameState.register_landing(floor)`'a iletir. HUD için `GameState.combo_jumps`, `combo_floors`, `combo_time_ratio` ve `Events.combo_changed/combo_ended` hazır.
 - GUT 9.7.1 kurulu (`addons/gut/`, editörde eklenti etkin). AssetLib'deki 9.6.1 Godot 4.7 ile editörde çalışmadı; kullanıcı 9.7.1'i GitHub'dan indirdi.
 - Kamera: `TowerCamera` (`scripts/world/tower_camera.gd`), kuralları `CameraRules`'ta (GUT testli). Kat tespiti: `landed` olayı `floor` taşır; `main.gd` en yüksek katı `GameState.floor_number`'a yazar.
 - Oyun sonu: oyuncu ekranın altından tamamen çıkınca `GameState.end_game()`. Geçici yazı `scripts/ui/game_over_label.gd` (Aşama 5'te gerçek ekranla değişecek). Yeniden başlatma: R veya Space (0,5 s gecikmeyle) → `GameState.reset()` + sahneyi yeniden yükleme.
