@@ -104,4 +104,5 @@ Bunlar başlangıç noktasıdır; oynayarak ayarlanacak.
 ## Görsel yön (Aşama 3–4'te netleşecek)
 - Karakter: Tripo ile üretilmiş 3D model, yan kamera, toon shader + outline.
 - Dünya: kodla/shader ile üretilen şık bir kule; parallax katmanlar; her 100 katta tema değişimi.
+- Duvarların dışındaki boşluklar (dekor alanı): dış çevre — doğa, bulutlar vb. (Aşama 4). Kule genişliği değişirse dekor kalan alana kendiliğinden uymalı.
 - Şimdilik her şey düz renkli şekiller.

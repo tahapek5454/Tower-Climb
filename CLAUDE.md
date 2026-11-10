@@ -98,6 +98,7 @@ Player (CharacterBody2D)      ← scripts/player/player.gd — hareket, çarpı�
 ### Ekran ve pencere
 - Tasarım çözünürlüğü **1280 x 720** sabittir (`Tuning.VIEW_WIDTH/HEIGHT`, stretch `canvas_items`, aspect `keep`). Tüm yerleşim ve oynanış sayıları bu koordinatlara göredir; pencere büyüsün diye bu değerleri **değiştirme**.
 - Oyun büyütülmüş pencerede başlar (`project.godot` → `display/window/size/mode=2`). Pencereyi büyütmek/tam ekran yapmak ölçekleme ile olur, viewport boyutuyla değil.
+- Kule genişliği ayarlanabilir kalmalı: tek kaynak `Tuning.TOWER_WIDTH` (kullanıcı ileride genişletebilir). Duvar konumu, platform üretimi, kamera, dekor alanı gibi her şey bu sabitten **türetilir**; `448`, `320` gibi türetilmiş sayıları koda yazma.
 - Pencere moduna sadece `WindowManager` üzerinden dokun (`set_fullscreen`, `toggle_fullscreen`, `is_fullscreen`); başka yerde `DisplayServer.window_set_mode` çağırma. Aşama 5'teki tam ekran ayarı da bunu kullanır.
 - Arayüz (HUD, menüler) her pencere boyutunda çalışmalı: sabit piksel konumu yerine anchor/container kullan.
 
