@@ -36,6 +36,12 @@ func _ready() -> void:
 	hud.name = "Hud"
 	add_child(hud)
 
+	var debug_overlay := DebugOverlay.new()
+	debug_overlay.name = "DebugOverlay"
+	debug_overlay.player = _player
+	debug_overlay.camera = _camera
+	add_child(debug_overlay)
+
 	var game_over_label := GameOverLabel.new()
 	game_over_label.name = "GameOverLabel"
 	game_over_label.restart_requested.connect(_restart)
