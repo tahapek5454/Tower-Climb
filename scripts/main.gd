@@ -32,6 +32,10 @@ func _ready() -> void:
 	_camera.target = _player
 	add_child(_camera)
 
+	var hud := Hud.new()
+	hud.name = "Hud"
+	add_child(hud)
+
 	var game_over_label := GameOverLabel.new()
 	game_over_label.name = "GameOverLabel"
 	game_over_label.restart_requested.connect(_restart)

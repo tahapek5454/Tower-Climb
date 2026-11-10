@@ -1,7 +1,7 @@
 # İlerleme
 
 **Aktif aşama:** 1 — Fizik prototipi
-**Durum:** Devam ediyor (9/11 madde)
+**Durum:** Devam ediyor (10/11 madde)
 
 ## Aşama 1 — Fizik prototipi
 - [x] Godot projesi + klasör yapısı + `.gitignore` + autoload'lar (`Events`, `GameState`)
@@ -13,7 +13,7 @@
 - [x] Kamera: bekleme, hızlanan kayma, yakalama bölgesi
 - [x] Game over + yeniden başlatma
 - [x] Skor + kombo sistemi (+ GUT testleri)
-- [ ] Basit HUD (kat, skor, kombo)
+- [x] Basit HUD (kat, skor, kombo)
 - [ ] Debug overlay (F3)
 
 ## Tamamlanan aşamalar
