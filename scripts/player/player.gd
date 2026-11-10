@@ -4,7 +4,8 @@ extends CharacterBody2D
 ## Orijin ayakların ortasındadır.
 
 signal state_changed(new_state: State, old_state: State)
-## Olaylar: &"jumped" {speed, run_speed}, &"jump_cut" {}, &"landed" {speed}.
+## Olaylar: &"jumped" {speed, run_speed}, &"jump_cut" {}, &"landed" {speed},
+## &"wall_bounce" {speed, normal_x, airborne}.
 signal event(name: StringName, data: Dictionary)
 
 enum State { IDLE, RUN, JUMP, FALL, LAND, WALL_BOUNCE, FLIP }
@@ -28,7 +29,9 @@ func _physics_process(delta: float) -> void:
 	_try_cut_jump()
 
 	var fall_speed: float = velocity.y
+	var impact_vx: float = velocity.x
 	move_and_slide()
+	_try_wall_bounce(impact_vx)
 
 	if is_on_floor() and not was_on_floor:
 		_can_cut_jump = false
@@ -93,6 +96,22 @@ func _try_cut_jump() -> void:
 	if velocity.y < 0.0:
 		velocity.y *= Tuning.JUMP_CUT_MULTIPLIER
 		event.emit(&"jump_cut", {})
+
+
+## Duvara yeterince hızlı çarpıldıysa yatay hızı ters çevirir; havadaysa yukarı iter.
+## impact_vx: çarpışmadan önceki yatay hız (move_and_slide çarpınca sıfırlar).
+func _try_wall_bounce(impact_vx: float) -> void:
+	if not is_on_wall() or absf(impact_vx) < Tuning.WALL_BOUNCE_MIN_SPEED:
+		return
+	var normal_x: float = get_wall_normal().x
+	# Sadece duvara doğru giderken sek.
+	if normal_x * impact_vx >= 0.0:
+		return
+	velocity.x = -impact_vx * Tuning.WALL_BOUNCE_DAMPING
+	var airborne: bool = not is_on_floor()
+	if airborne:
+		velocity.y -= Tuning.WALL_BOUNCE_UP_BOOST
+	event.emit(&"wall_bounce", {"speed": absf(impact_vx), "normal_x": normal_x, "airborne": airborne})
 
 
 ## Yatay hıza göre zıplama hızı: oyunun kalbi.

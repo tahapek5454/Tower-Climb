@@ -63,6 +63,7 @@ Zıplamayı oyuncu yapar (otomatik zıplama yok). Gamepad desteği sonra ekleneb
 
 ## Başlangıç ayar değerleri (`scripts/tuning.gd`)
 Bunlar başlangıç noktasıdır; oynayarak ayarlanacak.
+Değerler `const` olarak kalır (oyun içi canlı ayar paneli şimdilik yok). İleride güçlendirmeler (Aşama 6) karakteri hızlandırıp yavaşlatabilir: bu, `Tuning` sabitlerini değiştirerek değil, oyuncu üzerinde çalışma zamanı çarpanlarıyla (ör. hız çarpanı) yapılacak; `Tuning` taban değer olarak kalır.
 
 | Sabit | Değer | Not |
 |---|---|---|
