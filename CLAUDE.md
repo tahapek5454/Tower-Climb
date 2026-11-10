@@ -129,6 +129,12 @@ Tek yönlü çarpışma (alttan geçilir, üstüne basılır).
 - Her değişiklikten sonra `godot --headless --path . --quit` ile hata kontrolü yap. Testler varsa çalıştır.
 - Saf mantık içeren parçalar (skor/kombo hesabı, platform üretimi kuralları) için GUT testleri yaz.
 
+### Testler (GUT 9.6.1, `addons/gut/`)
+- Test dosyaları `tests/test_*.gd`, `extends GutTest`. Ayarlar `.gutconfig.json`'da.
+- Çalıştırma (PowerShell; Bash'te `godot` PATH'te yok): `godot --headless --path . -s res://addons/gut/gut_cmdln.gd` → sonda "All tests passed" ve çıkış kodu 0 olmalı.
+- Beklenen değerleri `Tuning`'den türet; ayar değişince testler kırılmasın.
+- GUT dosyalarını düzenleme. Zip'ten kurulumda dosyalar `res://addons/gut/` altında olmalı (zip'in kök klasörü atlanmalı).
+
 ---
 
 ## 5. Git

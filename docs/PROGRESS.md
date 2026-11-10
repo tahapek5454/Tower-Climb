@@ -28,7 +28,8 @@
 - `Player.event` olayları: `jumped`, `jump_cut`, `landed`, `wall_bounce`.
 - Kullanıcı kararı: ayarlar `const` kalacak, oyun içi canlı ayar paneli şimdilik yok. Güçlendirmeler ileride çalışma zamanı çarpanlarıyla eklenecek (bkz. GAME_DESIGN.md).
 - Doğrulama yöntemi: headless'ta simüle girişle sayısal kontrol + kullanıcının elle testi. Otomatik ekran görüntüsü şimdilik istenmiyor.
-- Platform kuralları saf sınıfta (`scripts/world/platform_rules.gd`). GUT kurulu değil (`addons/gut` yok); kullanıcı AssetLib'den kurunca bu kurallar için GUT testleri yazılacak.
+- Platform kuralları saf sınıfta (`scripts/world/platform_rules.gd`); GUT testleri `tests/test_platform_rules.gd` (7 test).
+- GUT 9.6.1 kurulu (`addons/gut/`). AssetLib'de Godot 4 sürümü çıkmadı; kullanıcı zip'i siteden indirdi.
 - `main.gd`'de GEÇİCİ kamera takibi var (oyuncuyu sadece yukarı doğru izler); kamera maddesinde gerçek davranışla değiştirilecek.
 - Dünya koordinatları: x=0 kule ortası, y=0 zeminin üstü, yukarı = -y. Oyuncunun orijini ayaklarında.
 - Duvarlar kamerayı dikeyde takip eder (`tower.gd`); kamera şimdilik sabit, kayma kamera maddesinde.
