@@ -23,5 +23,6 @@
 - Kullanıcının kurulu araçları: Godot 4 Standard, Git, Node.js, godot-mcp. `gh` yok.
 - Godot sürümü 4.7.2. Renderer: `gl_compatibility` (web build uyumu için).
 - Giriş eylemleri `project.godot`'ta: `move_left`, `move_right`, `jump`, `pause`, `toggle_debug`.
+- Pencere: oyun büyütülmüş pencerede başlar, F11 / Alt+Enter tam ekran (`WindowManager` autoload'u). Tasarım çözünürlüğü 1280x720 olarak kalır, görüntü ölçeklenir.
 - Dünya koordinatları: x=0 kule ortası, y=0 zeminin üstü, yukarı = -y. Oyuncunun orijini ayaklarında.
 - Duvarlar kamerayı dikeyde takip eder (`tower.gd`); kamera şimdilik sabit, kayma kamera maddesinde.
