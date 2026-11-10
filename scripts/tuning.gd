@@ -9,6 +9,12 @@ const VIEW_HEIGHT: float = 720.0
 ## Duvarlar arası oynanabilir genişlik.
 const TOWER_WIDTH: float = 640.0
 const WALL_THICKNESS: float = 48.0
+## Duvar gövdesinin yüksekliği; duvarlar kamerayı takip ettiği için ekrandan uzun olması yeter.
+const WALL_HEIGHT: float = 2160.0
+## Zemin ve platformların kalınlığı.
+const PLATFORM_THICKNESS: float = 24.0
+## Başlangıçta zeminin ekranın alt kenarından yüksekliği.
+const GROUND_SCREEN_MARGIN: float = 72.0
 
 # --- Karakter ---
 const PLAYER_WIDTH: float = 32.0
@@ -19,6 +25,8 @@ const MAX_RUN_SPEED: float = 900.0
 const GROUND_ACCEL: float = 2600.0
 const GROUND_FRICTION: float = 1800.0
 const AIR_ACCEL: float = 1400.0
+## Yerde bu hızın altı IDLE, üstü RUN sayılır.
+const RUN_STATE_MIN_SPEED: float = 20.0
 
 # --- Yerçekimi ve zıplama ---
 const GRAVITY: float = 2400.0
