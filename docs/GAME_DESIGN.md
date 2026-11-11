@@ -106,8 +106,10 @@ Değerler `const` olarak kalır (oyun içi canlı ayar paneli şimdilik yok). İ
 - Kombo yazısı: büyüyerek beliren, sallanan "COMBO x7!" etiketleri; skor sayacı tween ile.
 - Glow ve renk vurguları. (Uygulama: WorldEnvironment yerine toplamalı ışık hâleleri — Compatibility renderer/web uyumu için; bkz. PROGRESS.md.)
 
-## Görsel yön (Aşama 3–4'te netleşecek)
-- Karakter: Tripo ile üretilmiş 3D model, yan kamera, toon shader + outline.
+## Görsel yön (Aşama 4'te netleşecek)
+- Karakter (Aşama 3'te yapıldı): chibi **kartal maskotu** — beyaz kafa, turuncu gaga ve ayaklar, düz gri tişört, koyu pantolon, siyah tüylü kollar, beyaz kuyruk. Tripo ile üretilmiş 3D model; yan kamerayla şeffaf bir katmanda çizilir, toon shader + açık renkli dış çizgi. Ekranda ~94 px; hitbox 32x48 sabit.
+- Karakter animasyonları: bekleme, koşu (hız koşu hızına bağlı), zıplama, kanat çırpma, düşme, iniş; taklada rastgele **topak** ya da **yıldız** (yan takla).
+- Karakter siyah-beyaz-turuncu olduğu için **kule içi orta tonda** olmalı (siyah ve beyazdan uzak).
 - Dünya: kodla/shader ile üretilen şık bir kule; parallax katmanlar; her 100 katta tema değişimi.
 - Duvarların dışındaki boşluklar (dekor alanı): dış çevre — doğa, bulutlar vb. (Aşama 4). Kule genişliği değişirse dekor kalan alana kendiliğinden uymalı.
-- Şimdilik her şey düz renkli şekiller.
+- Şimdilik dünya düz renkli şekiller.

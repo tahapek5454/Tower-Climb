@@ -1,13 +1,17 @@
 # İlerleme
 
 **Aktif aşama:** 3 — Karakter
-**Durum:** 7/8 madde bitti — sırada madde 8 (ince ayar, Compatibility/web doğrulama, CREDITS).
+**Durum:** Tamamlandı (8/8 madde) — Aşama 4'e geçmek için kullanıcının "devam" demesi bekleniyor.
 
 ## ▶ Yeni oturumda buradan devam
-1. CLAUDE.md bölüm 0'daki ortam kontrolünü yap ve tabloyla raporla. Aşama 3 araçları 2026-11-11'de hazırdı: Blender 5.3.0 (PATH'te), uv/uvx 0.13.7, blender-mcp bağlı (eklenti 1.8, `tripo: on`). Yine de `get_addon_status` ile Blender bağlantısını doğrula.
-2. Aşama 2 ışık hâleleri ekran görüntüsüyle görüldü (2026-11-11): hâle, iz ve duvar efektleri kullanıcıya göre iyi; düzeltme istenmedi.
-3. Sıradaki iş: Madde 8. Önce kullanıcının animasyonlar hakkındaki oyun içi geri bildirimini al (koşu adım hızı, zıplama/düşme pozları, kanat çırpma, topak takla, iniş çömelmesi); istenen düzeltmeleri yap. Sonra web/Compatibility doğrulaması (web export şablonları Aşama 7'nin ön koşulu; yoksa sadece masaüstünde doğrula ve not düş) ve `CREDITS.md` son kontrolü. Aşama bitince CLAUDE.md'deki bildirim formatıyla dur.
-4. Kontrast kaygısı (kullanıcı sordu): karakter siyah/koyu gri, mevcut arka plan çok koyu lacivert → karakter kaybolur. Önerilen çözüm (kullanıcı onayı bekliyor): kule içi orta ton (soğuk mavi-mor taş), toon shader'da açık renkli kenar ışığı (rim) + siyah yerine açık/renkli outline, mevcut hâle karakterin arkasında kalır, gerekirse giysi tonu Blender'da açılır. Madde 5–6'da model geçici bir orta ton test zemininde denenecek.
+1. CLAUDE.md bölüm 0'daki ortam kontrolünü yap ve tabloyla raporla.
+2. Aşama 3 bitti (2026-11-12); kullanıcı sonucu onayladı ("harika olmuş, ilk sürüm için okey"). Aşama bildirimi yapıldı, "devam" bekleniyor.
+3. Kullanıcı "devam" deyince **Aşama 4 — Dünya görselleri ve ses**. Ön koşul: kullanıcının seçeceği ses/doku kaynakları (lisansları `CREDITS.md`'ye). Kod yazmadan önce maddeleri ve yaklaşımı kullanıcıyla netleştir, bu dosyaya madde listesi yaz. Başlangıç noktaları:
+   - **Kontrast (karar verildi, kullanıcı onayladı):** kule içi orta tonda olacak (siyah/beyazdan uzak, soğuk mavi-mor taş gibi); karakter siyah-beyaz-turuncu. Zemin değişince karakterin açık renkli outline/rim ayarını yeniden değerlendir (`Tuning.MODEL_OUTLINE_*`, `MODEL_RIM_*`).
+   - Dünya kodla/shader ile üretilecek (GAME_DESIGN "Görsel yön"); parallax, her 100 katta tema, duvar dışı dekor alanı `TOWER_WIDTH`'ten türetilir.
+   - Ses: internetten asset indirme yok; kaynakları kullanıcı seçer/indirir.
+   - Blender/Tripo gerekirse: Blender 5.3 + blender-mcp hazır (`get_addon_status` ile doğrula). Tripo API'de kredi yok; üretim Tripo web sitesinde, ücretsiz planda **H2.5** sürümüyle kullanıcı tarafından yapılır.
+4. Web doğrulaması ertelendi: export şablonları kurulu değil (`%APPDATA%\Godot\export_templates` boş) — Aşama 7'nin ön koşulu. Aşama 7'de özellikle kontrol et: SubViewport + şeffaf arka plan + MSAA + `next_pass` outline WebGL2'de çalışıyor mu. Masaüstünde `gl_compatibility` ile doğrulandı.
 
 ## Aşama 3 kararları (2026-11-11)
 - Karakter: **kartal maskotu**, **chibi oranlar** (büyük kafa, kısa bacak, kalın uzuvlar), yumuşak/yuvarlak tüy tutamları. Beyaz kafa, turuncu gaga ve ayaklar, **düz koyu gri–siyah arası tişört** (çizgisiz, logo/yazı/reklam yok), koyu pantolon. İfade: kararlı ama sevimli.
@@ -51,7 +55,7 @@
 - [x] Godot: SubViewport render katmanı, `Squash`'a takma, yön dönüşü, kutu yedek
 - [x] Toon shader + outline
 - [x] Durumlara animasyon bağlama (`state_changed`/`event`; koşu animasyonu hızı koşu hızına göre; `player.gd`'ye dokunulmaz)
-- [ ] İnce ayar, Compatibility/web doğrulama, `CREDITS.md`
+- [x] İnce ayar, Compatibility/web doğrulama, `CREDITS.md` (web kısmı Aşama 7'ye ertelendi: export şablonları yok)
 
 ### Kullanıcı tercihleri (özet)
 - Türkçe konuş. Tek seferde tek madde; her madde sonunda test talimatı ver, aşama geçişinde mutlaka "devam" bekle.
@@ -85,6 +89,13 @@
 ## Tamamlanan aşamalar
 - Aşama 1 — Fizik prototipi (2026-11-10)
 - Aşama 2 — Juice / animasyon (2026-11-11)
+- Aşama 3 — Karakter (2026-11-12)
+
+## Aşama 6 için fikirler (kullanıcı, 2026-11-12 — temel bitince; kapsam o aşamada netleşecek)
+- **Para toplama.**
+- **Kanat:** alınınca karakter kanatlanır ve otomatik olarak (belli bir süre/mesafe) uçar.
+- **Kum saati:** alınınca zaman yavaşlar (`Engine.time_scale` → `HitStop` ve F4 yavaş çekimle uyumlu olmalı).
+- Benzeri güçlendirmeler (ör. roket). Uygulama notu: oynanış etkisi çalışma zamanı çarpanlarıyla (`Tuning` sabit kalır), görsel taraf yeni animasyon + kemiğe takılan aksesuar (bkz. "Genişletilebilirlik" notu).
 
 ## Notlar
 
