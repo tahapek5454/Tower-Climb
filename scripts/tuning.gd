@@ -150,6 +150,25 @@ const SPEED_LINE_BACK_MIN: float = 20.0
 const SPEED_LINE_BACK_MAX: float = 60.0
 const SPEED_LINE_START_ALPHA: float = 0.3
 
+# --- Juice: iniş tozu ve duvar kıvılcımı (görsel) ---
+## İniş tozu: MIN_SPEED altındaki inişlerde yok; FULL_SPEED ve üstünde en güçlü hâli.
+const LAND_DUST_MIN_SPEED: float = 350.0
+const LAND_DUST_FULL_SPEED: float = 1200.0
+## Bir inişteki toz bulutu sayısı (zayıf → güçlü).
+const LAND_DUST_COUNT_MIN: int = 4
+const LAND_DUST_COUNT_MAX: int = 12
+const LAND_DUST_LIFETIME: float = 0.5
+## Bulutların yana yayılma hızı (en güçlü inişte; zayıfta bunun %50'si).
+const LAND_DUST_SPEED: float = 220.0
+## Toz saydamlığı (başlangıç; ömrü boyunca 0'a iner).
+const LAND_DUST_ALPHA: float = 0.35
+## Kıvılcım sayısı (yavaş → tam hızla çarpma) ve özellikleri.
+const WALL_SPARK_COUNT_MIN: int = 4
+const WALL_SPARK_COUNT_MAX: int = 10
+const WALL_SPARK_LIFETIME: float = 0.3
+const WALL_SPARK_SPEED: float = 380.0
+const WALL_SPARK_ALPHA: float = 0.8
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25

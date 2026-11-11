@@ -29,6 +29,7 @@ var _stretch_velocity: float = 0.0
 var _spring_stiffness: float = Tuning.SQUASH_SPRING_STIFFNESS
 var _spring_damping: float = Tuning.SQUASH_SPRING_DAMPING
 var _flip_tween: Tween
+var _bursts: ParticleBursts
 
 @onready var _player: Player = get_parent() as Player
 
@@ -79,6 +80,11 @@ func _build() -> void:
 	speed_lines.player = _player
 	add_child(speed_lines)
 	move_child(speed_lines, 1)
+
+	_bursts = ParticleBursts.new()
+	_bursts.name = "Bursts"
+	add_child(_bursts)
+	move_child(_bursts, 2)
 
 
 func _update_facing() -> void:
@@ -192,11 +198,20 @@ func _on_landed(fall_speed: float) -> void:
 	if fall_speed >= Tuning.LAND_SQUASH_MIN_SPEED:
 		var t: float = _land_strength(fall_speed)
 		_kick(-t * Tuning.LAND_SQUASH_MAX, t)
+	if fall_speed >= Tuning.LAND_DUST_MIN_SPEED:
+		var dust: float = clampf(inverse_lerp(Tuning.LAND_DUST_MIN_SPEED, Tuning.LAND_DUST_FULL_SPEED,
+				fall_speed), 0.0, 1.0)
+		_bursts.land_dust(_player.global_position, dust)
 
 
 func _on_wall_bounce(data: Dictionary) -> void:
 	var t: float = clampf(data["speed"] / Tuning.MAX_RUN_SPEED, 0.0, 1.0)
 	_kick(t * Tuning.WALL_SQUASH_MAX, t)
+	# Çarpma noktası: gövdenin duvar tarafındaki kenarı (duvar normalin tersinde).
+	var normal_x: float = data["normal_x"]
+	var contact: Vector2 = _player.global_position + Vector2(
+			-normal_x * Tuning.PLAYER_WIDTH * 0.5, -Tuning.PLAYER_HEIGHT * 0.5)
+	_bursts.wall_sparks(contact, normal_x, t)
 	if data["airborne"]:
 		# Sekme sonrası gidilen yön = duvarın normali.
 		_start_flip(-_player.velocity.y, signf(data["normal_x"]))
