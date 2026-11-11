@@ -5,6 +5,7 @@ extends Node2D
 ##
 ## Yapı:
 ##   Visual (ayaklarda)
+##    ├─ Trail, SpeedLines (top_level: dünyada kalır; gövdeden önce eklenir → arkasında çizilir)
 ##    └─ Spin (gövde ortasında; döner → takla)
 ##        └─ Squash (gövdenin altında; ölçeklenir → dikken ayaklar yerde kalır,
 ##            │        takla sırasında gövde kendi boyu yönünde uzar/ezilir)
@@ -60,9 +61,24 @@ func _build() -> void:
 	_spin.add_child(_squash)
 
 	var body_size := Vector2(Tuning.PLAYER_WIDTH, Tuning.PLAYER_HEIGHT)
-	_squash.add_child(_make_rect(Vector2(0.0, -half_height), body_size, BODY_COLOR))
+	var body: Polygon2D = _make_rect(Vector2(0.0, -half_height), body_size, BODY_COLOR)
+	_squash.add_child(body)
 	_eye = _make_rect(Vector2.ZERO, EYE_SIZE, EYE_COLOR)
 	_squash.add_child(_eye)
+
+	# İz ve çizgiler gövdeden önce eklenir: ağaç sırasıyla gövdenin arkasında çizilir.
+	var trail := AfterimageTrail.new()
+	trail.name = "Trail"
+	trail.source = body
+	trail.player = _player
+	add_child(trail)
+	move_child(trail, 0)
+
+	var speed_lines := SpeedLines.new()
+	speed_lines.name = "SpeedLines"
+	speed_lines.player = _player
+	add_child(speed_lines)
+	move_child(speed_lines, 1)
 
 
 func _update_facing() -> void:
