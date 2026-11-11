@@ -40,6 +40,11 @@ func _ready() -> void:
 	hud.name = "Hud"
 	add_child(hud)
 
+	var combo_popups := ComboPopups.new()
+	combo_popups.name = "ComboPopups"
+	combo_popups.player = _player
+	add_child(combo_popups)
+
 	var debug_overlay := DebugOverlay.new()
 	debug_overlay.name = "DebugOverlay"
 	debug_overlay.player = _player

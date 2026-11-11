@@ -14,10 +14,16 @@ const COMBO_BAR_SIZE := Vector2(180.0, 10.0)
 
 var _floor_label: Label
 var _score_label: Label
+## Skor yazısını container'ın ölçek sıfırlamasından korur (bkz. _build).
+var _score_holder: Control
 var _best_label: Label
 var _combo_box: VBoxContainer
 var _combo_label: Label
 var _combo_bar: ProgressBar
+## Skor yazısı anında atlamaz; gösterilen değer hedefe doğru sayar.
+var _shown_score: float = 0.0
+var _target_score: int = 0
+var _score_pulse: Tween
 
 
 func _ready() -> void:
@@ -29,13 +35,41 @@ func _ready() -> void:
 	Events.combo_ended.connect(_on_combo_ended)
 	_on_floor_changed(GameState.floor_number)
 	_on_score_changed(GameState.score)
+	_shown_score = GameState.score
+	_update_score_text()
 	_on_high_score_changed(GameState.high_score)
 	_combo_box.visible = false
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if _combo_box.visible:
 		_combo_bar.value = GameState.combo_time_ratio
+	if _shown_score != _target_score:
+		_shown_score = PopupRules.count_toward(_shown_score, _target_score, delta)
+		_update_score_text()
+
+
+## Testler ve debug için: ekranda gösterilen skor.
+func shown_score() -> int:
+	return roundi(_shown_score)
+
+
+func _update_score_text() -> void:
+	_score_label.text = "Skor: %d" % roundi(_shown_score)
+	var text_size: Vector2 = _score_label.get_minimum_size()
+	_score_label.size = text_size
+	_score_holder.custom_minimum_size = text_size
+
+
+## Skor yazısı kısa bir an büyüyüp yerine oturur.
+func _pulse_score() -> void:
+	if _score_pulse != null:
+		_score_pulse.kill()
+	_score_label.pivot_offset = Vector2(0.0, _score_label.size.y * 0.5)
+	_score_label.scale = Vector2.ONE * Tuning.SCORE_PULSE_SCALE
+	_score_pulse = create_tween()
+	_score_pulse.tween_property(_score_label, ^"scale", Vector2.ONE, Tuning.SCORE_PULSE_TIME) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 func _build() -> void:
@@ -55,7 +89,11 @@ func _build() -> void:
 	_score_label = _make_label(FONT_SIZE, TEXT_COLOR)
 	_best_label = _make_label(FONT_SIZE, TEXT_COLOR)
 	column.add_child(_floor_label)
-	column.add_child(_score_label)
+	# Container'lar çocuklarının ölçeğini sıfırlar; skor yazısı büyüyebilsin diye ara katmanda durur.
+	_score_holder = Control.new()
+	_score_holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_score_holder.add_child(_score_label)
+	column.add_child(_score_holder)
 	column.add_child(_best_label)
 
 	_combo_box = VBoxContainer.new()
@@ -84,7 +122,11 @@ func _on_floor_changed(floor_number: int) -> void:
 
 
 func _on_score_changed(score: int) -> void:
-	_score_label.text = "Skor: %d" % score
+	_target_score = score
+	if score < _shown_score:
+		# Sıfırlamada geriye saymasın.
+		_shown_score = score
+		_update_score_text()
 
 
 func _on_high_score_changed(high_score: int) -> void:
@@ -97,5 +139,7 @@ func _on_combo_changed(jumps: int, floors: int) -> void:
 	_combo_box.visible = true
 
 
-func _on_combo_ended(_jumps: int, _floors: int, _bonus: int) -> void:
+func _on_combo_ended(_jumps: int, _floors: int, bonus: int) -> void:
 	_combo_box.visible = false
+	if bonus > 0:
+		_pulse_score()

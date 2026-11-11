@@ -194,6 +194,34 @@ const HITSTOP_DURATION_MIN: float = 0.06
 const HITSTOP_DURATION_MAX: float = 0.14
 const HITSTOP_FULL_FLOORS: int = 20
 
+# --- Juice: kombo yazıları ve skor sayacı (görsel) ---
+## Kombo yazısı bu zıplayış sayısından itibaren gösterilir ("COMBO x2!").
+const COMBO_POPUP_MIN_JUMPS: int = 2
+## Yazı boyutu: MIN_JUMPS'ta FONT_MIN, FONT_FULL_JUMPS ve üstünde FONT_MAX.
+const COMBO_POPUP_FONT_MIN: int = 34
+const COMBO_POPUP_FONT_MAX: int = 64
+const COMBO_POPUP_FONT_FULL_JUMPS: int = 10
+## Bonus yazısı ("+144"): 0 kat → FONT_MIN, BONUS_FONT_FULL_FLOORS kat → FONT_MAX.
+const BONUS_POPUP_FONT_MIN: int = 40
+const BONUS_POPUP_FONT_MAX: int = 72
+const BONUS_POPUP_FONT_FULL_FLOORS: int = 20
+## Yazının ömrü (s), bu sürede ne kadar yükseldiği (px) ve oyuncunun ne kadar üstünde çıktığı.
+const COMBO_POPUP_LIFETIME: float = 0.9
+const BONUS_POPUP_LIFETIME: float = 1.3
+const POPUP_RISE: float = 70.0
+const POPUP_OFFSET_Y: float = 90.0
+## Beliriş: 0'dan bu ölçeğe büyür (taşma), sonra 1'e oturur.
+const POPUP_POP_SCALE: float = 1.3
+const POPUP_POP_TIME: float = 0.14
+## Sallanma: en büyük açı (derece) ve hızı (rad/s); ömür boyunca söner.
+const POPUP_WOBBLE_DEGREES: float = 8.0
+const POPUP_WOBBLE_SPEED: float = 14.0
+## Skor sayacı: hedefe yaklaşma hızı (büyük = daha hızlı sayar).
+const SCORE_COUNT_RATE: float = 6.0
+## Kombo bonusu gelince skor yazısının kısa büyümesi.
+const SCORE_PULSE_SCALE: float = 1.3
+const SCORE_PULSE_TIME: float = 0.3
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25

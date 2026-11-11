@@ -1,7 +1,7 @@
 # İlerleme
 
 **Aktif aşama:** 2 — Juice / animasyon
-**Durum:** Devam ediyor (6/8 madde)
+**Durum:** Devam ediyor (7/8 madde)
 
 ## Aşama 1 — Fizik prototipi
 - [x] Godot projesi + klasör yapısı + `.gitignore` + autoload'lar (`Events`, `GameState`)
@@ -23,7 +23,7 @@
 - [x] İniş tozu + duvar kıvılcımı (parçacıklar)
 - [x] Ekran sarsıntısı (büyük iniş, duvar sekmesi, kombo bitişi)
 - [x] Hit-stop (kombo bitişinde ~60 ms yavaşlama)
-- [ ] Kombo yazıları ("COMBO x7!") + skor sayacı tween
+- [x] Kombo yazıları ("COMBO x7!") + skor sayacı tween
 - [ ] Glow/bloom (WorldEnvironment) + renk vurguları
 
 ## Tamamlanan aşamalar
@@ -58,13 +58,15 @@
 - Parçacıklar: `scripts/fx/particle_bursts.gd` — `CPUParticles2D` (Compatibility renderer'a uygun), tek seferlik, havuzlu (3'er), `top_level`. Doku kodla üretilen yumuşak daire (`GradientTexture2D` radyal), dış dosya yok. `land_dust(ayak, güç)`, `wall_sparks(temas, normal_x, güç)` başka efektlerde de kullanılabilir.
 - Ekran sarsıntısı: `scripts/fx/camera_shake.gd` (trauma² + yumuşak gürültü, saf, GUT testli), `TowerCamera.offset`'e uygulanır. Oyun mantığı `offset`'siz konumu kullanır (`is_below_screen` → `global_position`). İstek: `Events.screen_shake.emit(trauma)`; kamera kombo bitişini kendisi dinler.
 - Hit-stop: `scripts/fx/hit_stop.gd` (`main.gd`'de düğüm). `Engine.time_scale`'i önceki değerin %5'ine indirir, gerçek zamanlı zamanlayıcıyla geri döndürür (F4 yavaş çekime saygılı); `_exit_tree`'de geri alır. `Engine.time_scale`'e dokunan başka kod eklenirse bununla uyumlu olmalı.
+- Kombo yazıları: `scripts/ui/combo_popups.gd` (CanvasLayer, oyuncunun ekran konumunun üstünde), kurallar `scripts/ui/popup_rules.gd` (saf, GUT testli). HUD skoru `PopupRules.count_toward` ile sayar, bonusla büyür.
+- Godot tuzağı: Container'lar çocuklarının `scale`/`rotation`'ını her yerleşimde sıfırlar. Container içinde ölçek/dönme animasyonu için öğeyi düz bir `Control` ara katmanına koy (bkz. `hud.gd` `_score_holder`).
 - Kullanıcı geri bildirimi (iz): ilk sürümdeki kutu kopyaları "çok yoğun, köşeli" bulundu. İstenen: silik, hafif, kıvrımlı/yumuşak, köşesiz. Efektlerde bu üslup tercih edilmeli.
 - Takla `Visual` tarafında; `player.gd` `FLIP` durumuna geçmiyor (fizik taklayı bilmiyor). Kombo zıplayışı tespiti için `player_visual.gd` `GameState.combo_jumps`'ı okur (sadece okuma).
 - Kullanıcı geri bildirimi: hızlı koşup zıplamadaki uzayıp ezilme "zıpladığımı hissettiriyor" — bu his korunmalı. Kısa zıplamalar için yay efekt gücüne göre yumuşuyor (`SQUASH_SPRING_STIFFNESS_SOFT`).
 
 ### Ölçümler ve testler
 - Zıplama yükseklikleri: duran ~176 px (1,4 kat), tam hızda ~444 px (3,5 kat), kısa basış ~68 px. Coyote time platform kenarında doğrulandı.
-- GUT testleri: platform kuralları (7), kamera kuralları (7), kombo (11), skor (5), yay (4), takla (6), yumuşatma (3), sarsıntı (8), hit-stop (3). Toplam 54.
+- GUT testleri: platform kuralları (7), kamera kuralları (7), kombo (11), skor (5), yay (4), takla (6), yumuşatma (3), sarsıntı (8), hit-stop (3), yazılar (5). Toplam 59.
 - İz: |hız| ≥ 650 (tam hızda koşu, büyük zıplama); koşuda ~140 px kuyruk, %22 saydamlık, en keskin kıvrım ~22°. Hız çizgileri: |hız| ≥ 1100 (büyük zıplama kalkışı ~0,3 s, hızlı düşüş), %30 saydamlık, aynı anda en çok ~4; koşuda çıkmaz.
 - İniş tozu: 350 px/s üstü inişlerde; normal iniş (500) 5 bulut, sert iniş 12. Duvar kıvılcımı: her sekmede 4–10, duvar yüzeyinden normal yönünde.
 - Sarsıntı (ölçüldü): normal zıplama/iniş 0; büyük iniş (≥1000 px/s) ~8 px; 12 katlık kombo bitişi ~8 px; tam hızla duvar ~3 px; ~0,8 s'de yatışır. En fazla 24 px.
