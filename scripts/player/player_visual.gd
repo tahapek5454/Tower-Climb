@@ -5,8 +5,9 @@ extends Node2D
 ##
 ## Yapı:
 ##   Visual (ayaklarda)
-##    └─ Squash (ayaklarda; ölçeklenir → ayaklar yerde kalır)
-##        └─ Spin (gövde ortasında; döner → takla)
+##    └─ Spin (gövde ortasında; döner → takla)
+##        └─ Squash (gövdenin altında; ölçeklenir → dikken ayaklar yerde kalır,
+##            │        takla sırasında gövde kendi boyu yönünde uzar/ezilir)
 ##            ├─ gövde
 ##            └─ göz
 
@@ -16,16 +17,17 @@ const EYE_SIZE := Vector2(8.0, 10.0)
 ## Gözün gövde ortasına göre konumu (x yüz dönülen yöne göre çevrilir).
 const EYE_OFFSET := Vector2(8.0, -12.0)
 
-var _squash: Node2D
 var _spin: Node2D
+var _squash: Node2D
 var _eye: Polygon2D
 var _facing: float = 1.0
-## + dikey uzama, - dikey ezilme.
+## + boyuna uzama, - boyuna ezilme.
 var _stretch: float = 0.0
 var _stretch_velocity: float = 0.0
 ## Son efektin gücüne göre seçilen yay (zayıf efekt = yumuşak, yavaş yay).
 var _spring_stiffness: float = Tuning.SQUASH_SPRING_STIFFNESS
 var _spring_damping: float = Tuning.SQUASH_SPRING_DAMPING
+var _flip_tween: Tween
 
 @onready var _player: Player = get_parent() as Player
 
@@ -33,7 +35,6 @@ var _spring_damping: float = Tuning.SQUASH_SPRING_DAMPING
 func _ready() -> void:
 	_build()
 	_update_eye()
-	_player.state_changed.connect(_on_state_changed)
 	_player.event.connect(_on_player_event)
 
 
@@ -42,20 +43,26 @@ func _process(delta: float) -> void:
 	_update_squash(delta)
 
 
-func _build() -> void:
-	_squash = Node2D.new()
-	_squash.name = "Squash"
-	add_child(_squash)
+func is_flipping() -> bool:
+	return _flip_tween != null and _flip_tween.is_running()
 
+
+func _build() -> void:
+	var half_height: float = Tuning.PLAYER_HEIGHT * 0.5
 	_spin = Node2D.new()
 	_spin.name = "Spin"
-	_spin.position = Vector2(0.0, -Tuning.PLAYER_HEIGHT * 0.5)
-	_squash.add_child(_spin)
+	_spin.position = Vector2(0.0, -half_height)
+	add_child(_spin)
+
+	_squash = Node2D.new()
+	_squash.name = "Squash"
+	_squash.position = Vector2(0.0, half_height)
+	_spin.add_child(_squash)
 
 	var body_size := Vector2(Tuning.PLAYER_WIDTH, Tuning.PLAYER_HEIGHT)
-	_spin.add_child(_make_rect(Vector2.ZERO, body_size, BODY_COLOR))
+	_squash.add_child(_make_rect(Vector2(0.0, -half_height), body_size, BODY_COLOR))
 	_eye = _make_rect(Vector2.ZERO, EYE_SIZE, EYE_COLOR)
-	_spin.add_child(_eye)
+	_squash.add_child(_eye)
 
 
 func _update_facing() -> void:
@@ -66,13 +73,16 @@ func _update_facing() -> void:
 
 
 func _update_eye() -> void:
-	_eye.position = Vector2(EYE_OFFSET.x * _facing, EYE_OFFSET.y)
+	# Göz, Squash'ın (gövde altı) koordinatında: gövde ortası -yarım boy.
+	_eye.position = Vector2(EYE_OFFSET.x * _facing, EYE_OFFSET.y - Tuning.PLAYER_HEIGHT * 0.5)
 
+
+# --- Squash & stretch ---
 
 ## Yay, havadayken dikey hıza göre hafif bir uzamaya, yerdeyken 0'a doğru çeker.
 func _update_squash(delta: float) -> void:
 	var target: float = 0.0
-	if not _player.is_on_floor():
+	if not _player.is_on_floor() and not is_flipping():
 		target = absf(_player.velocity.y) / Tuning.MAX_FALL_SPEED * Tuning.AIR_STRETCH_MAX
 	var result: Vector2 = Spring.step(_stretch, _stretch_velocity, target,
 			_spring_stiffness, _spring_damping, delta)
@@ -99,21 +109,6 @@ func _kick(amount: float, strength: float) -> void:
 	_apply_stretch()
 
 
-func _on_player_event(event_name: StringName, data: Dictionary) -> void:
-	match event_name:
-		&"jumped":
-			var t: float = _jump_strength(data["speed"])
-			_kick(lerpf(Tuning.JUMP_STRETCH_MIN, Tuning.JUMP_STRETCH_MAX, t), t)
-		&"landed":
-			var fall_speed: float = data["speed"]
-			if fall_speed >= Tuning.LAND_SQUASH_MIN_SPEED:
-				var t: float = _land_strength(fall_speed)
-				_kick(-t * Tuning.LAND_SQUASH_MAX, t)
-		&"wall_bounce":
-			var t: float = clampf(data["speed"] / Tuning.MAX_RUN_SPEED, 0.0, 1.0)
-			_kick(t * Tuning.WALL_SQUASH_MAX, t)
-
-
 ## Zıplama gücü: duran zıplama 0, tam hızda zıplama 1.
 func _jump_strength(jump_speed: float) -> float:
 	var max_jump: float = Player.jump_speed_for(Tuning.MAX_RUN_SPEED)
@@ -126,9 +121,69 @@ func _land_strength(fall_speed: float) -> float:
 			0.0, 1.0)
 
 
-func _on_state_changed(_new_state: Player.State, _old_state: Player.State) -> void:
-	# Takla ve diğer durum animasyonları sonraki maddelerde.
-	pass
+# --- Takla ---
+
+## Gövdeyi `direction` yönünde, yukarı hıza göre belirlenen süre ve tur sayısıyla döndürür.
+func _start_flip(up_speed: float, direction: float) -> void:
+	var duration: float = FlipRules.duration_for(up_speed)
+	var turns: int = FlipRules.turns_for(duration)
+	_kill_flip()
+	var start: float = wrapf(_spin.rotation, -PI, PI)
+	_spin.rotation = start
+	_flip_tween = create_tween()
+	_flip_tween.tween_property(_spin, ^"rotation", start + direction * turns * TAU, duration) \
+			.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+
+## İnişte açı sıfırlanır: takla bitmediyse en yakın dik konuma hızla döner.
+func _reset_flip_on_landing() -> void:
+	_kill_flip()
+	var angle: float = wrapf(_spin.rotation, -PI, PI)
+	_spin.rotation = angle
+	if is_zero_approx(angle):
+		return
+	_flip_tween = create_tween()
+	_flip_tween.tween_property(_spin, ^"rotation", 0.0, Tuning.FLIP_LAND_RESET_TIME)
+
+
+func _kill_flip() -> void:
+	if _flip_tween != null:
+		_flip_tween.kill()
+		_flip_tween = null
+
+
+# --- Olaylar ---
+
+func _on_player_event(event_name: StringName, data: Dictionary) -> void:
+	match event_name:
+		&"jumped":
+			_on_jumped(data["speed"])
+		&"landed":
+			_on_landed(data["speed"])
+		&"wall_bounce":
+			_on_wall_bounce(data)
+
+
+func _on_jumped(jump_speed: float) -> void:
+	var t: float = _jump_strength(jump_speed)
+	_kick(lerpf(Tuning.JUMP_STRETCH_MIN, Tuning.JUMP_STRETCH_MAX, t), t)
+	if FlipRules.jump_triggers_flip(jump_speed, GameState.combo_jumps > 0):
+		_start_flip(jump_speed, FlipRules.direction_for(_player.velocity.x, _facing))
+
+
+func _on_landed(fall_speed: float) -> void:
+	_reset_flip_on_landing()
+	if fall_speed >= Tuning.LAND_SQUASH_MIN_SPEED:
+		var t: float = _land_strength(fall_speed)
+		_kick(-t * Tuning.LAND_SQUASH_MAX, t)
+
+
+func _on_wall_bounce(data: Dictionary) -> void:
+	var t: float = clampf(data["speed"] / Tuning.MAX_RUN_SPEED, 0.0, 1.0)
+	_kick(t * Tuning.WALL_SQUASH_MAX, t)
+	if data["airborne"]:
+		# Sekme sonrası gidilen yön = duvarın normali.
+		_start_flip(-_player.velocity.y, signf(data["normal_x"]))
 
 
 func _make_rect(center: Vector2, size: Vector2, color: Color) -> Polygon2D:

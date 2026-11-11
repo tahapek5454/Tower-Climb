@@ -88,8 +88,17 @@ const COMBO_MIN_JUMPS: int = 2
 const COMBO_TIMEOUT: float = 3.0
 
 # --- Takla (görsel) ---
-## Bu dikey hızın üstündeki zıplamalar takla tetikler.
+## Bu dikey hızın üstündeki zıplamalar takla tetikler (kombo zıplayışları ve havada duvar sekmesi de).
 const FLIP_VELOCITY_THRESHOLD: float = 1200.0
+## Takla süresi = yükselme süresi (vy / GRAVITY) x bu çarpan; tepe noktasından biraz sonra biter.
+const FLIP_AIRTIME_FACTOR: float = 1.3
+## Takla en az bu kadar sürer (ör. düşerken duvar sekmesi).
+const FLIP_MIN_DURATION: float = 0.35
+## Bir tur için gereken süre; takla süresi bunun katlarıysa o kadar tur atılır.
+const FLIP_TURN_TIME: float = 0.4
+const FLIP_MAX_TURNS: int = 3
+## Takla bitmeden inilirse gövdenin dik konuma dönme süresi.
+const FLIP_LAND_RESET_TIME: float = 0.08
 
 # --- Juice: squash & stretch (görsel) ---
 # Uzama değeri: + dikey uzama, - dikey ezilme. Gövde alanı korunur (en = 1 / boy).
