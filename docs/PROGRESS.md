@@ -3,6 +3,27 @@
 **Aktif aşama:** 2 — Juice / animasyon
 **Durum:** Tamamlandı (8/8 madde) — Aşama 3'e geçmek için kullanıcının "devam" demesi bekleniyor.
 
+## ▶ Yeni oturumda buradan devam
+1. CLAUDE.md bölüm 0'daki ortam kontrolünü yap ve tabloyla raporla.
+2. Kullanıcı Aşama 2'ye "devam" dedi ve Aşama 3 için kurulum yapacağını söyledi (2026-11-11). Kod yazmadan önce **Aşama 3 ön koşullarını kontrol et**, tabloyla raporla, eksik varsa dur:
+   - Blender: `blender --version` (PATH'te değilse `C:\Program Files\Blender Foundation\` altında ara; 4.x beklenir)
+   - uv: `uv --version` (ve `uvx --version`)
+   - blender-mcp: `claude mcp list` içinde `blender` görünmeli; Blender eklentisinin kurulu ve "Connect" edilmiş olması gerekir (kullanıcıya sor)
+   - Tripo hesabı: kontrol edilemez, kullanıcıya sor. Ücretli işlem yapma; model üretimini kullanıcı yapar/onaylar.
+3. Bekleyen kullanıcı geri bildirimi: Aşama 2'nin son maddesi (ışık hâleleri, platform vurguları) henüz ekranda görülmedi. Kullanıcıya sor; düzeltme isterse Aşama 3'ten önce yap.
+4. Aşama 3'e başlarken maddeleri kullanıcıyla netleştirip bu dosyaya yaz (Aşama 2'de olduğu gibi madde listesi). Taslak yaklaşım (henüz karar değil):
+   - Model akışı: Tripo → `.glb` → (gerekirse Blender'da temizlik, rig, animasyon) → `assets/models/`, kaynak/lisans `CREDITS.md`'ye.
+   - 2D'ye yerleştirme: 3D model bir `SubViewport` (şeffaf arka plan, yan/ortografik kamera) içinde render edilir, dokusu `Visual/Spin/Squash` içindeki gövde yerine konur. Böylece squash, takla, hâle, iz aynen çalışır. Compatibility renderer + web uyumunu doğrula.
+   - Toon shader + outline: `assets/shaders/`.
+   - Durum animasyonları (idle, run, jump, fall, land): `Player.state_changed` ve `Player.event` ile `player_visual.gd` tarafında bağlanır; `player.gd`'ye dokunulmaz. Hitbox 32x48 sabit.
+   - Kutu gövdesi kaldırılmasın, model yokken yedek olarak kalabilir (kullanıcıya sor).
+
+### Kullanıcı tercihleri (özet)
+- Türkçe konuş. Tek seferde tek madde; her madde sonunda test talimatı ver, aşama geçişinde mutlaka "devam" bekle.
+- Görsel üslup: **yumuşak, silik, kıvrımlı, köşesiz; yazılar minimal**. Efektler ilk denemede belirgin olmalı (çok küçük/kısa efekt hissedilmiyor) ama kalabalık/keskin olmamalı.
+- Hızlı koşup zıplamadaki squash & stretch hissini çok beğendi — korunmalı.
+- Kullanıcı ekran görüntüsü paylaşıyor; görsel değişikliklerde iste, göremediğini "güzel oldu" diye raporlama.
+
 ## Aşama 1 — Fizik prototipi
 - [x] Godot projesi + klasör yapısı + `.gitignore` + autoload'lar (`Events`, `GameState`)
 - [x] `tuning.gd` (GAME_DESIGN.md'deki değerlerle)
@@ -47,7 +68,7 @@
 ### Mimari
 - Dünya koordinatları: x=0 kule ortası, y=0 zeminin üstü, yukarı = -y. Oyuncunun orijini ayaklarında.
 - Giriş eylemleri (`project.godot`): `move_left`, `move_right`, `jump`, `pause`, `toggle_debug`, `toggle_fullscreen`, `restart`. `pause` henüz bir şey yapmıyor (Aşama 5).
-- `Player.event` olayları: `jumped`, `jump_cut`, `landed {speed, floor}`, `wall_bounce`. `state_changed` yayınlanıyor; `LAND`, `WALL_BOUNCE`, `FLIP` durumları henüz kullanılmıyor (Aşama 2'de görsel tarafta).
+- `Player.event` olayları: `jumped {speed, run_speed}`, `jump_cut`, `landed {speed, floor}`, `wall_bounce {speed, normal_x, airborne}`. `state_changed` yayınlanıyor ama sadece `IDLE/RUN/JUMP/FALL` kullanılıyor; `LAND`, `WALL_BOUNCE`, `FLIP` durumlarına geçilmiyor (takla ve iniş efektleri olaylarla `Visual` tarafında). Aşama 3'te animasyon için gerekirse eklenebilir.
 - Duvarlar kamerayı dikeyde takip eder (`tower.gd`).
 - Platformlar: kurallar `scripts/world/platform_rules.gd` (saf), üretim `platform_spawner.gd`.
 - Kamera: `TowerCamera` (`scripts/world/tower_camera.gd`), kuralları `CameraRules`.
