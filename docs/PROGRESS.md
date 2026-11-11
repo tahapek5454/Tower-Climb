@@ -1,7 +1,7 @@
 # İlerleme
 
-**Aktif aşama:** 1 — Fizik prototipi
-**Durum:** Tamamlandı (11/11 madde) — Aşama 2'ye geçmek için kullanıcının "devam" demesi bekleniyor.
+**Aktif aşama:** 2 — Juice / animasyon
+**Durum:** Devam ediyor (1/8 madde)
 
 ## Aşama 1 — Fizik prototipi
 - [x] Godot projesi + klasör yapısı + `.gitignore` + autoload'lar (`Events`, `GameState`)
@@ -17,7 +17,14 @@
 - [x] Debug overlay (F3)
 
 ## Aşama 2 — Juice / animasyon
-(başlanmadı)
+- [x] Görsel katman yapısı (Squash → Spin) + squash & stretch (yay ile)
+- [ ] Takla (büyük zıplama, duvar sekmesi, kombo zıplayışı)
+- [ ] Hareket izi (trail) + hız çizgileri
+- [ ] İniş tozu + duvar kıvılcımı (parçacıklar)
+- [ ] Ekran sarsıntısı (büyük iniş, duvar sekmesi, kombo bitişi)
+- [ ] Hit-stop (kombo bitişinde ~60 ms yavaşlama)
+- [ ] Kombo yazıları ("COMBO x7!") + skor sayacı tween
+- [ ] Glow/bloom (WorldEnvironment) + renk vurguları
 
 ## Tamamlanan aşamalar
 - Aşama 1 — Fizik prototipi (2026-11-10)
@@ -46,8 +53,10 @@
 - Skor/kombo: kurallar `scripts/game/combo_counter.gd` (saf), durum `GameState`. `main.gd` iniş olayını `GameState.register_landing(floor)`'a iletir.
 - Oyun sonu: oyuncu ekranın altından tamamen çıkınca `GameState.end_game()`. Geçici yazı `scripts/ui/game_over_label.gd` (Aşama 5'te gerçek ekranla değişecek). Yeniden başlatma: R veya Space (0,5 s gecikmeyle) → `GameState.reset()` + sahneyi yeniden yükleme.
 - UI: `scripts/ui/hud.gd` (sol üst), `scripts/ui/debug_overlay.gd` (sağ üst, F3).
+- Görsel katman: `Visual` → `Squash` (ayaklarda, ölçeklenir) → `Spin` (gövde ortasında, döner; takla için) → gövde + göz. Juice ayar değerleri de `tuning.gd`'de ("Juice" bölümleri). Yay: `scripts/fx/spring.gd` (saf, GUT testli).
 
 ### Ölçümler ve testler
 - Zıplama yükseklikleri: duran ~176 px (1,4 kat), tam hızda ~444 px (3,5 kat), kısa basış ~68 px. Coyote time platform kenarında doğrulandı.
-- GUT testleri: platform kuralları (7), kamera kuralları (7), kombo (11), skor (5). Toplam 30.
+- GUT testleri: platform kuralları (7), kamera kuralları (7), kombo (11), skor (5), yay (4). Toplam 34.
+- Squash & stretch (ölçüldü): zıplama boyu 1,15–1,35, sert iniş boyu ~0,62, tam hızla duvar çarpması boyu 1,30.
 - Headless simülasyonlar gerçek zamanlı çalışır; uzun süreli davranışları (ör. hız tavanı) saf kural testleriyle doğrula.

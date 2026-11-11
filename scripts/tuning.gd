@@ -90,3 +90,21 @@ const COMBO_TIMEOUT: float = 3.0
 # --- Takla (görsel) ---
 ## Bu dikey hızın üstündeki zıplamalar takla tetikler.
 const FLIP_VELOCITY_THRESHOLD: float = 1200.0
+
+# --- Juice: squash & stretch (görsel) ---
+# Uzama değeri: + dikey uzama, - dikey ezilme. Gövde alanı korunur (en = 1 / boy).
+## Yay sertliği ve sönümü: düşük sönüm = daha fazla "jöle" sallanması.
+const SQUASH_SPRING_STIFFNESS: float = 400.0
+const SQUASH_SPRING_DAMPING: float = 16.0
+## Zıplama anındaki uzama: en düşük zıplamada MIN, en yüksekte MAX.
+const JUMP_STRETCH_MIN: float = 0.15
+const JUMP_STRETCH_MAX: float = 0.35
+## İniş ezilmesi düşüş hızıyla orantılı; bu hızın altındaki inişler ezilmez.
+const LAND_SQUASH_MIN_SPEED: float = 300.0
+const LAND_SQUASH_MAX: float = 0.40
+## Duvara çarpınca yatay ezilme (dikey uzama); çarpma hızıyla orantılı.
+const WALL_SQUASH_MAX: float = 0.30
+## Havadayken dikey hızla orantılı hafif uzama (MAX_FALL_SPEED'de bu kadar).
+const AIR_STRETCH_MAX: float = 0.12
+## Uzama/ezilmenin mutlak sınırı (gövde aşırı bozulmasın).
+const SQUASH_LIMIT: float = 0.5
