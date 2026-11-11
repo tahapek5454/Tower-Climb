@@ -1,22 +1,34 @@
 # İlerleme
 
-**Aktif aşama:** 2 — Juice / animasyon
-**Durum:** Tamamlandı (8/8 madde) — Aşama 3'e geçmek için kullanıcının "devam" demesi bekleniyor.
+**Aktif aşama:** 3 — Karakter
+**Durum:** Başladı (0/8 madde) — chibi konsept görseli bekleniyor (kullanıcı ChatGPT ile üretecek).
 
 ## ▶ Yeni oturumda buradan devam
-1. CLAUDE.md bölüm 0'daki ortam kontrolünü yap ve tabloyla raporla.
-2. Kullanıcı Aşama 2'ye "devam" dedi ve Aşama 3 için kurulum yapacağını söyledi (2026-11-11). Kod yazmadan önce **Aşama 3 ön koşullarını kontrol et**, tabloyla raporla, eksik varsa dur:
-   - Blender: `blender --version` (PATH'te değilse `C:\Program Files\Blender Foundation\` altında ara; 4.x beklenir)
-   - uv: `uv --version` (ve `uvx --version`)
-   - blender-mcp: `claude mcp list` içinde `blender` görünmeli; Blender eklentisinin kurulu ve "Connect" edilmiş olması gerekir (kullanıcıya sor)
-   - Tripo hesabı: kontrol edilemez, kullanıcıya sor. Ücretli işlem yapma; model üretimini kullanıcı yapar/onaylar.
-3. Bekleyen kullanıcı geri bildirimi: Aşama 2'nin son maddesi (ışık hâleleri, platform vurguları) henüz ekranda görülmedi. Kullanıcıya sor; düzeltme isterse Aşama 3'ten önce yap.
-4. Aşama 3'e başlarken maddeleri kullanıcıyla netleştirip bu dosyaya yaz (Aşama 2'de olduğu gibi madde listesi). Taslak yaklaşım (henüz karar değil):
-   - Model akışı: Tripo → `.glb` → (gerekirse Blender'da temizlik, rig, animasyon) → `assets/models/`, kaynak/lisans `CREDITS.md`'ye.
-   - 2D'ye yerleştirme: 3D model bir `SubViewport` (şeffaf arka plan, yan/ortografik kamera) içinde render edilir, dokusu `Visual/Spin/Squash` içindeki gövde yerine konur. Böylece squash, takla, hâle, iz aynen çalışır. Compatibility renderer + web uyumunu doğrula.
-   - Toon shader + outline: `assets/shaders/`.
-   - Durum animasyonları (idle, run, jump, fall, land): `Player.state_changed` ve `Player.event` ile `player_visual.gd` tarafında bağlanır; `player.gd`'ye dokunulmaz. Hitbox 32x48 sabit.
-   - Kutu gövdesi kaldırılmasın, model yokken yedek olarak kalabilir (kullanıcıya sor).
+1. CLAUDE.md bölüm 0'daki ortam kontrolünü yap ve tabloyla raporla. Aşama 3 araçları 2026-11-11'de hazırdı: Blender 5.3.0 (PATH'te), uv/uvx 0.13.7, blender-mcp bağlı (eklenti 1.8, `tripo: on`). Yine de `get_addon_status` ile Blender bağlantısını doğrula.
+2. Bekleyen: Aşama 2'nin son maddesinin (ışık hâleleri) ekran görüntüsü kullanıcıdan henüz gelmedi.
+3. Sıradaki iş: Madde 1. Kullanıcı chibi konsept görselini verince `docs/concept/`'e kaydet, Tripo görselden 3D üretimini **kullanıcı onayıyla** başlat (her üretim kredi harcar), modeli Blender'da farklı açılardan göster.
+
+## Aşama 3 kararları (2026-11-11)
+- Karakter: **kartal maskotu**, **chibi oranlar** (büyük kafa, kısa bacak, kalın uzuvlar), yumuşak/yuvarlak tüy tutamları. Beyaz kafa, turuncu gaga ve ayaklar, **düz koyu gri–siyah arası tişört** (çizgisiz, logo/yazı/reklam yok), koyu pantolon. İfade: kararlı ama sevimli.
+- İlk konsept (`C:\Users\pekta\Downloads\tower-climb-hero.png`, ChatGPT ile kullanıcı üretti) referans: kartal + forma. Çizgili forma ve gerçekçi oranlar **kullanılmayacak**.
+- **3D** (Tripo görselden üretim). 2D çizim yok.
+- Görüntü kutudan **biraz büyük** olacak (hareketler belirgin olsun). Hitbox 32x48 **değişmez**; görsel boy oyunda denenerek ayarlanır (başlangıç hedefi ~72 px). Duvara taşmayı kontrol et.
+- Rig + animasyon: Blender'da (Claude, blender-mcp ile). Animasyonlar: idle, run, jump, fall, land; ek olarak taklada topak pozu, büyük zıplamada kanat (kol) çırpma.
+- 2D'ye yerleştirme: canlı 3D, `SubViewport` (şeffaf arka plan, ortografik yan kamera) → dokusu `Visual/Spin/Squash` içine. Sağa/sola dönüşte model 180° döner. Kutu gövde yedek olarak kalır.
+- Toon shader + outline: `assets/shaders/`. Siyah parçalar outline ile birleşmesin diye kontrast Aşama 4'te çevre renkleriyle sağlanacak (çevre siyah/beyazdan uzak, orta tonlar).
+- Sıra: önce karakter (Aşama 3), çevre karakter paletine göre (Aşama 4).
+- Kaynak `.blend` dosyaları `assets/models/source/` (+ `.gdignore`), oyunda sadece `.glb`.
+- `tools/blender/addon.py` (blender-mcp eklentisi) repoda kalacak; kullanıcı kararı.
+
+## Aşama 3 — Karakter
+- [ ] Chibi konsept görseli + Tripo ile görselden 3D üretim → Blender'da inceleme
+- [ ] Temizlik: sadeleştirme (~3–5k üçgen), ölçek, orijin ayakta, yön, malzeme/doku
+- [ ] İskelet + skinning
+- [ ] Animasyonlar: idle, run, jump, fall, land, takla topak pozu, kanat çırpma
+- [ ] Godot: SubViewport render katmanı, `Squash`'a takma, yön dönüşü, kutu yedek
+- [ ] Toon shader + outline
+- [ ] Durumlara animasyon bağlama (`state_changed`/`event`; koşu animasyonu hızı koşu hızına göre; `player.gd`'ye dokunulmaz)
+- [ ] İnce ayar, Compatibility/web doğrulama, `CREDITS.md`
 
 ### Kullanıcı tercihleri (özet)
 - Türkçe konuş. Tek seferde tek madde; her madde sonunda test talimatı ver, aşama geçişinde mutlaka "devam" bekle.
