@@ -94,10 +94,14 @@ const FLIP_VELOCITY_THRESHOLD: float = 1200.0
 # --- Juice: squash & stretch (görsel) ---
 # Uzama değeri: + dikey uzama, - dikey ezilme. Gövde alanı korunur (en = 1 / boy).
 ## Yay sertliği ve sönümü: düşük sönüm = daha fazla "jöle" sallanması.
+## Güçlü efektlerde (tam hızda zıplama) kullanılan yay; zayıf efektlerde SOFT'a doğru yumuşar.
 const SQUASH_SPRING_STIFFNESS: float = 220.0
+## Zayıf efektlerin (kısa zıplama, yumuşak iniş) yayı: daha yavaş, daha uzun sallanma.
+const SQUASH_SPRING_STIFFNESS_SOFT: float = 110.0
+## STIFFNESS'taki sönüm; yay yumuşadıkça aynı "sallanma karakteri" korunacak şekilde ölçeklenir.
 const SQUASH_SPRING_DAMPING: float = 9.0
 ## Zıplama anındaki uzama: en düşük zıplamada MIN, en yüksekte MAX.
-const JUMP_STRETCH_MIN: float = 0.25
+const JUMP_STRETCH_MIN: float = 0.35
 const JUMP_STRETCH_MAX: float = 0.50
 ## İniş ezilmesi düşüş hızıyla orantılı: MIN_SPEED altında yok, FULL_SPEED ve üstünde MAX.
 ## (Tipik iniş hızları 450–950 px/s; bir kat yukarıdaki platforma iniş ~500.)

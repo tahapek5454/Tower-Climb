@@ -23,6 +23,9 @@ var _facing: float = 1.0
 ## + dikey uzama, - dikey ezilme.
 var _stretch: float = 0.0
 var _stretch_velocity: float = 0.0
+## Son efektin gücüne göre seçilen yay (zayıf efekt = yumuşak, yavaş yay).
+var _spring_stiffness: float = Tuning.SQUASH_SPRING_STIFFNESS
+var _spring_damping: float = Tuning.SQUASH_SPRING_DAMPING
 
 @onready var _player: Player = get_parent() as Player
 
@@ -72,7 +75,7 @@ func _update_squash(delta: float) -> void:
 	if not _player.is_on_floor():
 		target = absf(_player.velocity.y) / Tuning.MAX_FALL_SPEED * Tuning.AIR_STRETCH_MAX
 	var result: Vector2 = Spring.step(_stretch, _stretch_velocity, target,
-			Tuning.SQUASH_SPRING_STIFFNESS, Tuning.SQUASH_SPRING_DAMPING, delta)
+			_spring_stiffness, _spring_damping, delta)
 	_stretch = result.x
 	_stretch_velocity = result.y
 	_apply_stretch()
@@ -85,35 +88,42 @@ func _apply_stretch() -> void:
 
 
 ## Uzamayı anında bu değere ayarlar; yay oradan geri döndürür.
-func _kick(amount: float) -> void:
+## strength (0..1): efektin gücü; zayıf efektler daha yumuşak, yavaş bir yayla döner.
+func _kick(amount: float, strength: float) -> void:
 	_stretch = clampf(amount, -Tuning.SQUASH_LIMIT, Tuning.SQUASH_LIMIT)
 	_stretch_velocity = 0.0
+	_spring_stiffness = lerpf(Tuning.SQUASH_SPRING_STIFFNESS_SOFT, Tuning.SQUASH_SPRING_STIFFNESS,
+			clampf(strength, 0.0, 1.0))
+	# Sönüm/√sertlik oranı sabit kalsın: yay yumuşasa da aynı karakterde sallansın.
+	_spring_damping = Tuning.SQUASH_SPRING_DAMPING * sqrt(_spring_stiffness / Tuning.SQUASH_SPRING_STIFFNESS)
 	_apply_stretch()
 
 
 func _on_player_event(event_name: StringName, data: Dictionary) -> void:
 	match event_name:
 		&"jumped":
-			_kick(_jump_stretch(data["speed"]))
+			var t: float = _jump_strength(data["speed"])
+			_kick(lerpf(Tuning.JUMP_STRETCH_MIN, Tuning.JUMP_STRETCH_MAX, t), t)
 		&"landed":
-			_kick(-_land_squash(data["speed"]))
+			var fall_speed: float = data["speed"]
+			if fall_speed >= Tuning.LAND_SQUASH_MIN_SPEED:
+				var t: float = _land_strength(fall_speed)
+				_kick(-t * Tuning.LAND_SQUASH_MAX, t)
 		&"wall_bounce":
-			var ratio: float = clampf(data["speed"] / Tuning.MAX_RUN_SPEED, 0.0, 1.0)
-			_kick(ratio * Tuning.WALL_SQUASH_MAX)
+			var t: float = clampf(data["speed"] / Tuning.MAX_RUN_SPEED, 0.0, 1.0)
+			_kick(t * Tuning.WALL_SQUASH_MAX, t)
 
 
-func _jump_stretch(jump_speed: float) -> float:
+## Zıplama gücü: duran zıplama 0, tam hızda zıplama 1.
+func _jump_strength(jump_speed: float) -> float:
 	var max_jump: float = Player.jump_speed_for(Tuning.MAX_RUN_SPEED)
-	var t: float = clampf(inverse_lerp(Tuning.JUMP_BASE, max_jump, jump_speed), 0.0, 1.0)
-	return lerpf(Tuning.JUMP_STRETCH_MIN, Tuning.JUMP_STRETCH_MAX, t)
+	return clampf(inverse_lerp(Tuning.JUMP_BASE, max_jump, jump_speed), 0.0, 1.0)
 
 
-func _land_squash(fall_speed: float) -> float:
-	if fall_speed < Tuning.LAND_SQUASH_MIN_SPEED:
-		return 0.0
-	var t: float = clampf(inverse_lerp(Tuning.LAND_SQUASH_MIN_SPEED, Tuning.LAND_SQUASH_FULL_SPEED,
-			fall_speed), 0.0, 1.0)
-	return t * Tuning.LAND_SQUASH_MAX
+## İniş gücü: LAND_SQUASH_MIN_SPEED'de 0, LAND_SQUASH_FULL_SPEED ve üstünde 1.
+func _land_strength(fall_speed: float) -> float:
+	return clampf(inverse_lerp(Tuning.LAND_SQUASH_MIN_SPEED, Tuning.LAND_SQUASH_FULL_SPEED, fall_speed),
+			0.0, 1.0)
 
 
 func _on_state_changed(_new_state: Player.State, _old_state: Player.State) -> void:
