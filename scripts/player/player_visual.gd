@@ -42,6 +42,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_update_facing()
+	_update_wall_clearance()
 	_update_squash(delta)
 
 
@@ -109,6 +110,14 @@ func _update_facing() -> void:
 	if absf(vx) > Tuning.RUN_STATE_MIN_SPEED and signf(vx) != _facing:
 		_facing = signf(vx)
 		_apply_facing()
+
+
+## Model hitbox'tan geniş: duvara yaslanınca görüntü duvarın içine girmesin diye içeri kayar.
+func _update_wall_clearance() -> void:
+	if _model == null:
+		return
+	_spin.position.x = WallClearance.offset_x(_player.global_position.x,
+			Tuning.MODEL_WALL_HALF_WIDTH, Tuning.TOWER_WIDTH * 0.5)
 
 
 func _apply_facing() -> void:

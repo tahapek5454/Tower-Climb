@@ -26,6 +26,9 @@ const USE_CHARACTER_MODEL: bool = true
 ## Modelin 1 biriminin ekrandaki karşılığı (px). Model ~1,07 birim boyunda (kafa büyütüldü).
 ## Hitbox'tan (PLAYER_HEIGHT) büyük olabilir.
 const MODEL_HEIGHT: float = 88.0
+## Görüntünün yarı genişliği (px): duvara yaslanınca görüntü bu kadar içeride tutulur.
+## Hitbox (PLAYER_WIDTH) dar kalır; sadece çizim kayar (bkz. WallClearance).
+const MODEL_WALL_HALF_WIDTH: float = 27.0
 ## Çizim çerçevesinin model boyuna oranı: kol, kuyruk ve animasyonlar sığsın diye 1'den büyük.
 const MODEL_FRAME_RATIO: float = 1.6
 ## Model bu kat çözünürlükte çizilir (büyük pencerede/tam ekranda net kalsın).
