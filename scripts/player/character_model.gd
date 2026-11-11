@@ -1,0 +1,142 @@
+class_name CharacterModel
+extends Node2D
+## 3D karakter modelini şeffaf bir SubViewport'ta yandan çizer ve 2D'de bir Sprite2D ile gösterir.
+## Orijin modelin ayaklarındadır (PlayerVisual'daki Squash düğümüne takılır).
+## Sadece görüntü: hangi animasyonun oynayacağına PlayerVisual karar verir.
+
+const MODEL_PATH: String = "res://assets/models/eagle_hero.glb"
+## Döngülü oynaması gereken animasyonlar (glb döngü bilgisini taşımıyor).
+const LOOPING: Array[StringName] = [&"idle", &"run", &"fall"]
+## Kamera modelin yanında, bu uzaklıkta durur (ortografik: uzaklık görüntüyü değiştirmez).
+const CAMERA_DISTANCE: float = 5.0
+
+var _pivot: Node3D
+var _animation_player: AnimationPlayer
+var _target_yaw: float = 0.0
+
+
+## Model dosyası projede var mı? Yoksa PlayerVisual kutu gövdeye döner.
+static func is_available() -> bool:
+	return ResourceLoader.exists(MODEL_PATH)
+
+
+func _ready() -> void:
+	_build()
+	set_facing(1.0, true)
+	play(&"idle")
+
+
+func _process(delta: float) -> void:
+	var weight: float = 1.0 - exp(-Tuning.MODEL_TURN_RATE * delta)
+	_pivot.rotation.y = lerp_angle(_pivot.rotation.y, _target_yaw, weight)
+
+
+## direction: +1 sağa, -1 sola bakar. Model kameraya doğru hafif dönük durur.
+func set_facing(direction: float, instant: bool = false) -> void:
+	var view_angle: float = deg_to_rad(Tuning.MODEL_VIEW_ANGLE_DEGREES)
+	# Model +Z'ye bakar; kamera -X tarafında. Sola dönüş kameranın önünden geçer.
+	_target_yaw = -view_angle if direction >= 0.0 else -(PI - view_angle)
+	if instant:
+		_pivot.rotation.y = _target_yaw
+
+
+func has_animation(animation: StringName) -> bool:
+	return _animation_player != null and _animation_player.has_animation(animation)
+
+
+func current_animation() -> StringName:
+	return StringName(_animation_player.current_animation) if _animation_player != null else &""
+
+
+func play(animation: StringName, blend_time: float = Tuning.MODEL_ANIM_BLEND_TIME,
+		speed: float = 1.0) -> void:
+	if not has_animation(animation):
+		return
+	_animation_player.play(animation, blend_time, speed)
+
+
+func set_speed(speed: float) -> void:
+	if _animation_player != null:
+		_animation_player.speed_scale = speed
+
+
+func _build() -> void:
+	var frame_px: float = Tuning.MODEL_HEIGHT * Tuning.MODEL_FRAME_RATIO
+	var render_px: int = roundi(frame_px * Tuning.MODEL_RENDER_SCALE)
+
+	var viewport := SubViewport.new()
+	viewport.name = "ModelViewport"
+	viewport.size = Vector2i(render_px, render_px)
+	viewport.transparent_bg = true
+	viewport.own_world_3d = true
+	viewport.msaa_3d = Viewport.MSAA_4X
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	add_child(viewport)
+
+	_pivot = Node3D.new()
+	_pivot.name = "Pivot"
+	viewport.add_child(_pivot)
+	var scene: PackedScene = load(MODEL_PATH) as PackedScene
+	var model: Node = scene.instantiate()
+	_pivot.add_child(model)
+	_animation_player = _find_animation_player(model)
+	_setup_loops()
+
+	_build_camera(viewport)
+	_build_lighting(viewport)
+
+	var sprite := Sprite2D.new()
+	sprite.name = "ModelSprite"
+	sprite.texture = viewport.get_texture()
+	sprite.scale = Vector2.ONE / Tuning.MODEL_RENDER_SCALE
+	# Çerçevenin ortası modelin ortasına (boyun yarısı) denk gelir; ayaklar orijinde kalır.
+	sprite.position = Vector2(0.0, -Tuning.MODEL_HEIGHT * 0.5)
+	add_child(sprite)
+
+
+## Model 1 birim boyundadır; çerçeve, kol/kuyruk hareketleri sığsın diye ondan büyüktür.
+func _build_camera(viewport: SubViewport) -> void:
+	var camera := Camera3D.new()
+	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	camera.size = Tuning.MODEL_FRAME_RATIO
+	camera.position = Vector3(-CAMERA_DISTANCE, 0.5, 0.0)
+	camera.rotation.y = -PI * 0.5
+	camera.near = 0.1
+	camera.far = CAMERA_DISTANCE * 2.0
+	viewport.add_child(camera)
+	camera.make_current()
+
+
+func _build_lighting(viewport: SubViewport) -> void:
+	var environment := Environment.new()
+	environment.background_mode = Environment.BG_CLEAR_COLOR
+	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	environment.ambient_light_color = Color.WHITE
+	environment.ambient_light_energy = Tuning.MODEL_AMBIENT_ENERGY
+	var world_environment := WorldEnvironment.new()
+	world_environment.environment = environment
+	viewport.add_child(world_environment)
+
+	var light := DirectionalLight3D.new()
+	light.light_energy = Tuning.MODEL_LIGHT_ENERGY
+	# Kameranın arkasından, yukarıdan ve hafif önden.
+	light.rotation = Vector3(deg_to_rad(-40.0), deg_to_rad(-60.0), 0.0)
+	viewport.add_child(light)
+
+
+func _setup_loops() -> void:
+	if _animation_player == null:
+		return
+	for animation_name in LOOPING:
+		if _animation_player.has_animation(animation_name):
+			_animation_player.get_animation(animation_name).loop_mode = Animation.LOOP_LINEAR
+
+
+func _find_animation_player(node: Node) -> AnimationPlayer:
+	if node is AnimationPlayer:
+		return node as AnimationPlayer
+	for child in node.get_children():
+		var found: AnimationPlayer = _find_animation_player(child)
+		if found != null:
+			return found
+	return null

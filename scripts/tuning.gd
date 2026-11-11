@@ -20,6 +20,25 @@ const GROUND_SCREEN_MARGIN: float = 72.0
 const PLAYER_WIDTH: float = 32.0
 const PLAYER_HEIGHT: float = 48.0
 
+# --- Karakter modeli (görsel; hitbox'tan bağımsız) ---
+## false: 3D model yerine kutu gövde kullanılır (model dosyası yoksa da kutuya dönülür).
+const USE_CHARACTER_MODEL: bool = true
+## Modelin ekrandaki boyu (px). Hitbox'tan (PLAYER_HEIGHT) büyük olabilir.
+const MODEL_HEIGHT: float = 72.0
+## Çizim çerçevesinin model boyuna oranı: kol, kuyruk ve animasyonlar sığsın diye 1'den büyük.
+const MODEL_FRAME_RATIO: float = 1.6
+## Model bu kat çözünürlükte çizilir (büyük pencerede/tam ekranda net kalsın).
+const MODEL_RENDER_SCALE: float = 3.0
+## Model tam profilden bu kadar kameraya dönük durur (yüz ve gövde okunsun).
+const MODEL_VIEW_ANGLE_DEGREES: float = 25.0
+## Sağa/sola dönüşün hızı (büyük = daha ani).
+const MODEL_TURN_RATE: float = 14.0
+## Animasyonlar arası geçiş süresi.
+const MODEL_ANIM_BLEND_TIME: float = 0.12
+## Geçici düz ışıklandırma (madde 6'da toon shader ile değişecek).
+const MODEL_AMBIENT_ENERGY: float = 0.9
+const MODEL_LIGHT_ENERGY: float = 0.8
+
 # --- Yatay hareket ---
 const MAX_RUN_SPEED: float = 900.0
 const GROUND_ACCEL: float = 2600.0

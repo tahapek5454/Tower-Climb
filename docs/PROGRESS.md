@@ -1,12 +1,12 @@
 # İlerleme
 
 **Aktif aşama:** 3 — Karakter
-**Durum:** 4/8 madde bitti — sırada madde 5 (Godot: SubViewport render katmanı).
+**Durum:** 5/8 madde bitti — sırada madde 6 (toon shader + outline).
 
 ## ▶ Yeni oturumda buradan devam
 1. CLAUDE.md bölüm 0'daki ortam kontrolünü yap ve tabloyla raporla. Aşama 3 araçları 2026-11-11'de hazırdı: Blender 5.3.0 (PATH'te), uv/uvx 0.13.7, blender-mcp bağlı (eklenti 1.8, `tripo: on`). Yine de `get_addon_status` ile Blender bağlantısını doğrula.
 2. Aşama 2 ışık hâleleri ekran görüntüsüyle görüldü (2026-11-11): hâle, iz ve duvar efektleri kullanıcıya göre iyi; düzeltme istenmedi.
-3. Sıradaki iş: Madde 5 (Godot: SubViewport render katmanı, modeli `Squash`'a takma). Çalışma dosyası `assets/models/source/eagle_hero.blend` (nesne `EagleHero`). Blender'da bu dosya açık olmalı; değilse kullanıcıdan açmasını iste.
+3. Sıradaki iş: Madde 6 (toon shader + outline: açık renkli kenar ışığı, siyah olmayan outline; koyu zeminde gövde kayboluyor). Çalışma dosyası `assets/models/source/eagle_hero.blend` (nesne `EagleHero`). Blender'da bu dosya açık olmalı; değilse kullanıcıdan açmasını iste.
 4. Kontrast kaygısı (kullanıcı sordu): karakter siyah/koyu gri, mevcut arka plan çok koyu lacivert → karakter kaybolur. Önerilen çözüm (kullanıcı onayı bekliyor): kule içi orta ton (soğuk mavi-mor taş), toon shader'da açık renkli kenar ışığı (rim) + siyah yerine açık/renkli outline, mevcut hâle karakterin arkasında kalır, gerekirse giysi tonu Blender'da açılır. Madde 5–6'da model geçici bir orta ton test zemininde denenecek.
 
 ## Aşama 3 kararları (2026-11-11)
@@ -31,6 +31,9 @@
 - Animasyonlar kodla üretilir: `tools/blender/eagle_anims.py` (Blender'da `exec` ile çalıştır; action'ları silip yeniden kurar, her birini NLA şeridine koyar). 30 fps. `idle` 2,0 s döngü · `run` 0,53 s döngü · `jump` 0,27 s tek sefer (son poz tutulur) · `fall` 0,67 s döngü · `land` 0,33 s tek sefer · `tuck` sabit poz · `flap` 0,53 s (iki kanat çırpışı, zıplama pozunda biter). Açı kuralları script başında. Poz değiştirmek = script'teki sayıları değiştirip yeniden çalıştırmak + yeniden dışa aktarmak.
 - Dışa aktarım: `assets/models/eagle_hero.glb` (1,3 MB; mesh + iskelet + 7 animasyon + gömülü doku). Ayarlar: seçili `EagleHero`+`EagleRig`, `export_animation_mode='NLA_TRACKS'`, `export_force_sampling=True`, Y-up. Godot içe aktarımı hatasız. Döngü bayrakları glb'de yok → Godot tarafında kodla ayarlanacak (idle, run, fall).
 - Bilinen zayıflık: yandan bakışta `flap` ve `fall` kol hareketi az okunuyor (kollar kameraya doğru açılıyor). Oyun içinde, gerçek kamera ve boyutta ayarlanacak (madde 7–8).
+- Godot tarafı: `scripts/player/character_model.gd` (`CharacterModel`, Node2D, orijin ayaklarda). İçinde `SubViewport` (şeffaf, `own_world_3d`, MSAA 4x, 346 px) + `Pivot` (model) + ortografik `Camera3D` (-X tarafında, +X'e bakar; model +Z'ye baktığı için ekranda sağa bakar) + geçici düz ışık; görüntü `Sprite2D` ile `Squash`'a konur. API: `set_facing(±1)`, `play(anim, blend, speed)`, `set_speed`, `has_animation`, `current_animation`, `is_available()`. Dönüş `Pivot.rotation.y` ile, kameranın önünden geçerek; model tam profilden 25° kameraya dönük. Ayarlar `Tuning.MODEL_*`; `USE_CHARACTER_MODEL=false` ya da glb yoksa kutu gövde.
+- `eagle_hero.glb.import`: `animation/remove_immutable_tracks=false` (sabit pozlu izler silinmesin; animasyon değişince kemik eski pozda kalmasın). Yeniden dışa aktarımda bu ayar korunur (.import dosyası repoda).
+- Doğrulama yöntemi (Claude için): geçici `-s` script'i ana sahneyi açıp `root.get_texture().get_image().save_png()` ile görüntü alır (pencereli çalıştırma gerekir, headless'ta render yok). Kullanıcı ekran görüntüsü yine istenir.
 - Doku düzeltmesi: tişört düz kurşuni griye çekildi (ham dokuda tişört/pantolon neredeyse aynı koyuluktaydı). Gövde yandan %22 kalınlaştırıldı. Tripo'nun eklediği beyaz kuyruk kaldı (ikincil hareket için; kullanıcı kararı Claude'a bıraktı).
 
 ## Aşama 3 — Karakter
@@ -38,7 +41,7 @@
 - [x] Temizlik: sadeleştirme (8k üçgen), ölçek, orijin ayakta, yön, malzeme/doku
 - [x] İskelet + skinning
 - [x] Animasyonlar: idle, run, jump, fall, land, takla topak pozu, kanat çırpma
-- [ ] Godot: SubViewport render katmanı, `Squash`'a takma, yön dönüşü, kutu yedek
+- [x] Godot: SubViewport render katmanı, `Squash`'a takma, yön dönüşü, kutu yedek
 - [ ] Toon shader + outline
 - [ ] Durumlara animasyon bağlama (`state_changed`/`event`; koşu animasyonu hızı koşu hızına göre; `player.gd`'ye dokunulmaz)
 - [ ] İnce ayar, Compatibility/web doğrulama, `CREDITS.md`

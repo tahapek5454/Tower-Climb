@@ -1,7 +1,7 @@
 class_name PlayerVisual
 extends Node2D
 ## Karakterin görüntüsü ve efektleri. Player'ın sinyallerini dinler; fiziğe karışmaz.
-## Şimdilik kutu; Aşama 3'te 3D model buraya takılacak.
+## Gövde: 3D model (CharacterModel); model yoksa ya da kapalıysa kutu.
 ##
 ## Yapı:
 ##   Visual (ayaklarda)
@@ -9,8 +9,7 @@ extends Node2D
 ##    └─ Spin (gövde ortasında; döner → takla)
 ##        └─ Squash (gövdenin altında; ölçeklenir → dikken ayaklar yerde kalır,
 ##            │        takla sırasında gövde kendi boyu yönünde uzar/ezilir)
-##            ├─ gövde
-##            └─ göz
+##            └─ Model (CharacterModel)  — ya da kutu gövde + göz
 
 const BODY_COLOR := Color(1.0, 0.55, 0.15)
 const EYE_COLOR := Color(0.12, 0.08, 0.05)
@@ -21,6 +20,7 @@ const EYE_OFFSET := Vector2(8.0, -12.0)
 var _spin: Node2D
 var _squash: Node2D
 var _eye: Polygon2D
+var _model: CharacterModel
 var _facing: float = 1.0
 ## + boyuna uzama, - boyuna ezilme.
 var _stretch: float = 0.0
@@ -36,7 +36,7 @@ var _bursts: ParticleBursts
 
 func _ready() -> void:
 	_build()
-	_update_eye()
+	_apply_facing()
 	_player.event.connect(_on_player_event)
 
 
@@ -61,12 +61,22 @@ func _build() -> void:
 	_squash.position = Vector2(0.0, half_height)
 	_spin.add_child(_squash)
 
+	if Tuning.USE_CHARACTER_MODEL and CharacterModel.is_available():
+		_model = CharacterModel.new()
+		_model.name = "Model"
+		_squash.add_child(_model)
+	else:
+		_build_box(half_height)
+	_build_effects()
+
+
+## Yedek gövde: model yokken kullanılan kutu ve göz.
+func _build_box(half_height: float) -> void:
 	var body_size := Vector2(Tuning.PLAYER_WIDTH, Tuning.PLAYER_HEIGHT)
 	var body: Polygon2D = _make_rect(Vector2(0.0, -half_height), body_size, BODY_COLOR)
 	_squash.add_child(body)
 	_eye = _make_rect(Vector2.ZERO, EYE_SIZE, EYE_COLOR)
 	_squash.add_child(_eye)
-	_build_effects()
 
 
 ## Efektler gövdeden (Spin) önceye yerleştirilir: ağaç sırasıyla gövdenin arkasında çizilir.
@@ -98,12 +108,15 @@ func _update_facing() -> void:
 	var vx: float = _player.velocity.x
 	if absf(vx) > Tuning.RUN_STATE_MIN_SPEED and signf(vx) != _facing:
 		_facing = signf(vx)
-		_update_eye()
+		_apply_facing()
 
 
-func _update_eye() -> void:
-	# Göz, Squash'ın (gövde altı) koordinatında: gövde ortası -yarım boy.
-	_eye.position = Vector2(EYE_OFFSET.x * _facing, EYE_OFFSET.y - Tuning.PLAYER_HEIGHT * 0.5)
+func _apply_facing() -> void:
+	if _model != null:
+		_model.set_facing(_facing)
+	elif _eye != null:
+		# Göz, Squash'ın (gövde altı) koordinatında: gövde ortası -yarım boy.
+		_eye.position = Vector2(EYE_OFFSET.x * _facing, EYE_OFFSET.y - Tuning.PLAYER_HEIGHT * 0.5)
 
 
 # --- Squash & stretch ---
