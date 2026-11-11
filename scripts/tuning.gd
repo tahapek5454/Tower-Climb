@@ -169,6 +169,23 @@ const WALL_SPARK_LIFETIME: float = 0.3
 const WALL_SPARK_SPEED: float = 380.0
 const WALL_SPARK_ALPHA: float = 0.8
 
+# --- Juice: ekran sarsıntısı (görsel) ---
+# "Sarsıntı" (trauma) 0..1 birikir ve azalır; kaydırma = trauma² x MAX_OFFSET (küçükler çok hafif).
+## En güçlü sarsıntıdaki kamera kaydırması (px).
+const SHAKE_MAX_OFFSET: float = 24.0
+## Saniyede azalma (1 → 0: 1/DECAY saniye).
+const SHAKE_DECAY: float = 1.2
+## Gürültü hızı: yüksek = daha hızlı titreşim, düşük = daha yumuşak dalgalanma.
+const SHAKE_NOISE_SPEED: float = 30.0
+## Büyük iniş: bu düşüş hızının üstünde; MAX_FALL_SPEED'de LAND_TRAUMA_MAX.
+const SHAKE_LAND_MIN_SPEED: float = 1000.0
+const SHAKE_LAND_TRAUMA_MAX: float = 0.6
+## Duvar sekmesi: tam hızda çarpmada bu kadar (yavaşta hızın karesiyle azalır).
+const SHAKE_WALL_TRAUMA_MAX: float = 0.45
+## Kombo bitişi (puan kazandıran): atlanan kat başına, en çok COMBO_TRAUMA_MAX.
+const SHAKE_COMBO_TRAUMA_PER_FLOOR: float = 0.05
+const SHAKE_COMBO_TRAUMA_MAX: float = 0.8
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25

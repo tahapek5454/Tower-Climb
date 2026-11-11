@@ -53,6 +53,7 @@ func _compose_text() -> String:
 	if camera != null:
 		var scroll: String = "kayıyor" if camera.is_scrolling else "bekliyor"
 		lines.append("Kamera: %.1f px/s (%s)" % [camera.speed, scroll])
+		lines.append("Sarsıntı: %.2f" % camera.shake.trauma)
 	return "\n".join(lines)
 
 

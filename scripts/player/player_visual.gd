@@ -202,6 +202,9 @@ func _on_landed(fall_speed: float) -> void:
 		var dust: float = clampf(inverse_lerp(Tuning.LAND_DUST_MIN_SPEED, Tuning.LAND_DUST_FULL_SPEED,
 				fall_speed), 0.0, 1.0)
 		_bursts.land_dust(_player.global_position, dust)
+	var land_shake: float = CameraShake.land_trauma(fall_speed)
+	if land_shake > 0.0:
+		Events.screen_shake.emit(land_shake)
 
 
 func _on_wall_bounce(data: Dictionary) -> void:
@@ -212,6 +215,7 @@ func _on_wall_bounce(data: Dictionary) -> void:
 	var contact: Vector2 = _player.global_position + Vector2(
 			-normal_x * Tuning.PLAYER_WIDTH * 0.5, -Tuning.PLAYER_HEIGHT * 0.5)
 	_bursts.wall_sparks(contact, normal_x, t)
+	Events.screen_shake.emit(CameraShake.wall_trauma(data["speed"]))
 	if data["airborne"]:
 		# Sekme sonrası gidilen yön = duvarın normali.
 		_start_flip(-_player.velocity.y, signf(data["normal_x"]))

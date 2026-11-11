@@ -27,3 +27,7 @@ signal combo_ended(jumps: int, floors: int, bonus: int)
 
 @warning_ignore("unused_signal")
 signal high_score_changed(high_score: int)
+
+## Ekran sarsıntısı iste (0..1 eklenir; kamera dinler).
+@warning_ignore("unused_signal")
+signal screen_shake(trauma: float)
