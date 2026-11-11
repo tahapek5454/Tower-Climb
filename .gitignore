@@ -28,3 +28,8 @@ desktop.ini
 
 # Claude Code yerel ayarları
 .claude/settings.local.json
+
+# Ham Tripo çıktısı (büyük; temizlenmiş model repoda)
+assets/models/source/*_raw.glb
+# Blender yedekleri
+*.blend1

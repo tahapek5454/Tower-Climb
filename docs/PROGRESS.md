@@ -1,12 +1,12 @@
 # İlerleme
 
 **Aktif aşama:** 3 — Karakter
-**Durum:** Başladı (0/8 madde) — chibi konsept görseli geldi (`docs/concept/hero_chibi_v1.jpg`); Tripo üretimi için kullanıcı onayı bekleniyor.
+**Durum:** 2/8 madde bitti — sırada madde 3 (iskelet + skinning).
 
 ## ▶ Yeni oturumda buradan devam
 1. CLAUDE.md bölüm 0'daki ortam kontrolünü yap ve tabloyla raporla. Aşama 3 araçları 2026-11-11'de hazırdı: Blender 5.3.0 (PATH'te), uv/uvx 0.13.7, blender-mcp bağlı (eklenti 1.8, `tripo: on`). Yine de `get_addon_status` ile Blender bağlantısını doğrula.
 2. Aşama 2 ışık hâleleri ekran görüntüsüyle görüldü (2026-11-11): hâle, iz ve duvar efektleri kullanıcıya göre iyi; düzeltme istenmedi.
-3. Sıradaki iş: Madde 1. Konsept `docs/concept/hero_chibi_v1.jpg` (ChatGPT ile kullanıcı üretti). Tripo görselden 3D üretimini **kullanıcı onayıyla** başlat (her üretim kredi harcar), modeli Blender'da farklı açılardan göster.
+3. Sıradaki iş: Madde 3 (iskelet + skinning). Çalışma dosyası `assets/models/source/eagle_hero.blend` (nesne `EagleHero`). Blender'da bu dosya açık olmalı; değilse kullanıcıdan açmasını iste.
 4. Kontrast kaygısı (kullanıcı sordu): karakter siyah/koyu gri, mevcut arka plan çok koyu lacivert → karakter kaybolur. Önerilen çözüm (kullanıcı onayı bekliyor): kule içi orta ton (soğuk mavi-mor taş), toon shader'da açık renkli kenar ışığı (rim) + siyah yerine açık/renkli outline, mevcut hâle karakterin arkasında kalır, gerekirse giysi tonu Blender'da açılır. Madde 5–6'da model geçici bir orta ton test zemininde denenecek.
 
 ## Aşama 3 kararları (2026-11-11)
@@ -21,9 +21,16 @@
 - Kaynak `.blend` dosyaları `assets/models/source/` (+ `.gdignore`), oyunda sadece `.glb`.
 - `tools/blender/addon.py` (blender-mcp eklentisi) repoda kalacak; kullanıcı kararı.
 
+### Aşama 3 model notları
+- Konsept: `docs/concept/hero_chibi_v1.jpg` (kullanıcı ChatGPT ile üretti).
+- Tripo API anahtarında kredi yok (`generate_3d` → "not enough credit"). Model **Tripo web sitesinde, ücretsiz planda, H2.5 sürümüyle** kullanıcı tarafından üretildi (ücretsiz planda sadece H2.5 dışa aktarılabiliyor). Yeniden üretim gerekirse aynı yol.
+- Ham dosya `assets/models/source/eagle_hero_raw.glb` (14,8 MB, 450k üçgen) **git'te değil** (`.gitignore`, kullanıcı kararı). `assets/models/source/` ve `docs/` altında `.gdignore` var (Godot içe aktarmaz).
+- `eagle_hero.blend`: `EagleHero` — 8.000 üçgen, tek parça, boy 1,0 m, ayaklar z=0'da, orijin ayakta, **yüzü -Y'ye bakıyor** (glTF'te +Z). Yeni UV (smart project) + ham modelden 1024 px renk bake'i: `eagle_hero_albedo.png`. Sadece renk dokusu var (normal/pürüz yok; toon shader kullanılacak).
+- Doku düzeltmesi: tişört düz kurşuni griye çekildi (ham dokuda tişört/pantolon neredeyse aynı koyuluktaydı). Gövde yandan %22 kalınlaştırıldı. Tripo'nun eklediği beyaz kuyruk kaldı (ikincil hareket için; kullanıcı kararı Claude'a bıraktı).
+
 ## Aşama 3 — Karakter
-- [ ] Chibi konsept görseli + Tripo ile görselden 3D üretim → Blender'da inceleme
-- [ ] Temizlik: sadeleştirme (~3–5k üçgen), ölçek, orijin ayakta, yön, malzeme/doku
+- [x] Chibi konsept görseli + Tripo ile görselden 3D üretim → Blender'da inceleme
+- [x] Temizlik: sadeleştirme (8k üçgen), ölçek, orijin ayakta, yön, malzeme/doku
 - [ ] İskelet + skinning
 - [ ] Animasyonlar: idle, run, jump, fall, land, takla topak pozu, kanat çırpma
 - [ ] Godot: SubViewport render katmanı, `Squash`'a takma, yön dönüşü, kutu yedek
