@@ -26,6 +26,7 @@
 - Tripo API anahtarında kredi yok (`generate_3d` → "not enough credit"). Model **Tripo web sitesinde, ücretsiz planda, H2.5 sürümüyle** kullanıcı tarafından üretildi (ücretsiz planda sadece H2.5 dışa aktarılabiliyor). Yeniden üretim gerekirse aynı yol.
 - Ham dosya `assets/models/source/eagle_hero_raw.glb` (14,8 MB, 450k üçgen) **git'te değil** (`.gitignore`, kullanıcı kararı). `assets/models/source/` ve `docs/` altında `.gdignore` var (Godot içe aktarmaz).
 - `eagle_hero.blend`: `EagleHero` — 8.000 üçgen, tek parça, boy 1,0 m, ayaklar z=0'da, orijin ayakta, **yüzü -Y'ye bakıyor** (glTF'te +Z). Yeni UV (smart project) + ham modelden 1024 px renk bake'i: `eagle_hero_albedo.png`. Sadece renk dokusu var (normal/pürüz yok; toon shader kullanılacak).
+- Gözler: ham modelde düz siyahtı (parıltı yansımadan geliyordu, bake'te kayboldu); kullanıcı "normal göz" istedi → göz yüzleri atlasın sağ şeridinde ayrı 112 px UV adalarına alındı (atlasın geri kalanı 0,875'e küçültüldü) ve kodla boyandı: beyaz göz akı, kehribar iris, siyah göz bebeği, parıltı. Göz merkezi (±0.072, -0.077, 0.823), yarıçap ~0.046.
 - Doku düzeltmesi: tişört düz kurşuni griye çekildi (ham dokuda tişört/pantolon neredeyse aynı koyuluktaydı). Gövde yandan %22 kalınlaştırıldı. Tripo'nun eklediği beyaz kuyruk kaldı (ikincil hareket için; kullanıcı kararı Claude'a bıraktı).
 
 ## Aşama 3 — Karakter
