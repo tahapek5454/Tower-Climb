@@ -1,12 +1,12 @@
 # İlerleme
 
 **Aktif aşama:** 3 — Karakter
-**Durum:** 5/8 madde bitti — sırada madde 6 (toon shader + outline).
+**Durum:** 6/8 madde bitti — sırada madde 7 (durumlara animasyon bağlama).
 
 ## ▶ Yeni oturumda buradan devam
 1. CLAUDE.md bölüm 0'daki ortam kontrolünü yap ve tabloyla raporla. Aşama 3 araçları 2026-11-11'de hazırdı: Blender 5.3.0 (PATH'te), uv/uvx 0.13.7, blender-mcp bağlı (eklenti 1.8, `tripo: on`). Yine de `get_addon_status` ile Blender bağlantısını doğrula.
 2. Aşama 2 ışık hâleleri ekran görüntüsüyle görüldü (2026-11-11): hâle, iz ve duvar efektleri kullanıcıya göre iyi; düzeltme istenmedi.
-3. Sıradaki iş: Madde 6 (toon shader + outline: açık renkli kenar ışığı, siyah olmayan outline; koyu zeminde gövde kayboluyor). Çalışma dosyası `assets/models/source/eagle_hero.blend` (nesne `EagleHero`). Blender'da bu dosya açık olmalı; değilse kullanıcıdan açmasını iste.
+3. Sıradaki iş: Madde 7 (animasyonları `state_changed`/`event` ile bağlama; koşu hızı koşu hızına göre; taklada `tuck`, büyük zıplamada `flap`). Kullanıcı şu an karakterin "kutu gibi" kaydığını biliyor ve animasyonları bekliyor.
 4. Kontrast kaygısı (kullanıcı sordu): karakter siyah/koyu gri, mevcut arka plan çok koyu lacivert → karakter kaybolur. Önerilen çözüm (kullanıcı onayı bekliyor): kule içi orta ton (soğuk mavi-mor taş), toon shader'da açık renkli kenar ışığı (rim) + siyah yerine açık/renkli outline, mevcut hâle karakterin arkasında kalır, gerekirse giysi tonu Blender'da açılır. Madde 5–6'da model geçici bir orta ton test zemininde denenecek.
 
 ## Aşama 3 kararları (2026-11-11)
@@ -34,6 +34,9 @@
 - Godot tarafı: `scripts/player/character_model.gd` (`CharacterModel`, Node2D, orijin ayaklarda). İçinde `SubViewport` (şeffaf, `own_world_3d`, MSAA 4x, 346 px) + `Pivot` (model) + ortografik `Camera3D` (-X tarafında, +X'e bakar; model +Z'ye baktığı için ekranda sağa bakar) + geçici düz ışık; görüntü `Sprite2D` ile `Squash`'a konur. API: `set_facing(±1)`, `play(anim, blend, speed)`, `set_speed`, `has_animation`, `current_animation`, `is_available()`. Dönüş `Pivot.rotation.y` ile, kameranın önünden geçerek; model tam profilden 25° kameraya dönük. Ayarlar `Tuning.MODEL_*`; `USE_CHARACTER_MODEL=false` ya da glb yoksa kutu gövde.
 - `eagle_hero.glb.import`: `animation/remove_immutable_tracks=false` (sabit pozlu izler silinmesin; animasyon değişince kemik eski pozda kalmasın). Yeniden dışa aktarımda bu ayar korunur (.import dosyası repoda).
 - Doğrulama yöntemi (Claude için): geçici `-s` script'i ana sahneyi açıp `root.get_texture().get_image().save_png()` ile görüntü alır (pencereli çalıştırma gerekir, headless'ta render yok). Kullanıcı ekran görüntüsü yine istenir.
+- Kullanıcı geri bildirimi (2026-11-12, ilk oyun içi görüntü): genel boy büyüsün, kafa gövdeye göre daha büyük olsun; duvara girmiyor, juice iyi. → Kafa Blender'da boyun pivotu (z=0,67) etrafında ×1,22 büyütüldü (kafa ağırlığıyla harmanlı; model boyu 1,074 birim), `Tuning.MODEL_HEIGHT` 72 → 88 (ekranda ~94 px).
+- Toon görünüm: `assets/shaders/toon_character.gdshader` (unshaded; kamera uzayında sabit ışık yönü, iki ton, kenar ışığı, koyu renkleri hafif açma, beyazları parlatma) + `toon_outline.gdshader` (ters kabuk, `next_pass`). `CharacterModel._apply_toon_materials` her yüzeye uygular, dokuyu modelin kendi malzemesinden alır. Outline **açık renk** (siyah değil): koyu gövde koyu zeminde okunuyor ("çıkartma" görünümü). Ayarlar `Tuning.MODEL_OUTLINE_*`, `MODEL_RIM_*`, `MODEL_SHADOW_TINT`; ince ayarlar shader uniform varsayılanlarında. Sahne ışığı yok (unshaded).
+- Aşama 4 notu: zemin orta tona geçince açık outline/rim yeniden değerlendirilmeli.
 - Doku düzeltmesi: tişört düz kurşuni griye çekildi (ham dokuda tişört/pantolon neredeyse aynı koyuluktaydı). Gövde yandan %22 kalınlaştırıldı. Tripo'nun eklediği beyaz kuyruk kaldı (ikincil hareket için; kullanıcı kararı Claude'a bıraktı).
 
 ## Aşama 3 — Karakter
@@ -42,7 +45,7 @@
 - [x] İskelet + skinning
 - [x] Animasyonlar: idle, run, jump, fall, land, takla topak pozu, kanat çırpma
 - [x] Godot: SubViewport render katmanı, `Squash`'a takma, yön dönüşü, kutu yedek
-- [ ] Toon shader + outline
+- [x] Toon shader + outline
 - [ ] Durumlara animasyon bağlama (`state_changed`/`event`; koşu animasyonu hızı koşu hızına göre; `player.gd`'ye dokunulmaz)
 - [ ] İnce ayar, Compatibility/web doğrulama, `CREDITS.md`
 

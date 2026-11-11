@@ -5,6 +5,8 @@ extends Node2D
 ## Sadece görüntü: hangi animasyonun oynayacağına PlayerVisual karar verir.
 
 const MODEL_PATH: String = "res://assets/models/eagle_hero.glb"
+const TOON_SHADER: Shader = preload("res://assets/shaders/toon_character.gdshader")
+const OUTLINE_SHADER: Shader = preload("res://assets/shaders/toon_outline.gdshader")
 ## Döngülü oynaması gereken animasyonlar (glb döngü bilgisini taşımıyor).
 const LOOPING: Array[StringName] = [&"idle", &"run", &"fall"]
 ## Kamera modelin yanında, bu uzaklıkta durur (ortografik: uzaklık görüntüyü değiştirmez).
@@ -81,9 +83,9 @@ func _build() -> void:
 	_pivot.add_child(model)
 	_animation_player = _find_animation_player(model)
 	_setup_loops()
+	_apply_toon_materials(model)
 
 	_build_camera(viewport)
-	_build_lighting(viewport)
 
 	var sprite := Sprite2D.new()
 	sprite.name = "ModelSprite"
@@ -107,21 +109,27 @@ func _build_camera(viewport: SubViewport) -> void:
 	camera.make_current()
 
 
-func _build_lighting(viewport: SubViewport) -> void:
-	var environment := Environment.new()
-	environment.background_mode = Environment.BG_CLEAR_COLOR
-	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	environment.ambient_light_color = Color.WHITE
-	environment.ambient_light_energy = Tuning.MODEL_AMBIENT_ENERGY
-	var world_environment := WorldEnvironment.new()
-	world_environment.environment = environment
-	viewport.add_child(world_environment)
-
-	var light := DirectionalLight3D.new()
-	light.light_energy = Tuning.MODEL_LIGHT_ENERGY
-	# Kameranın arkasından, yukarıdan ve hafif önden.
-	light.rotation = Vector3(deg_to_rad(-40.0), deg_to_rad(-60.0), 0.0)
-	viewport.add_child(light)
+## Modelin kendi malzemesi yerine toon shader + dış çizgi geçişi kullanılır; doku aynı kalır.
+func _apply_toon_materials(node: Node) -> void:
+	var mesh_instance: MeshInstance3D = node as MeshInstance3D
+	if mesh_instance != null and mesh_instance.mesh != null:
+		var outline := ShaderMaterial.new()
+		outline.shader = OUTLINE_SHADER
+		outline.set_shader_parameter(&"outline_color", Tuning.MODEL_OUTLINE_COLOR)
+		outline.set_shader_parameter(&"outline_width", Tuning.MODEL_OUTLINE_WIDTH)
+		for surface in mesh_instance.mesh.get_surface_count():
+			var source: BaseMaterial3D = mesh_instance.mesh.surface_get_material(surface) as BaseMaterial3D
+			var toon := ShaderMaterial.new()
+			toon.shader = TOON_SHADER
+			if source != null:
+				toon.set_shader_parameter(&"albedo_texture", source.albedo_texture)
+			toon.set_shader_parameter(&"rim_color", Tuning.MODEL_RIM_COLOR)
+			toon.set_shader_parameter(&"rim_strength", Tuning.MODEL_RIM_STRENGTH)
+			toon.set_shader_parameter(&"shadow_tint", Tuning.MODEL_SHADOW_TINT)
+			toon.next_pass = outline
+			mesh_instance.set_surface_override_material(surface, toon)
+	for child in node.get_children():
+		_apply_toon_materials(child)
 
 
 func _setup_loops() -> void:

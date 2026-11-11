@@ -23,8 +23,9 @@ const PLAYER_HEIGHT: float = 48.0
 # --- Karakter modeli (görsel; hitbox'tan bağımsız) ---
 ## false: 3D model yerine kutu gövde kullanılır (model dosyası yoksa da kutuya dönülür).
 const USE_CHARACTER_MODEL: bool = true
-## Modelin ekrandaki boyu (px). Hitbox'tan (PLAYER_HEIGHT) büyük olabilir.
-const MODEL_HEIGHT: float = 72.0
+## Modelin 1 biriminin ekrandaki karşılığı (px). Model ~1,07 birim boyunda (kafa büyütüldü).
+## Hitbox'tan (PLAYER_HEIGHT) büyük olabilir.
+const MODEL_HEIGHT: float = 88.0
 ## Çizim çerçevesinin model boyuna oranı: kol, kuyruk ve animasyonlar sığsın diye 1'den büyük.
 const MODEL_FRAME_RATIO: float = 1.6
 ## Model bu kat çözünürlükte çizilir (büyük pencerede/tam ekranda net kalsın).
@@ -35,9 +36,16 @@ const MODEL_VIEW_ANGLE_DEGREES: float = 25.0
 const MODEL_TURN_RATE: float = 14.0
 ## Animasyonlar arası geçiş süresi.
 const MODEL_ANIM_BLEND_TIME: float = 0.12
-## Geçici düz ışıklandırma (madde 6'da toon shader ile değişecek).
-const MODEL_AMBIENT_ENERGY: float = 0.9
-const MODEL_LIGHT_ENERGY: float = 0.8
+## Toon görünüm (assets/shaders/toon_character.gdshader, toon_outline.gdshader).
+## Dış çizgi: siyah değil, açık renk — koyu gövde koyu zeminde okunsun.
+const MODEL_OUTLINE_COLOR: Color = Color(0.86, 0.90, 1.0)
+## Dış çizgi kalınlığı (model birimi; 0.013 ≈ 1,1 px).
+const MODEL_OUTLINE_WIDTH: float = 0.013
+## Kenar ışığının rengi ve gücü.
+const MODEL_RIM_COLOR: Color = Color(0.75, 0.85, 1.0)
+const MODEL_RIM_STRENGTH: float = 0.55
+## Gölgede kalan yüzeyin renk çarpanı.
+const MODEL_SHADOW_TINT: Color = Color(0.62, 0.64, 0.80)
 
 # --- Yatay hareket ---
 const MAX_RUN_SPEED: float = 900.0
