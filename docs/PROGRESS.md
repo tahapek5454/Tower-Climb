@@ -13,6 +13,14 @@
    - Blender/Tripo gerekirse: Blender 5.3 + blender-mcp hazır (`get_addon_status` ile doğrula). Tripo API'de kredi yok; üretim Tripo web sitesinde, ücretsiz planda **H2.5** sürümüyle kullanıcı tarafından yapılır.
 4. Web doğrulaması ertelendi: export şablonları kurulu değil (`%APPDATA%\Godot\export_templates` boş) — Aşama 7'nin ön koşulu. Aşama 7'de özellikle kontrol et: SubViewport + şeffaf arka plan + MSAA + `next_pass` outline WebGL2'de çalışıyor mu. Masaüstünde `gl_compatibility` ile doğrulandı.
 
+### Çalışma yöntemi notları (Aşama 3'te işe yarayanlar)
+- Kullanıcı Aşama 3'ü 2026-11-12'de bitirip oturumu kapattı; Aşama 4'e **yeni oturumda** başlanacak. Aşama 4'e henüz "devam" denmedi sayılmaz: kullanıcı yeni oturumu Aşama 4 için açıyor, ama yine de önce maddeleri netleştir ve onay al.
+- Akış: her maddede kısa plan → uygula → doğrula → commit → `PROGRESS.md` → kullanıcıya test talimatı + ekran görüntüsü iste. Kullanıcı kısa cevap verir ("devam", "uygun"); görsel kararları çoğu zaman Claude'a bırakır ama sonucu oyunda görüp yorumlar.
+- Kullanıcı karar gerekçelerini merak eder (ör. "hitbox neden büyümedi?"): sessizce karar verme, kısa gerekçeyle bildir.
+- Görsel doğrulama: geçici bir `-s` script'i (scratchpad'de; repoya koyma) ana sahneyi pencereli açar, `Input.action_press` ile oynatır, `root.get_texture().get_image()` ile karakterin çevresini kırpıp PNG kaydeder; Claude görüntüyü okur. Script içinde `Tuning`/autoload kullanan sınıflara doğrudan başvurma (düğüm üzerinden eriş). Headless'ta render yok.
+- Araç tuzakları: Bash'te `python` var (`py` yok, PIL yok); `godot` sadece PowerShell'de. Çok satırlı dosya düzenlemelerini Bash heredoc yerine Write aracıyla yazılan küçük Python script'leriyle yap (tırnak hataları). Dosyalar LF ile yazılır; git CRLF uyarıları zararsız.
+- Blender: çalışma dosyası açık değilse kullanıcıdan `assets/models/source/eagle_hero.blend`'i açmasını iste. Model/animasyon değişince: `eagle_anims.py`'yi çalıştır → pozu sıfırla → kaydet → glb'yi aynı ayarlarla dışa aktar → `godot --headless --path . --import`.
+
 ## Aşama 3 kararları (2026-11-11)
 - Karakter: **kartal maskotu**, **chibi oranlar** (büyük kafa, kısa bacak, kalın uzuvlar), yumuşak/yuvarlak tüy tutamları. Beyaz kafa, turuncu gaga ve ayaklar, **düz koyu gri–siyah arası tişört** (çizgisiz, logo/yazı/reklam yok), koyu pantolon. İfade: kararlı ama sevimli.
 - İlk konsept (`C:\Users\pekta\Downloads\tower-climb-hero.png`, ChatGPT ile kullanıcı üretti) referans: kartal + forma. Çizgili forma ve gerçekçi oranlar **kullanılmayacak**.
