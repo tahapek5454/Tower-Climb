@@ -58,5 +58,6 @@
 ### Ölçümler ve testler
 - Zıplama yükseklikleri: duran ~176 px (1,4 kat), tam hızda ~444 px (3,5 kat), kısa basış ~68 px. Coyote time platform kenarında doğrulandı.
 - GUT testleri: platform kuralları (7), kamera kuralları (7), kombo (11), skor (5), yay (4). Toplam 34.
-- Squash & stretch (ölçüldü): zıplama boyu 1,15–1,35, sert iniş boyu ~0,62, tam hızla duvar çarpması boyu 1,30.
+- Squash & stretch (ölçüldü, 2. ayar): zıplama boyu 1,25–1,50 (120–400 ms), normal iniş (500 px/s) 0,68 (~250 ms), sert iniş 0,50, duvar 1,40. İlk ayar (%15 uzama, ~150 ms) kullanıcıya hiç hissettirmedi: juice efektleri belirgin ve en az ~0,25 s görünür olmalı.
+- F4: debug yavaş çekim (x0,25), efektleri incelemek için. Hit-stop maddesinde `Engine.time_scale` ile çakışmasına dikkat.
 - Headless simülasyonlar gerçek zamanlı çalışır; uzun süreli davranışları (ör. hız tavanı) saf kural testleriyle doğrula.

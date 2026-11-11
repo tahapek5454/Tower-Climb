@@ -111,8 +111,8 @@ func _jump_stretch(jump_speed: float) -> float:
 func _land_squash(fall_speed: float) -> float:
 	if fall_speed < Tuning.LAND_SQUASH_MIN_SPEED:
 		return 0.0
-	var t: float = clampf(inverse_lerp(Tuning.LAND_SQUASH_MIN_SPEED, Tuning.MAX_FALL_SPEED, fall_speed),
-			0.0, 1.0)
+	var t: float = clampf(inverse_lerp(Tuning.LAND_SQUASH_MIN_SPEED, Tuning.LAND_SQUASH_FULL_SPEED,
+			fall_speed), 0.0, 1.0)
 	return t * Tuning.LAND_SQUASH_MAX
 
 

@@ -94,17 +94,23 @@ const FLIP_VELOCITY_THRESHOLD: float = 1200.0
 # --- Juice: squash & stretch (görsel) ---
 # Uzama değeri: + dikey uzama, - dikey ezilme. Gövde alanı korunur (en = 1 / boy).
 ## Yay sertliği ve sönümü: düşük sönüm = daha fazla "jöle" sallanması.
-const SQUASH_SPRING_STIFFNESS: float = 400.0
-const SQUASH_SPRING_DAMPING: float = 16.0
+const SQUASH_SPRING_STIFFNESS: float = 220.0
+const SQUASH_SPRING_DAMPING: float = 9.0
 ## Zıplama anındaki uzama: en düşük zıplamada MIN, en yüksekte MAX.
-const JUMP_STRETCH_MIN: float = 0.15
-const JUMP_STRETCH_MAX: float = 0.35
-## İniş ezilmesi düşüş hızıyla orantılı; bu hızın altındaki inişler ezilmez.
-const LAND_SQUASH_MIN_SPEED: float = 300.0
-const LAND_SQUASH_MAX: float = 0.40
+const JUMP_STRETCH_MIN: float = 0.25
+const JUMP_STRETCH_MAX: float = 0.50
+## İniş ezilmesi düşüş hızıyla orantılı: MIN_SPEED altında yok, FULL_SPEED ve üstünde MAX.
+## (Tipik iniş hızları 450–950 px/s; bir kat yukarıdaki platforma iniş ~500.)
+const LAND_SQUASH_MIN_SPEED: float = 150.0
+const LAND_SQUASH_FULL_SPEED: float = 700.0
+const LAND_SQUASH_MAX: float = 0.50
 ## Duvara çarpınca yatay ezilme (dikey uzama); çarpma hızıyla orantılı.
-const WALL_SQUASH_MAX: float = 0.30
-## Havadayken dikey hızla orantılı hafif uzama (MAX_FALL_SPEED'de bu kadar).
-const AIR_STRETCH_MAX: float = 0.12
+const WALL_SQUASH_MAX: float = 0.40
+## Havadayken dikey hızla orantılı uzama (MAX_FALL_SPEED'de bu kadar).
+const AIR_STRETCH_MAX: float = 0.20
 ## Uzama/ezilmenin mutlak sınırı (gövde aşırı bozulmasın).
-const SQUASH_LIMIT: float = 0.5
+const SQUASH_LIMIT: float = 0.6
+
+# --- Debug ---
+## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
+const DEBUG_SLOW_MOTION_SCALE: float = 0.25

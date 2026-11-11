@@ -21,11 +21,16 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build()
 	visible = false
+	# Yeniden başlatmada yavaş çekim açık kalmasın.
+	Engine.time_scale = 1.0
 
 
 func _unhandled_input(input_event: InputEvent) -> void:
 	if input_event.is_action_pressed(&"toggle_debug"):
 		visible = not visible
+		get_viewport().set_input_as_handled()
+	elif input_event.is_action_pressed(&"debug_slow_motion"):
+		Engine.time_scale = Tuning.DEBUG_SLOW_MOTION_SCALE if is_equal_approx(Engine.time_scale, 1.0) else 1.0
 		get_viewport().set_input_as_handled()
 
 
@@ -37,6 +42,7 @@ func _process(_delta: float) -> void:
 func _compose_text() -> String:
 	var lines: PackedStringArray = []
 	lines.append("FPS: %d" % Engine.get_frames_per_second())
+	lines.append("Oyun hızı: x%.2f  (F4 yavaş çekim)" % Engine.time_scale)
 	if player != null:
 		lines.append("vx: %7.1f   vy: %7.1f" % [player.velocity.x, player.velocity.y])
 		lines.append("Durum: %s" % Player.State.keys()[player.state])
