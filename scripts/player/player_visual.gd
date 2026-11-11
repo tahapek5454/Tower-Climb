@@ -21,6 +21,7 @@ var _spin: Node2D
 var _squash: Node2D
 var _eye: Polygon2D
 var _model: CharacterModel
+var _animator: ModelAnimator
 var _facing: float = 1.0
 ## + boyuna uzama, - boyuna ezilme.
 var _stretch: float = 0.0
@@ -43,6 +44,8 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_update_facing()
 	_update_wall_clearance()
+	if _animator != null:
+		_animator.update(delta, _player.is_on_floor(), _player.velocity, is_flipping())
 	_update_squash(delta)
 
 
@@ -51,7 +54,9 @@ func is_flipping() -> bool:
 
 
 func _build() -> void:
-	var half_height: float = Tuning.PLAYER_HEIGHT * 0.5
+	var use_model: bool = Tuning.USE_CHARACTER_MODEL and CharacterModel.is_available()
+	# Takla ekseni: kutuda gövde ortası, modelde topak pozunun ortası.
+	var half_height: float = Tuning.MODEL_SPIN_PIVOT_HEIGHT if use_model else Tuning.PLAYER_HEIGHT * 0.5
 	_spin = Node2D.new()
 	_spin.name = "Spin"
 	_spin.position = Vector2(0.0, -half_height)
@@ -62,10 +67,11 @@ func _build() -> void:
 	_squash.position = Vector2(0.0, half_height)
 	_spin.add_child(_squash)
 
-	if Tuning.USE_CHARACTER_MODEL and CharacterModel.is_available():
+	if use_model:
 		_model = CharacterModel.new()
 		_model.name = "Model"
 		_squash.add_child(_model)
+		_animator = ModelAnimator.new(_model)
 	else:
 		_build_box(half_height)
 	_build_effects()
@@ -220,10 +226,14 @@ func _on_jumped(jump_speed: float) -> void:
 	_kick(lerpf(Tuning.JUMP_STRETCH_MIN, Tuning.JUMP_STRETCH_MAX, t), t)
 	if FlipRules.jump_triggers_flip(jump_speed, GameState.combo_jumps > 0):
 		_start_flip(jump_speed, FlipRules.direction_for(_player.velocity.x, _facing))
+	if _animator != null:
+		_animator.on_jumped(t)
 
 
 func _on_landed(fall_speed: float) -> void:
 	_reset_flip_on_landing()
+	if _animator != null:
+		_animator.on_landed(fall_speed)
 	if fall_speed >= Tuning.LAND_SQUASH_MIN_SPEED:
 		var t: float = _land_strength(fall_speed)
 		_kick(-t * Tuning.LAND_SQUASH_MAX, t)

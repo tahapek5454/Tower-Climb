@@ -15,6 +15,7 @@ const CAMERA_DISTANCE: float = 5.0
 var _pivot: Node3D
 var _animation_player: AnimationPlayer
 var _target_yaw: float = 0.0
+var _requested: StringName = &""
 
 
 ## Model dosyası projede var mı? Yoksa PlayerVisual kutu gövdeye döner.
@@ -46,15 +47,16 @@ func has_animation(animation: StringName) -> bool:
 	return _animation_player != null and _animation_player.has_animation(animation)
 
 
-func current_animation() -> StringName:
-	return StringName(_animation_player.current_animation) if _animation_player != null else &""
+func animation_length(animation: StringName) -> float:
+	return _animation_player.get_animation(animation).length if has_animation(animation) else 0.0
 
 
-func play(animation: StringName, blend_time: float = Tuning.MODEL_ANIM_BLEND_TIME,
-		speed: float = 1.0) -> void:
-	if not has_animation(animation):
+## Aynı animasyon zaten istenmişse baştan başlatmaz (her karede çağrılabilir).
+func play(animation: StringName, blend_time: float = Tuning.MODEL_ANIM_BLEND_TIME) -> void:
+	if animation == _requested or not has_animation(animation):
 		return
-	_animation_player.play(animation, blend_time, speed)
+	_requested = animation
+	_animation_player.play(animation, blend_time)
 
 
 func set_speed(speed: float) -> void:

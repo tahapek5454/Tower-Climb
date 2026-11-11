@@ -37,8 +37,20 @@ const MODEL_RENDER_SCALE: float = 3.0
 const MODEL_VIEW_ANGLE_DEGREES: float = 25.0
 ## Sağa/sola dönüşün hızı (büyük = daha ani).
 const MODEL_TURN_RATE: float = 14.0
-## Animasyonlar arası geçiş süresi.
+## Animasyonlar arası geçiş süresi; ani olaylar (zıplama, iniş, takla) için kısa olanı.
 const MODEL_ANIM_BLEND_TIME: float = 0.12
+const MODEL_ANIM_BLEND_TIME_FAST: float = 0.05
+## Koşu animasyonunun oynatma hızı: çok yavaşken ve tam hızda (MAX_RUN_SPEED).
+const MODEL_RUN_ANIM_SPEED_MIN: float = 0.7
+const MODEL_RUN_ANIM_SPEED_MAX: float = 2.0
+## Aşağı hız bunu geçince düşme animasyonuna geçilir (tepe noktasında titremesin).
+const MODEL_FALL_ANIM_MIN_SPEED: float = 60.0
+## İniş (çömelme) animasyonu sadece bu yatay hızın altında oynar; hızlıyken koşuya devam edilir.
+const MODEL_LAND_ANIM_MAX_RUN_SPEED: float = 250.0
+## Zıplama gücü (0..1) bu değeri geçerse kanat çırpılır (takla yoksa).
+const MODEL_FLAP_MIN_STRENGTH: float = 0.35
+## Takla ekseninin ayaklardan yüksekliği (px): topak pozundaki modelin ortası.
+const MODEL_SPIN_PIVOT_HEIGHT: float = 42.0
 ## Toon görünüm (assets/shaders/toon_character.gdshader, toon_outline.gdshader).
 ## Dış çizgi: siyah değil, açık renk — koyu gövde koyu zeminde okunsun.
 const MODEL_OUTLINE_COLOR: Color = Color(0.86, 0.90, 1.0)

@@ -1,12 +1,12 @@
 # İlerleme
 
 **Aktif aşama:** 3 — Karakter
-**Durum:** 6/8 madde bitti — sırada madde 7 (durumlara animasyon bağlama).
+**Durum:** 7/8 madde bitti — sırada madde 8 (ince ayar, Compatibility/web doğrulama, CREDITS).
 
 ## ▶ Yeni oturumda buradan devam
 1. CLAUDE.md bölüm 0'daki ortam kontrolünü yap ve tabloyla raporla. Aşama 3 araçları 2026-11-11'de hazırdı: Blender 5.3.0 (PATH'te), uv/uvx 0.13.7, blender-mcp bağlı (eklenti 1.8, `tripo: on`). Yine de `get_addon_status` ile Blender bağlantısını doğrula.
 2. Aşama 2 ışık hâleleri ekran görüntüsüyle görüldü (2026-11-11): hâle, iz ve duvar efektleri kullanıcıya göre iyi; düzeltme istenmedi.
-3. Sıradaki iş: Madde 7 (animasyonları `state_changed`/`event` ile bağlama; koşu hızı koşu hızına göre; taklada `tuck`, büyük zıplamada `flap`). Kullanıcı şu an karakterin "kutu gibi" kaydığını biliyor ve animasyonları bekliyor.
+3. Sıradaki iş: Madde 8. Önce kullanıcının animasyonlar hakkındaki oyun içi geri bildirimini al (koşu adım hızı, zıplama/düşme pozları, kanat çırpma, topak takla, iniş çömelmesi); istenen düzeltmeleri yap. Sonra web/Compatibility doğrulaması (web export şablonları Aşama 7'nin ön koşulu; yoksa sadece masaüstünde doğrula ve not düş) ve `CREDITS.md` son kontrolü. Aşama bitince CLAUDE.md'deki bildirim formatıyla dur.
 4. Kontrast kaygısı (kullanıcı sordu): karakter siyah/koyu gri, mevcut arka plan çok koyu lacivert → karakter kaybolur. Önerilen çözüm (kullanıcı onayı bekliyor): kule içi orta ton (soğuk mavi-mor taş), toon shader'da açık renkli kenar ışığı (rim) + siyah yerine açık/renkli outline, mevcut hâle karakterin arkasında kalır, gerekirse giysi tonu Blender'da açılır. Madde 5–6'da model geçici bir orta ton test zemininde denenecek.
 
 ## Aşama 3 kararları (2026-11-11)
@@ -37,6 +37,7 @@
 - Kullanıcı geri bildirimi (2026-11-12, ilk oyun içi görüntü): genel boy büyüsün, kafa gövdeye göre daha büyük olsun; duvara girmiyor, juice iyi. → Kafa Blender'da boyun pivotu (z=0,67) etrafında ×1,22 büyütüldü (kafa ağırlığıyla harmanlı; model boyu 1,074 birim), `Tuning.MODEL_HEIGHT` 72 → 88 (ekranda ~94 px).
 - Toon görünüm: `assets/shaders/toon_character.gdshader` (unshaded; kamera uzayında sabit ışık yönü, iki ton, kenar ışığı, koyu renkleri hafif açma, beyazları parlatma) + `toon_outline.gdshader` (ters kabuk, `next_pass`). `CharacterModel._apply_toon_materials` her yüzeye uygular, dokuyu modelin kendi malzemesinden alır. Outline **açık renk** (siyah değil): koyu gövde koyu zeminde okunuyor ("çıkartma" görünümü). Ayarlar `Tuning.MODEL_OUTLINE_*`, `MODEL_RIM_*`, `MODEL_SHADOW_TINT`; ince ayarlar shader uniform varsayılanlarında. Sahne ışığı yok (unshaded).
 - Duvar taşması (kullanıcı bildirdi, büyütmeden sonra): hitbox 32 px genişlikte kalıyor, model ~54 px. Çözüm fizik değil görüntü: `scripts/fx/wall_clearance.gd` (`WallClearance.offset_x`, saf, 5 GUT testi) → `PlayerVisual._update_wall_clearance` `Spin.position.x`'i duvara yaklaştıkça içeri kaydırır (en çok 11 px). `Tuning.MODEL_WALL_HALF_WIDTH = 27`. Hitbox neden büyütülmedi: geniş hitbox platform kenarında "havada durma" görüntüsü verir ve zıplama/duvar ayarlarını değiştirir. Takla sırasında (model yatayken) kısa süreli taşma olabilir; kabul edildi. GUT toplam 67.
+- Animasyon bağlama: kurallar `scripts/player/animation_rules.gd` (`AnimationRules.pick/run_speed_scale/blend_time`, saf, 8 GUT testi), zamanlayıcılar `scripts/player/model_animator.gd` (`ModelAnimator`, RefCounted; `on_jumped(güç)`, `on_landed(hız)`, `update(...)`). `PlayerVisual` her karede `update` çağırır; `player.gd`'ye dokunulmadı (`is_on_floor`, `velocity` okunur; `state_changed` kullanılmadı çünkü `LAND/FLIP` durumlarına geçilmiyor). Kurallar: havada takla varsa `tuck`; aşağı hız > 60 ise `fall`; yükselirken güçlü zıplamada (güç ≥ 0,35, takla yoksa) `flap`, değilse `jump`; yerde iniş süresi dolmadıysa ve yatay hız < 250 ise `land`; hız > 20 ise `run` (oynatma hızı 0,7–2,0), değilse `idle`. `CharacterModel.play` aynı isteği tekrar başlatmaz. Takla ekseni modelde `Tuning.MODEL_SPIN_PIVOT_HEIGHT` (42 px, topak pozunun ortası). Oyun içi görüntüyle doğrulandı: jump, fall, land, run, tuck. GUT toplam 75.
 - Aşama 4 notu: zemin orta tona geçince açık outline/rim yeniden değerlendirilmeli.
 - Doku düzeltmesi: tişört düz kurşuni griye çekildi (ham dokuda tişört/pantolon neredeyse aynı koyuluktaydı). Gövde yandan %22 kalınlaştırıldı. Tripo'nun eklediği beyaz kuyruk kaldı (ikincil hareket için; kullanıcı kararı Claude'a bıraktı).
 
@@ -47,7 +48,7 @@
 - [x] Animasyonlar: idle, run, jump, fall, land, takla topak pozu, kanat çırpma
 - [x] Godot: SubViewport render katmanı, `Squash`'a takma, yön dönüşü, kutu yedek
 - [x] Toon shader + outline
-- [ ] Durumlara animasyon bağlama (`state_changed`/`event`; koşu animasyonu hızı koşu hızına göre; `player.gd`'ye dokunulmaz)
+- [x] Durumlara animasyon bağlama (`state_changed`/`event`; koşu animasyonu hızı koşu hızına göre; `player.gd`'ye dokunulmaz)
 - [ ] İnce ayar, Compatibility/web doğrulama, `CREDITS.md`
 
 ### Kullanıcı tercihleri (özet)
