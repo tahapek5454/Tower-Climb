@@ -186,6 +186,14 @@ const SHAKE_WALL_TRAUMA_MAX: float = 0.45
 const SHAKE_COMBO_TRAUMA_PER_FLOOR: float = 0.05
 const SHAKE_COMBO_TRAUMA_MAX: float = 0.8
 
+# --- Juice: hit-stop (görsel) ---
+## Puan kazandıran kombo bitince oyun bu hıza iner (1 = normal).
+const HITSTOP_TIME_SCALE: float = 0.05
+## Süre (gerçek zaman, s): küçük komboda MIN, HITSTOP_FULL_FLOORS ve üstü katta MAX.
+const HITSTOP_DURATION_MIN: float = 0.06
+const HITSTOP_DURATION_MAX: float = 0.14
+const HITSTOP_FULL_FLOORS: int = 20
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25

@@ -32,6 +32,10 @@ func _ready() -> void:
 	_camera.target = _player
 	add_child(_camera)
 
+	var hit_stop := HitStop.new()
+	hit_stop.name = "HitStop"
+	add_child(hit_stop)
+
 	var hud := Hud.new()
 	hud.name = "Hud"
 	add_child(hud)
