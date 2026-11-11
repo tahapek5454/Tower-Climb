@@ -67,9 +67,9 @@ func _build() -> void:
 	_squash.add_child(_eye)
 
 	# İz ve çizgiler gövdeden önce eklenir: ağaç sırasıyla gövdenin arkasında çizilir.
-	var trail := AfterimageTrail.new()
+	var trail := SmoothTrail.new()
 	trail.name = "Trail"
-	trail.source = body
+	trail.trail_color = BODY_COLOR
 	trail.player = _player
 	add_child(trail)
 	move_child(trail, 0)

@@ -125,27 +125,30 @@ const AIR_STRETCH_MAX: float = 0.20
 const SQUASH_LIMIT: float = 0.6
 
 # --- Juice: hareket izi (görsel) ---
-## Bu hızın (vektör uzunluğu) üstünde gövdenin solan kopyaları bırakılır.
+## Bu hızın (vektör uzunluğu) üstünde gövdenin arkasında yumuşak bir şerit bırakılır.
 const TRAIL_MIN_SPEED: float = 650.0
-## Kopyalar arası süre ve bir kopyanın ömrü (s).
-const TRAIL_INTERVAL: float = 0.035
-const TRAIL_LIFETIME: float = 0.25
-## Kopyanın ilk saydamlığı (0..1); ömrü boyunca 0'a iner.
-const TRAIL_START_ALPHA: float = 0.45
+## Şeridin bir noktasının ömrü (s) = kuyruğun uzunluğu.
+const TRAIL_LIFETIME: float = 0.22
+## Gövdeye yakın uçtaki kalınlık (px) ve saydamlık (0..1); kuyruğa doğru 0'a iner.
+const TRAIL_WIDTH: float = 20.0
+const TRAIL_ALPHA: float = 0.22
+## Noktalar arası en az mesafe (px); daha sık nokta eklenmez.
+const TRAIL_POINT_SPACING: float = 6.0
 
 # --- Juice: hız çizgileri (görsel) ---
 ## Bu hızın üstünde gövdenin arkasında hareket yönünde çizgiler çıkar.
 const SPEED_LINES_MIN_SPEED: float = 1100.0
-const SPEED_LINE_INTERVAL: float = 0.025
+const SPEED_LINE_INTERVAL: float = 0.05
 const SPEED_LINE_LIFETIME: float = 0.18
 const SPEED_LINE_LENGTH_MIN: float = 40.0
 const SPEED_LINE_LENGTH_MAX: float = 90.0
-const SPEED_LINE_WIDTH: float = 3.0
+## Baş taraftaki kalınlık; kuyruğa doğru incelir.
+const SPEED_LINE_WIDTH: float = 2.5
 ## Çizgilerin hareket yönüne dik dağılımı (± px) ve gövde merkezinin ne kadar arkasında çıktıkları.
 const SPEED_LINE_SPREAD: float = 28.0
 const SPEED_LINE_BACK_MIN: float = 20.0
 const SPEED_LINE_BACK_MAX: float = 60.0
-const SPEED_LINE_START_ALPHA: float = 0.7
+const SPEED_LINE_START_ALPHA: float = 0.3
 
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
