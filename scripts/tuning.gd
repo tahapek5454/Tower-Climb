@@ -49,6 +49,9 @@ const MODEL_FALL_ANIM_MIN_SPEED: float = 60.0
 const MODEL_LAND_ANIM_MAX_RUN_SPEED: float = 250.0
 ## Zıplama gücü (0..1) bu değeri geçerse kanat çırpılır (takla yoksa).
 const MODEL_FLAP_MIN_STRENGTH: float = 0.35
+## Zıplama taklasının "yıldız" (kollar bacaklar açık, yan takla) olma olasılığı; kalanı topak takla.
+## Duvar sekmesi taklaları hep topaktır (yıldız geniş olduğu için duvara taşar).
+const MODEL_STAR_FLIP_CHANCE: float = 0.5
 ## Takla ekseninin ayaklardan yüksekliği (px): topak pozundaki modelin ortası.
 const MODEL_SPIN_PIVOT_HEIGHT: float = 42.0
 ## Toon görünüm (assets/shaders/toon_character.gdshader, toon_outline.gdshader).

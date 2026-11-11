@@ -118,6 +118,21 @@ for _s in (".L", ".R"):
     TUCK_POSE["forearm" + _s] = dict(rx=-60.0)
 
 
+# Yıldız takla pozu: kollar ve bacaklar yana açık. Oyunda model kameraya dönükken oynar,
+# böylece ekran düzleminde dönen bir "yan takla" (çark) olur.
+STAR_POSE = {
+    "spine": dict(rx=-4.0),
+    "head": dict(rx=-6.0),
+    "tail": dict(rx=15.0),
+}
+for _s in (".L", ".R"):
+    STAR_POSE["upper_arm" + _s] = dict(side=106.0)
+    STAR_POSE["forearm" + _s] = dict(side=8.0)
+    STAR_POSE["thigh" + _s] = dict(side=42.0)
+    STAR_POSE["shin" + _s] = dict(side=4.0)
+    STAR_POSE["foot" + _s] = dict(rx=20.0)
+
+
 def pose_fall(t: float) -> dict:
     p = 2.0 * math.pi * t
     sn, cs = math.sin(p), math.cos(p)
@@ -241,10 +256,11 @@ def build() -> None:
     _make("land", list(land_k), lambda f: pose_land(land_k[f]))
     _make("tuck", [0, 10], lambda f: TUCK_POSE)
     _make("flap", list(range(0, 17)), lambda f: pose_flap(f / 16.0))
+    _make("star", [0, 10], lambda f: STAR_POSE)
 
     # Dışa aktarım için her action bir NLA şeridine konur.
     rig.animation_data.action = None
-    for name in ("idle", "run", "jump", "fall", "land", "tuck", "flap"):
+    for name in ("idle", "run", "jump", "fall", "land", "tuck", "flap", "star"):
         act = bpy.data.actions[name]
         track = rig.animation_data.nla_tracks.new()
         track.name = name

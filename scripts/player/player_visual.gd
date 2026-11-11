@@ -181,7 +181,9 @@ func _land_strength(fall_speed: float) -> float:
 # --- Takla ---
 
 ## Gövdeyi `direction` yönünde, yukarı hıza göre belirlenen süre ve tur sayısıyla döndürür.
-func _start_flip(up_speed: float, direction: float) -> void:
+func _start_flip(up_speed: float, direction: float, from_wall: bool = false) -> void:
+	if _animator != null:
+		_animator.on_flip_started(from_wall)
 	var duration: float = FlipRules.duration_for(up_speed)
 	var turns: int = FlipRules.turns_for(duration)
 	_kill_flip()
@@ -257,7 +259,7 @@ func _on_wall_bounce(data: Dictionary) -> void:
 	Events.screen_shake.emit(CameraShake.wall_trauma(data["speed"]))
 	if data["airborne"]:
 		# Sekme sonrası gidilen yön = duvarın normali.
-		_start_flip(-_player.velocity.y, signf(data["normal_x"]))
+		_start_flip(-_player.velocity.y, signf(data["normal_x"]), true)
 
 
 func _make_rect(center: Vector2, size: Vector2, color: Color) -> Polygon2D:

@@ -16,6 +16,8 @@ var _pivot: Node3D
 var _animation_player: AnimationPlayer
 var _target_yaw: float = 0.0
 var _requested: StringName = &""
+var _facing: float = 1.0
+var _front_view: bool = false
 
 
 ## Model dosyası projede var mı? Yoksa PlayerVisual kutu gövdeye döner.
@@ -36,11 +38,27 @@ func _process(delta: float) -> void:
 
 ## direction: +1 sağa, -1 sola bakar. Model kameraya doğru hafif dönük durur.
 func set_facing(direction: float, instant: bool = false) -> void:
-	var view_angle: float = deg_to_rad(Tuning.MODEL_VIEW_ANGLE_DEGREES)
-	# Model +Z'ye bakar; kamera -X tarafında. Sola dönüş kameranın önünden geçer.
-	_target_yaw = -view_angle if direction >= 0.0 else -(PI - view_angle)
+	_facing = 1.0 if direction >= 0.0 else -1.0
+	_update_target_yaw()
 	if instant:
 		_pivot.rotation.y = _target_yaw
+
+
+## true: model tam kameraya döner (önden görünüm); false: yön görünümüne geri döner.
+func set_front_view(enabled: bool) -> void:
+	if enabled == _front_view:
+		return
+	_front_view = enabled
+	_update_target_yaw()
+
+
+func _update_target_yaw() -> void:
+	# Model +Z'ye bakar; kamera -X tarafında. Sola dönüş kameranın önünden geçer.
+	var view_angle: float = deg_to_rad(Tuning.MODEL_VIEW_ANGLE_DEGREES)
+	if _front_view:
+		_target_yaw = -PI * 0.5
+	else:
+		_target_yaw = -view_angle if _facing > 0.0 else -(PI - view_angle)
 
 
 func has_animation(animation: StringName) -> bool:

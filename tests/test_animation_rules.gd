@@ -50,3 +50,23 @@ func test_run_speed_scale_grows_with_speed() -> void:
 func test_sudden_animations_blend_faster() -> void:
 	assert_lt(AnimationRules.blend_time(AnimationRules.TUCK), AnimationRules.blend_time(AnimationRules.RUN))
 	assert_lt(AnimationRules.blend_time(AnimationRules.LAND), AnimationRules.blend_time(AnimationRules.IDLE))
+
+
+func test_flip_uses_chosen_pose() -> void:
+	assert_eq(AnimationRules.pick(false, RISING, true, false, false, AnimationRules.STAR), AnimationRules.STAR)
+	assert_eq(AnimationRules.pick(false, RISING, true, false, false, AnimationRules.TUCK), AnimationRules.TUCK)
+	# Takla yokken seçilmiş poz kullanılmaz.
+	assert_eq(AnimationRules.pick(false, RISING, false, false, false, AnimationRules.STAR), AnimationRules.JUMP)
+
+
+func test_flip_pose_is_random_for_jumps_and_tuck_for_walls() -> void:
+	assert_eq(AnimationRules.flip_animation(0.0, false), AnimationRules.STAR)
+	assert_eq(AnimationRules.flip_animation(0.999, false), AnimationRules.TUCK)
+	assert_eq(AnimationRules.flip_animation(0.0, true), AnimationRules.TUCK)
+	assert_eq(AnimationRules.flip_animation(0.999, true), AnimationRules.TUCK)
+
+
+func test_only_star_faces_camera() -> void:
+	assert_true(AnimationRules.faces_camera(AnimationRules.STAR))
+	assert_false(AnimationRules.faces_camera(AnimationRules.TUCK))
+	assert_false(AnimationRules.faces_camera(AnimationRules.RUN))
