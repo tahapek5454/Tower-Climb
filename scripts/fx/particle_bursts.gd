@@ -2,23 +2,22 @@ class_name ParticleBursts
 extends Node2D
 ## Tek seferlik parçacık patlamaları: iniş tozu ve duvar kıvılcımı.
 ## top_level: parçacıklar dünyada kalır. Yayıcılar havuzdan tekrar kullanılır.
-## Parçacık görüntüsü kodla üretilen yumuşak kenarlı daire (dış dosya yok).
+## Parçacık görüntüsü kodla üretilen yumuşak kenarlı daire (SoftTextures.dot, 64 px).
+## Toz normal karışımla (toz gibi), kıvılcım toplamalı karışımla (ışık gibi) çizilir.
 
 const DUST_COLOR := Color(0.85, 0.87, 0.95)
 const SPARK_COLOR := Color(1.0, 0.82, 0.45)
-## Yumuşak daire dokusunun boyutu (px); parçacık ölçeği buna göre.
-const SOFT_DOT_SIZE: int = 32
 const POOL_SIZE: int = 3
-## Toz bulutu ölçeği (doku boyutuna oranla) ve ömrü boyunca büyümesi.
-const DUST_SCALE_MIN: float = 0.35
-const DUST_SCALE_MAX: float = 0.7
+## Toz bulutu ölçeği (64 px dokuya oranla; 0,25 ≈ 16 px) ve ömrü boyunca büyümesi.
+const DUST_SCALE_MIN: float = 0.175
+const DUST_SCALE_MAX: float = 0.35
 const DUST_GROWTH: float = 1.6
 ## Toz yana yayılır, hafifçe yükselir; sürtünmeyle yavaşlar.
 const DUST_SPREAD_DEGREES: float = 75.0
 const DUST_DAMPING: float = 380.0
 const DUST_GRAVITY := Vector2(0.0, -40.0)
-const SPARK_SCALE_MIN: float = 0.12
-const SPARK_SCALE_MAX: float = 0.25
+const SPARK_SCALE_MIN: float = 0.06
+const SPARK_SCALE_MAX: float = 0.125
 const SPARK_SPREAD_DEGREES: float = 35.0
 const SPARK_GRAVITY := Vector2(0.0, 900.0)
 const SPARK_DAMPING: float = 120.0
@@ -34,7 +33,7 @@ var _next_spark: int = 0
 func _ready() -> void:
 	top_level = true
 	global_transform = Transform2D.IDENTITY
-	var dot: Texture2D = _make_soft_dot()
+	var dot: Texture2D = SoftTextures.dot()
 	for i in POOL_SIZE:
 		_dust_pool.append(_make_dust_emitter(dot))
 		_spark_pool.append(_make_spark_emitter(dot))
@@ -98,6 +97,7 @@ func _make_spark_emitter(dot: Texture2D) -> CPUParticles2D:
 	emitter.scale_amount_min = SPARK_SCALE_MIN
 	emitter.scale_amount_max = SPARK_SCALE_MAX
 	emitter.color_ramp = _fade_ramp(SPARK_COLOR, Tuning.WALL_SPARK_ALPHA)
+	emitter.material = SoftTextures.additive()
 	return emitter
 
 
@@ -111,21 +111,6 @@ func _make_emitter(dot: Texture2D, lifetime: float) -> CPUParticles2D:
 	emitter.local_coords = false
 	add_child(emitter)
 	return emitter
-
-
-## Ortası opak, kenara doğru tamamen saydam beyaz daire.
-func _make_soft_dot() -> Texture2D:
-	var gradient := Gradient.new()
-	gradient.set_color(0, Color(1.0, 1.0, 1.0, 1.0))
-	gradient.set_color(1, Color(1.0, 1.0, 1.0, 0.0))
-	var texture := GradientTexture2D.new()
-	texture.gradient = gradient
-	texture.fill = GradientTexture2D.FILL_RADIAL
-	texture.fill_from = Vector2(0.5, 0.5)
-	texture.fill_to = Vector2(1.0, 0.5)
-	texture.width = SOFT_DOT_SIZE
-	texture.height = SOFT_DOT_SIZE
-	return texture
 
 
 ## Renk sabit, saydamlık başlangıç değerinden 0'a iner.

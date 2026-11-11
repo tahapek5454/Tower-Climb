@@ -223,6 +223,20 @@ const SCORE_COUNT_RATE: float = 6.0
 const SCORE_PULSE_SCALE: float = 1.3
 const SCORE_PULSE_TIME: float = 0.3
 
+# --- Juice: ışık hâlesi ("sahte glow", görsel) ---
+# WorldEnvironment glow Compatibility renderer'da 2D için güvenilir değil; yerine toplamalı ışık hâleleri.
+## Karakter hâlesinin çapı (px).
+const GLOW_AURA_SIZE: float = 150.0
+## Hâle parlaklığı: dururken, hızlıyken (|hız| ≥ TRAIL_MIN_SPEED) ve kombo sürerken.
+const GLOW_AURA_ALPHA_IDLE: float = 0.08
+const GLOW_AURA_ALPHA_FAST: float = 0.18
+const GLOW_AURA_ALPHA_COMBO: float = 0.28
+## Hâlenin hedef parlaklığa yaklaşma hızı (büyük = daha ani).
+const GLOW_AURA_SMOOTHING: float = 6.0
+## Bölüm platformunun (her 100 kat) arkasındaki hâle: yükseklik (px) ve parlaklık.
+const GLOW_SECTION_HEIGHT: float = 90.0
+const GLOW_SECTION_ALPHA: float = 0.22
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25

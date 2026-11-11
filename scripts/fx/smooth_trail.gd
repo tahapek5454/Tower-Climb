@@ -22,6 +22,8 @@ func _ready() -> void:
 	begin_cap_mode = Line2D.LINE_CAP_ROUND
 	end_cap_mode = Line2D.LINE_CAP_ROUND
 	antialiased = true
+	# Toplamalı karışım: karanlık zeminde ışık izi gibi parlar.
+	material = SoftTextures.additive()
 
 	# Nokta 0 = en eski (kuyruk), son nokta = gövde.
 	var fade := Gradient.new()

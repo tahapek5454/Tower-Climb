@@ -36,6 +36,7 @@ func _ready() -> void:
 		line.begin_cap_mode = Line2D.LINE_CAP_ROUND
 		line.end_cap_mode = Line2D.LINE_CAP_ROUND
 		line.antialiased = true
+		line.material = SoftTextures.additive()
 		line.visible = false
 		add_child(line)
 		_lines.append(line)

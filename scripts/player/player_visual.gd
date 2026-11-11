@@ -66,25 +66,32 @@ func _build() -> void:
 	_squash.add_child(body)
 	_eye = _make_rect(Vector2.ZERO, EYE_SIZE, EYE_COLOR)
 	_squash.add_child(_eye)
+	_build_effects()
 
-	# İz ve çizgiler gövdeden önce eklenir: ağaç sırasıyla gövdenin arkasında çizilir.
+
+## Efektler gövdeden (Spin) önceye yerleştirilir: ağaç sırasıyla gövdenin arkasında çizilir.
+## Sıra (arkadan öne): hâle, iz, hız çizgileri, parçacıklar, gövde.
+func _build_effects() -> void:
+	var aura := PlayerAura.new()
+	aura.name = "Aura"
+	aura.player = _player
+
 	var trail := SmoothTrail.new()
 	trail.name = "Trail"
 	trail.trail_color = BODY_COLOR
 	trail.player = _player
-	add_child(trail)
-	move_child(trail, 0)
 
 	var speed_lines := SpeedLines.new()
 	speed_lines.name = "SpeedLines"
 	speed_lines.player = _player
-	add_child(speed_lines)
-	move_child(speed_lines, 1)
 
 	_bursts = ParticleBursts.new()
 	_bursts.name = "Bursts"
-	add_child(_bursts)
-	move_child(_bursts, 2)
+
+	var effects: Array[Node] = [aura, trail, speed_lines, _bursts]
+	for i in effects.size():
+		add_child(effects[i])
+		move_child(effects[i], i)
 
 
 func _update_facing() -> void:

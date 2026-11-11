@@ -104,7 +104,7 @@ Değerler `const` olarak kalır (oyun içi canlı ayar paneli şimdilik yok). İ
 - Ekran sarsıntısı (büyük iniş, duvar sekmesi, kombo bitişi).
 - Hit-stop: kombo bitişinde ~60 ms zaman yavaşlaması.
 - Kombo yazısı: büyüyerek beliren, sallanan "COMBO x7!" etiketleri; skor sayacı tween ile.
-- Glow/bloom (WorldEnvironment) ve renk vurguları.
+- Glow ve renk vurguları. (Uygulama: WorldEnvironment yerine toplamalı ışık hâleleri — Compatibility renderer/web uyumu için; bkz. PROGRESS.md.)
 
 ## Görsel yön (Aşama 3–4'te netleşecek)
 - Karakter: Tripo ile üretilmiş 3D model, yan kamera, toon shader + outline.

@@ -1,7 +1,7 @@
 # İlerleme
 
 **Aktif aşama:** 2 — Juice / animasyon
-**Durum:** Devam ediyor (7/8 madde)
+**Durum:** Tamamlandı (8/8 madde) — Aşama 3'e geçmek için kullanıcının "devam" demesi bekleniyor.
 
 ## Aşama 1 — Fizik prototipi
 - [x] Godot projesi + klasör yapısı + `.gitignore` + autoload'lar (`Events`, `GameState`)
@@ -24,10 +24,11 @@
 - [x] Ekran sarsıntısı (büyük iniş, duvar sekmesi, kombo bitişi)
 - [x] Hit-stop (kombo bitişinde ~60 ms yavaşlama)
 - [x] Kombo yazıları ("COMBO x7!") + skor sayacı tween
-- [ ] Glow/bloom (WorldEnvironment) + renk vurguları
+- [x] Glow ("sahte glow": toplamalı ışık hâleleri) + renk vurguları
 
 ## Tamamlanan aşamalar
 - Aşama 1 — Fizik prototipi (2026-11-10)
+- Aşama 2 — Juice / animasyon (2026-11-11)
 
 ## Notlar
 
@@ -61,13 +62,14 @@
 - Kombo yazıları: `scripts/ui/combo_popups.gd` (CanvasLayer, oyuncunun ekran konumunun üstünde), kurallar `scripts/ui/popup_rules.gd` (saf, GUT testli). HUD skoru `PopupRules.count_toward` ile sayar, bonusla büyür.
 - Kullanıcı geri bildirimi (yazılar): ilk sürüm (34–72 punto, "COMBO x3!", "+144 / 12 KAT") "çok büyük" bulundu → minimal yapıldı ("COMBO x3" 18–26, "+144" 22–30, az fırlama/sallanma). Asset aşamasında (4–5) daha şık, modern bir görünümle yeniden ele alınacak. Genel ilke: oyun içi yazılar minimal ve göze batmayan olmalı.
 - Godot tuzağı: Container'lar çocuklarının `scale`/`rotation`'ını her yerleşimde sıfırlar. Container içinde ölçek/dönme animasyonu için öğeyi düz bir `Control` ara katmanına koy (bkz. `hud.gd` `_score_holder`).
+- Glow: WorldEnvironment glow yerine "sahte glow". Sebep: Compatibility renderer'da HDR 2D yok; Canvas arka plan modunda glow'un çalıştığı belgelerde doğrulanmıyor ve nesne seçmiyor. Bunun yerine toplamalı (`BLEND_MODE_ADD`) yumuşak hâleler: `scripts/fx/player_aura.gd` (dururken/hızlı/kombo parlaklığı, kombo rengi), iz/hız çizgisi/kıvılcım toplamalı; bölüm platformu hâlesi ve platform üst vurgu şeridi `platform.gd`'de. Ortak doku/malzeme: `scripts/fx/soft_textures.gd`.
 - Kullanıcı geri bildirimi (iz): ilk sürümdeki kutu kopyaları "çok yoğun, köşeli" bulundu. İstenen: silik, hafif, kıvrımlı/yumuşak, köşesiz. Efektlerde bu üslup tercih edilmeli.
 - Takla `Visual` tarafında; `player.gd` `FLIP` durumuna geçmiyor (fizik taklayı bilmiyor). Kombo zıplayışı tespiti için `player_visual.gd` `GameState.combo_jumps`'ı okur (sadece okuma).
 - Kullanıcı geri bildirimi: hızlı koşup zıplamadaki uzayıp ezilme "zıpladığımı hissettiriyor" — bu his korunmalı. Kısa zıplamalar için yay efekt gücüne göre yumuşuyor (`SQUASH_SPRING_STIFFNESS_SOFT`).
 
 ### Ölçümler ve testler
 - Zıplama yükseklikleri: duran ~176 px (1,4 kat), tam hızda ~444 px (3,5 kat), kısa basış ~68 px. Coyote time platform kenarında doğrulandı.
-- GUT testleri: platform kuralları (7), kamera kuralları (7), kombo (11), skor (5), yay (4), takla (6), yumuşatma (3), sarsıntı (8), hit-stop (3), yazılar (5). Toplam 59.
+- GUT testleri: platform kuralları (7), kamera kuralları (7), kombo (11), skor (5), yay (4), takla (6), yumuşatma (3), sarsıntı (8), hit-stop (3), yazılar (5), hâle (3). Toplam 62.
 - İz: |hız| ≥ 650 (tam hızda koşu, büyük zıplama); koşuda ~140 px kuyruk, %22 saydamlık, en keskin kıvrım ~22°. Hız çizgileri: |hız| ≥ 1100 (büyük zıplama kalkışı ~0,3 s, hızlı düşüş), %30 saydamlık, aynı anda en çok ~4; koşuda çıkmaz.
 - İniş tozu: 350 px/s üstü inişlerde; normal iniş (500) 5 bulut, sert iniş 12. Duvar kıvılcımı: her sekmede 4–10, duvar yüzeyinden normal yönünde.
 - Sarsıntı (ölçüldü): normal zıplama/iniş 0; büyük iniş (≥1000 px/s) ~8 px; 12 katlık kombo bitişi ~8 px; tam hızla duvar ~3 px; ~0,8 s'de yatışır. En fazla 24 px.
