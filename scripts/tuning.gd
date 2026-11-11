@@ -198,23 +198,24 @@ const HITSTOP_FULL_FLOORS: int = 20
 ## Kombo yazısı bu zıplayış sayısından itibaren gösterilir ("COMBO x2!").
 const COMBO_POPUP_MIN_JUMPS: int = 2
 ## Yazı boyutu: MIN_JUMPS'ta FONT_MIN, FONT_FULL_JUMPS ve üstünde FONT_MAX.
-const COMBO_POPUP_FONT_MIN: int = 34
-const COMBO_POPUP_FONT_MAX: int = 64
+## (Kullanıcı tercihi: minimal. Asset aşamasında görünüm yeniden ele alınacak.)
+const COMBO_POPUP_FONT_MIN: int = 18
+const COMBO_POPUP_FONT_MAX: int = 26
 const COMBO_POPUP_FONT_FULL_JUMPS: int = 10
 ## Bonus yazısı ("+144"): 0 kat → FONT_MIN, BONUS_FONT_FULL_FLOORS kat → FONT_MAX.
-const BONUS_POPUP_FONT_MIN: int = 40
-const BONUS_POPUP_FONT_MAX: int = 72
+const BONUS_POPUP_FONT_MIN: int = 22
+const BONUS_POPUP_FONT_MAX: int = 30
 const BONUS_POPUP_FONT_FULL_FLOORS: int = 20
 ## Yazının ömrü (s), bu sürede ne kadar yükseldiği (px) ve oyuncunun ne kadar üstünde çıktığı.
-const COMBO_POPUP_LIFETIME: float = 0.9
-const BONUS_POPUP_LIFETIME: float = 1.3
-const POPUP_RISE: float = 70.0
-const POPUP_OFFSET_Y: float = 90.0
+const COMBO_POPUP_LIFETIME: float = 0.8
+const BONUS_POPUP_LIFETIME: float = 1.1
+const POPUP_RISE: float = 40.0
+const POPUP_OFFSET_Y: float = 70.0
 ## Beliriş: 0'dan bu ölçeğe büyür (taşma), sonra 1'e oturur.
-const POPUP_POP_SCALE: float = 1.3
-const POPUP_POP_TIME: float = 0.14
+const POPUP_POP_SCALE: float = 1.12
+const POPUP_POP_TIME: float = 0.12
 ## Sallanma: en büyük açı (derece) ve hızı (rad/s); ömür boyunca söner.
-const POPUP_WOBBLE_DEGREES: float = 8.0
+const POPUP_WOBBLE_DEGREES: float = 3.0
 const POPUP_WOBBLE_SPEED: float = 14.0
 ## Skor sayacı: hedefe yaklaşma hızı (büyük = daha hızlı sayar).
 const SCORE_COUNT_RATE: float = 6.0

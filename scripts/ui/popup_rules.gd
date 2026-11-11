@@ -8,7 +8,7 @@ static func shows_combo(jumps: int) -> bool:
 
 
 static func combo_text(jumps: int) -> String:
-	return "COMBO x%d!" % jumps
+	return "COMBO x%d" % jumps
 
 
 static func combo_font_size(jumps: int) -> int:
@@ -17,8 +17,9 @@ static func combo_font_size(jumps: int) -> int:
 	return roundi(lerpf(Tuning.COMBO_POPUP_FONT_MIN, Tuning.COMBO_POPUP_FONT_MAX, t))
 
 
-static func bonus_text(floors: int, bonus: int) -> String:
-	return "+%d\n%d KAT" % [bonus, floors]
+## Minimal: sadece kazanılan puan (kat sayısı HUD'daki kombo kutusunda zaten görünüyor).
+static func bonus_text(bonus: int) -> String:
+	return "+%d" % bonus
 
 
 static func bonus_font_size(floors: int) -> int:

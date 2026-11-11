@@ -1,13 +1,13 @@
 class_name ComboPopups
 extends CanvasLayer
-## Kombo yazıları: oyuncunun üstünde büyüyerek beliren, sallanarak yükselip solan
-## "COMBO x3!" ve kombo bitişinde "+144 / 12 KAT". Ekran koordinatında çizilir.
+## Kombo yazıları: oyuncunun üstünde hafifçe büyüyerek beliren, yükselip solan
+## "COMBO x3" ve kombo bitişinde "+144". Ekran koordinatında çizilir. Minimal tutulur.
 ## Yeni kombo yazısı öncekinin yerini alır (ekran dolmasın); bonus yazısı ayrıdır.
 
 const COMBO_COLOR := Color(1.0, 0.86, 0.4)
 const BONUS_COLOR := Color(1.0, 0.62, 0.32)
 const OUTLINE_COLOR := Color(0.08, 0.05, 0.1)
-const OUTLINE_SIZE: int = 10
+const OUTLINE_SIZE: int = 4
 ## Yazının ekran kenarlarına en fazla bu kadar yaklaşmasına izin verilir.
 const SCREEN_MARGIN: float = 24.0
 
@@ -35,7 +35,7 @@ func _on_combo_ended(_jumps: int, floors: int, bonus: int) -> void:
 	if is_instance_valid(_combo_label):
 		_combo_label.queue_free()
 	if bonus > 0:
-		_spawn(PopupRules.bonus_text(floors, bonus), PopupRules.bonus_font_size(floors),
+		_spawn(PopupRules.bonus_text(bonus), PopupRules.bonus_font_size(floors),
 				BONUS_COLOR, Tuning.BONUS_POPUP_LIFETIME)
 
 

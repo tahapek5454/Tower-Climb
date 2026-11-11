@@ -8,8 +8,8 @@ func test_combo_popup_starts_at_min_jumps() -> void:
 
 
 func test_texts() -> void:
-	assert_eq(PopupRules.combo_text(7), "COMBO x7!")
-	assert_eq(PopupRules.bonus_text(12, 144), "+144\n12 KAT")
+	assert_eq(PopupRules.combo_text(7), "COMBO x7")
+	assert_eq(PopupRules.bonus_text(144), "+144")
 
 
 func test_combo_font_grows_and_caps() -> void:
