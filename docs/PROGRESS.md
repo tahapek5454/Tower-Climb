@@ -1,12 +1,13 @@
 # İlerleme
 
 **Aktif aşama:** 3 — Karakter
-**Durum:** Başladı (0/8 madde) — chibi konsept görseli bekleniyor (kullanıcı ChatGPT ile üretecek).
+**Durum:** Başladı (0/8 madde) — chibi konsept görseli geldi (`docs/concept/hero_chibi_v1.jpg`); Tripo üretimi için kullanıcı onayı bekleniyor.
 
 ## ▶ Yeni oturumda buradan devam
 1. CLAUDE.md bölüm 0'daki ortam kontrolünü yap ve tabloyla raporla. Aşama 3 araçları 2026-11-11'de hazırdı: Blender 5.3.0 (PATH'te), uv/uvx 0.13.7, blender-mcp bağlı (eklenti 1.8, `tripo: on`). Yine de `get_addon_status` ile Blender bağlantısını doğrula.
-2. Bekleyen: Aşama 2'nin son maddesinin (ışık hâleleri) ekran görüntüsü kullanıcıdan henüz gelmedi.
-3. Sıradaki iş: Madde 1. Kullanıcı chibi konsept görselini verince `docs/concept/`'e kaydet, Tripo görselden 3D üretimini **kullanıcı onayıyla** başlat (her üretim kredi harcar), modeli Blender'da farklı açılardan göster.
+2. Aşama 2 ışık hâleleri ekran görüntüsüyle görüldü (2026-11-11): hâle, iz ve duvar efektleri kullanıcıya göre iyi; düzeltme istenmedi.
+3. Sıradaki iş: Madde 1. Konsept `docs/concept/hero_chibi_v1.jpg` (ChatGPT ile kullanıcı üretti). Tripo görselden 3D üretimini **kullanıcı onayıyla** başlat (her üretim kredi harcar), modeli Blender'da farklı açılardan göster.
+4. Kontrast kaygısı (kullanıcı sordu): karakter siyah/koyu gri, mevcut arka plan çok koyu lacivert → karakter kaybolur. Önerilen çözüm (kullanıcı onayı bekliyor): kule içi orta ton (soğuk mavi-mor taş), toon shader'da açık renkli kenar ışığı (rim) + siyah yerine açık/renkli outline, mevcut hâle karakterin arkasında kalır, gerekirse giysi tonu Blender'da açılır. Madde 5–6'da model geçici bir orta ton test zemininde denenecek.
 
 ## Aşama 3 kararları (2026-11-11)
 - Karakter: **kartal maskotu**, **chibi oranlar** (büyük kafa, kısa bacak, kalın uzuvlar), yumuşak/yuvarlak tüy tutamları. Beyaz kafa, turuncu gaga ve ayaklar, **düz koyu gri–siyah arası tişört** (çizgisiz, logo/yazı/reklam yok), koyu pantolon. İfade: kararlı ama sevimli.
