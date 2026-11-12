@@ -30,6 +30,18 @@ const INTERIOR_BEVEL_STRENGTH: float = 0.04
 const INTERIOR_EDGE_SHADE_WIDTH: float = 150.0
 const INTERIOR_EDGE_SHADE_STRENGTH: float = 0.18
 
+# --- Yan duvar ve zemin görünümü (görsel; assets/shaders/tower_wall.gdshader) ---
+## Duvar sütununun parça yüksekliği (iki kat) ve parçalar arasındaki derzin kalınlığı (px).
+const WALL_SEGMENT_HEIGHT: float = FLOOR_SPACING * 2.0
+const WALL_JOINT_WIDTH: float = 3.0
+## Kule içine bakan kenardaki açık pervazın genişliği (px) ve dış kenardaki kararma oranı.
+const WALL_LIP_WIDTH: float = 5.0
+const WALL_OUTER_SHADE: float = 0.15
+## Zeminin üstündeki açık şeridin kalınlığı ve zemin görüntüsünün aşağı doğru derinliği (px).
+## Kamera aşağı inmediği için yarım ekran yeter (sarsıntı payı dahil).
+const GROUND_TOP_HEIGHT: float = 4.0
+const GROUND_VISUAL_DEPTH: float = VIEW_HEIGHT * 0.5
+
 # --- Karakter ---
 const PLAYER_WIDTH: float = 32.0
 const PLAYER_HEIGHT: float = 48.0
