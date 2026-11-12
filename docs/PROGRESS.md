@@ -1,12 +1,35 @@
 # İlerleme
 
-**Aktif aşama:** 3 — Karakter
-**Durum:** Tamamlandı (8/8 madde) — Aşama 4'e geçmek için kullanıcının "devam" demesi bekleniyor.
+**Aktif aşama:** 4 — Dünya görselleri ve ses
+**Durum:** Devam ediyor (1/10 madde). Madde 1 için kullanıcının ekran görüntüsü/onayı bekleniyor; sıradaki madde 2.
+
+## Aşama 4 — Dünya görselleri ve ses
+Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
+- [x] 1. Palet kaynağı (`WorldPalette`) + kule içi taş deseni (`assets/shaders/tower_interior.gdshader`)
+- [ ] 2. Karakter okunurluğu: yeni zeminde outline/rim yeniden ayarı (`Tuning.MODEL_OUTLINE_*`, `MODEL_RIM_*`)
+- [ ] 3. Yan duvarlar ve zemin (taş sütun görünümü, iç kenar gölgesi; `TOWER_WIDTH`'ten türetilir)
+- [ ] 4. Platformlar (yuvarlak köşe, üst vurgu, alt gölge; renk temadan; bölüm platformu altın sarısı kalır)
+- [ ] 5. Dış çevre + parallax (gökyüzü gradyanı, 2–3 bulut katmanı, uzak siluetler; kule içi arka duvar da hafif yavaş kayar)
+- [ ] 6. Tema sistemi: her 100 katta yumuşak palet geçişi (`ThemeRules` saf + GUT; temaları hızlı görmek için debug tuşu)
+- [ ] 7. Işık: sahte ışık hâleleri (pencere/fener), `Light2D` yok
+- [ ] 8. Ses efektleri: `AudioManager` autoload, `Master/SFX/Music` bus'ları; zıplama, iniş, duvar sekmesi, kombo artışı/bitişi, bölüm platformu, oyun sonu
+- [ ] 9. Müzik: tek döngü, oyun bitince kısılır
+- [ ] 10. Kapanış: HUD/yazı renkleri, `CREDITS.md`, ince ayar
+
+### Aşama 4 kararları (2026-11-12)
+- **Dokular:** yok; her şey shader/kodla.
+- **Ses efektleri:** Claude kodla sentezler (`.wav` üreten script; indirme yok). Kullanıcı kararı.
+- **Müzik:** ertelendi ("sonra bakarız"); kullanıcı seçip `assets/audio/music/`'e koyacak. Madde 9'a gelince sor.
+- **Yazı tipi:** kullanıcı Claude'a bıraktı. İndirme yasak olduğu için şimdilik Godot varsayılan fontu; asıl karar Aşama 5'te (kullanıcı font dosyası koyarsa kullanılır).
+- **Palet ilkesi:** dünya orta parlaklık (%30–50), düşük doygunluk; saf siyah/beyaz ve doygun turuncu dünyada yok (turuncu/altın: karakter, kombo, bölüm platformu).
+- **Temalar (öneri, itiraz gelmedi):** Taş kule 0–99 (mavi-mor taş / koyu lacivert-gri duvar / soluk turkuaz platform) · Yosunlu 100–199 (adaçayı-teal / koyu çam / soluk kum) · Alacakaranlık 200–299 (mürdüm / koyu erik / soluk lila) · Buz 300–399 (soluk çelik mavisi / koyu petrol / buz mavisi) · Gece 400+ (lacivert-mor / koyu indigo / soluk mor); sonra döngü.
+- **Dış çevre (öneri, itiraz gelmedi):** gökyüzü + bulut + uzak siluetler.
+- Madde 1 uygulama notu: arka duvar dikdörtgeni kamerayı takip eder ama desen shader'da dünya koordinatından (`MODEL_MATRIX * VERTEX`) hesaplanır → taşlar yerinde durur. Blok 128x64 (kat başına iki sıra), ayarlar `Tuning.INTERIOR_*`, renkler `WorldPalette`. Madde 5'te parallax için shader'a kaydırma çarpanı eklenecek; madde 6'da `WorldPalette` temalı hâle gelecek.
 
 ## ▶ Yeni oturumda buradan devam
 1. CLAUDE.md bölüm 0'daki ortam kontrolünü yap ve tabloyla raporla.
-2. Aşama 3 bitti (2026-11-12); kullanıcı sonucu onayladı ("harika olmuş, ilk sürüm için okey"). Aşama bildirimi yapıldı, "devam" bekleniyor.
-3. Kullanıcı "devam" deyince **Aşama 4 — Dünya görselleri ve ses**. Ön koşul: kullanıcının seçeceği ses/doku kaynakları (lisansları `CREDITS.md`'ye). Kod yazmadan önce maddeleri ve yaklaşımı kullanıcıyla netleştir, bu dosyaya madde listesi yaz. Başlangıç noktaları:
+2. Aşama 4 sürüyor: yukarıdaki listede işaretsiz ilk maddeden devam et (tek seferde tek madde, her madde sonunda test talimatı + ekran görüntüsü iste).
+3. Aşama 4 başlangıç notları (eski):
    - **Kontrast (karar verildi, kullanıcı onayladı):** kule içi orta tonda olacak (siyah/beyazdan uzak, soğuk mavi-mor taş gibi); karakter siyah-beyaz-turuncu. Zemin değişince karakterin açık renkli outline/rim ayarını yeniden değerlendir (`Tuning.MODEL_OUTLINE_*`, `MODEL_RIM_*`).
    - Dünya kodla/shader ile üretilecek (GAME_DESIGN "Görsel yön"); parallax, her 100 katta tema, duvar dışı dekor alanı `TOWER_WIDTH`'ten türetilir.
    - Ses: internetten asset indirme yok; kaynakları kullanıcı seçer/indirir.

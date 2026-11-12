@@ -16,6 +16,20 @@ const PLATFORM_THICKNESS: float = 24.0
 ## Başlangıçta zeminin ekranın alt kenarından yüksekliği.
 const GROUND_SCREEN_MARGIN: float = 72.0
 
+# --- Kule içi görünümü (görsel; assets/shaders/tower_interior.gdshader) ---
+## Arka duvardaki bir taş bloğun boyutu (px). Yükseklik FLOOR_SPACING'in yarısı: kat başına iki sıra.
+const INTERIOR_BLOCK_SIZE: Vector2 = Vector2(128.0, 64.0)
+## Taş köşelerinin yuvarlaklığı, derz kalınlığı ve derz kenarının yumuşaklığı (px).
+const INTERIOR_BLOCK_CORNER_RADIUS: float = 12.0
+const INTERIOR_JOINT_WIDTH: float = 4.0
+const INTERIOR_JOINT_SOFTNESS: float = 3.0
+## Bloklar arası parlaklık farkı (±oran) ve blok içi üstten alta kararma.
+const INTERIOR_BLOCK_VARIATION: float = 0.05
+const INTERIOR_BEVEL_STRENGTH: float = 0.08
+## Duvar dibindeki yumuşak gölge: genişlik (px) ve en koyu noktadaki kararma oranı.
+const INTERIOR_EDGE_SHADE_WIDTH: float = 150.0
+const INTERIOR_EDGE_SHADE_STRENGTH: float = 0.28
+
 # --- Karakter ---
 const PLAYER_WIDTH: float = 32.0
 const PLAYER_HEIGHT: float = 48.0

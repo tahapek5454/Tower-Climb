@@ -3,9 +3,7 @@ extends Node2D
 ## Kule: sol/sağ duvarlar ve zemin. Dünya orijini: x=0 kule ortası, y=0 zeminin üstü, yukarı = -y.
 ## Duvarlar kamerayı dikeyde takip eder; böylece kule sonsuz görünür.
 
-const WALL_COLOR := Color(0.16, 0.18, 0.26)
-const GROUND_COLOR := Color(0.35, 0.40, 0.55)
-const INTERIOR_COLOR := Color(0.09, 0.10, 0.15)
+const INTERIOR_SHADER: Shader = preload("res://assets/shaders/tower_interior.gdshader")
 
 var _walls: Node2D
 
@@ -15,17 +13,39 @@ func _ready() -> void:
 	_walls.name = "Walls"
 	add_child(_walls)
 
-	var interior_size := Vector2(Tuning.TOWER_WIDTH, Tuning.WALL_HEIGHT)
-	_walls.add_child(make_rect_visual(interior_size, INTERIOR_COLOR))
+	_walls.add_child(_make_interior())
 
 	var wall_size := Vector2(Tuning.WALL_THICKNESS, Tuning.WALL_HEIGHT)
 	var wall_x: float = (Tuning.TOWER_WIDTH + Tuning.WALL_THICKNESS) * 0.5
-	_walls.add_child(_make_body("LeftWall", Vector2(-wall_x, 0.0), wall_size, WALL_COLOR))
-	_walls.add_child(_make_body("RightWall", Vector2(wall_x, 0.0), wall_size, WALL_COLOR))
+	_walls.add_child(_make_body("LeftWall", Vector2(-wall_x, 0.0), wall_size, WorldPalette.WALL))
+	_walls.add_child(_make_body("RightWall", Vector2(wall_x, 0.0), wall_size, WorldPalette.WALL))
 
 	var ground_size := Vector2(Tuning.TOWER_WIDTH, Tuning.PLATFORM_THICKNESS)
 	var ground_pos := Vector2(0.0, Tuning.PLATFORM_THICKNESS * 0.5)
-	add_child(_make_body("Ground", ground_pos, ground_size, GROUND_COLOR))
+	add_child(_make_body("Ground", ground_pos, ground_size, WorldPalette.GROUND))
+
+
+## Arka duvar: taş deseni shader ile çizilir (desen dünya koordinatında sabit).
+func _make_interior() -> Polygon2D:
+	var material := ShaderMaterial.new()
+	material.shader = INTERIOR_SHADER
+	material.set_shader_parameter(&"stone_color", WorldPalette.INTERIOR_STONE)
+	material.set_shader_parameter(&"joint_color", WorldPalette.INTERIOR_JOINT)
+	material.set_shader_parameter(&"block_size", Tuning.INTERIOR_BLOCK_SIZE)
+	material.set_shader_parameter(&"corner_radius", Tuning.INTERIOR_BLOCK_CORNER_RADIUS)
+	material.set_shader_parameter(&"joint_width", Tuning.INTERIOR_JOINT_WIDTH)
+	material.set_shader_parameter(&"joint_softness", Tuning.INTERIOR_JOINT_SOFTNESS)
+	material.set_shader_parameter(&"block_variation", Tuning.INTERIOR_BLOCK_VARIATION)
+	material.set_shader_parameter(&"bevel_strength", Tuning.INTERIOR_BEVEL_STRENGTH)
+	material.set_shader_parameter(&"half_width", Tuning.TOWER_WIDTH * 0.5)
+	material.set_shader_parameter(&"edge_shade_width", Tuning.INTERIOR_EDGE_SHADE_WIDTH)
+	material.set_shader_parameter(&"edge_shade_strength", Tuning.INTERIOR_EDGE_SHADE_STRENGTH)
+
+	var interior_size := Vector2(Tuning.TOWER_WIDTH, Tuning.WALL_HEIGHT)
+	var interior: Polygon2D = make_rect_visual(interior_size, Color.WHITE)
+	interior.name = "Interior"
+	interior.material = material
+	return interior
 
 
 func _physics_process(_delta: float) -> void:
