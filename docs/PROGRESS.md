@@ -1,7 +1,7 @@
 # İlerleme
 
 **Aktif aşama:** 4 — Dünya görselleri ve ses
-**Durum:** Devam ediyor (5/10 madde). Madde 5 (dış çevre + parallax) yapıldı, kullanıcı testi bekleniyor; sıradaki madde 6.
+**Durum:** Devam ediyor (5/10 madde + 6a). 6a (tema renk sistemi + F6) yapıldı, kullanıcı testi bekleniyor; sıradaki 6b (bölüme özel platform tasarımları — önce kullanıcıya seçenek göster).
 
 ## Aşama 4 — Dünya görselleri ve ses
 Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
@@ -12,7 +12,8 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - [x] 4b. Taş kule platformu detaylandırıldı (başlık taşları, tonlu bloklar, derzler, destek taşları)
 - [x] 4c. Platform genişlik kuralları: bölüme göre değişir + rastgele sapma (kimi katlarda dar/geniş); `PlatformRules` + GUT
 - [x] 5. Dış çevre + parallax (gökyüzü gradyanı, 2–3 bulut katmanı, uzak siluetler; kule içi arka duvar da hafif yavaş kayar)
-- [ ] 6. Tema sistemi: her 100 katta yumuşak palet geçişi + **bölüme özel platform tasarımı** (kodla; görünen kalınlık/biçim de değişebilir) (`ThemeRules` saf + GUT; temaları hızlı görmek için debug tuşu)
+- [x] 6a. Tema renk sistemi: 5 tema, bölüm platformundan sonra 8 katta yumuşak geçiş (iç duvar, yan duvar, gökyüzü, bulut, dağ, platform); F6 debug bölüm atlama; overlay'de tema adı
+- [ ] 6b. Bölüme özel platform tasarımları (kodla; görünen kalınlık/biçim de değişebilir). Kullanıcı 4b'yi "çok düzenli" buldu → önce birkaç seçeneği görsel olarak göster, seçtir (`ThemeRules` saf + GUT; temaları hızlı görmek için debug tuşu)
 - [ ] 7. Işık: sahte ışık hâleleri (pencere/fener), `Light2D` yok
 - [ ] 8. Ses efektleri: `AudioManager` autoload, `Master/SFX/Music` bus'ları; zıplama, iniş, duvar sekmesi, kombo artışı/bitişi, bölüm platformu, oyun sonu
 - [ ] 9. Müzik: tek döngü, oyun bitince kısılır
@@ -40,6 +41,8 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - Shader tuzağı: ızgara tabanlı desenlerde kenar yumuşatması için `fwidth` kullanma — hücre sınırında uzaklık sıçrar ve ince dikey çizgi bırakır. Sabit yumuşatma genişliği (`edge_softness`) kullan; şekiller hücreye sığmalı.
 - Kullanıcı geri bildirimi (madde 5): "her şey çok daha güzel olmaya başladı". İstek: dağlar dağ rengine benzesin (kahve tonları), kulenin dibine çimenli ova. → Dağlar düşük doygunlukta toprak/kahve (`HILL_FAR` soluk gri-kahve, `HILL_NEAR` toprak kahvesi), kulenin dibinde duvar dışında çimenli ova (`meadow()`, parallax 1 = zeminle aynı derinlik; dalgalı üst kenar, açık üst şerit, koyu çimen bantları; renkler `WorldPalette.MEADOW*`).
 - Madde 6 için not: yükseldikçe gökyüzü (ve bulut yoğunluğu) temaya göre değişmeli; şu an ekran gradyanı sabit. HUD yazıları sol üstte açık bulutların üstüne denk gelebiliyor (madde 10).
+- Madde 6a: `ThemeRules` (saf: `position(kat_değeri)` sürekli tema konumu — tam kısım tema, kesir geçiş; geçiş bölüm platformunda başlar, `Tuning.THEME_TRANSITION_FLOORS`=8 katta biter; `theme_index` döngülü; `floor_value_at(y)`), `WorldPalette` artık tema tablosu (`_themes`, anahtarlar başta açıklandı; `colors_at(konum)` iki tema arası lerp; `PLATFORM_SECTION`, `MEADOW*`, `GROUND*` temadan bağımsız), `ThemeTracker` (kamera merkezinden renkleri izler; sadece konum değişince yeniden hesaplar). Tower ve Backdrop `_process`'te shader parametrelerini günceller; platform rengi kendi katının tema konumundan (oluşurken). Temalar: Taş kule · Yosunlu · Alacakaranlık · Buz · Gece (değerler `world_palette.gd`). 5 temanın görüntüsü alındı: karakter hepsinde okunuyor (Gece dahil; outline değişikliği gerekmedi). GUT toplam 88 (`test_theme_rules.gd` 8 test; palet uç değer testi dahil).
+- F6 (`debug_skip_section`, project.godot'a eklendi): oyuncuyu bir sonraki bölüm platformuna (tam genişlik, ortada) ışınlar, kamerayı başlangıçtaki gibi konumlar (`main._debug_skip_section`, `PlatformSpawner.spawn_through_floor`). Işınlanınca iniş olayı olmadığından HUD'daki kat ilk inişe kadar güncellenmez (sadece debug).
 - Madde 1 uygulama notu: arka duvar dikdörtgeni kamerayı takip eder ama desen shader'da dünya koordinatından (`MODEL_MATRIX * VERTEX`) hesaplanır → taşlar yerinde durur. Blok 128x64 (kat başına iki sıra), ayarlar `Tuning.INTERIOR_*`, renkler `WorldPalette`. Madde 5'te parallax için shader'a kaydırma çarpanı eklenecek; madde 6'da `WorldPalette` temalı hâle gelecek.
 
 ## ▶ Yeni oturumda buradan devam

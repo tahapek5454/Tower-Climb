@@ -7,6 +7,7 @@ const BACKDROP_COLOR := Color(0.05, 0.05, 0.08)
 
 var _player: Player
 var _camera: TowerCamera
+var _spawner: PlatformSpawner
 
 
 func _ready() -> void:
@@ -20,9 +21,9 @@ func _ready() -> void:
 	tower.name = "Tower"
 	add_child(tower)
 
-	var spawner := PlatformSpawner.new()
-	spawner.name = "Platforms"
-	add_child(spawner)
+	_spawner = PlatformSpawner.new()
+	_spawner.name = "Platforms"
+	add_child(_spawner)
 
 	_player = PLAYER_SCENE.instantiate() as Player
 	_player.position = Vector2.ZERO
@@ -66,6 +67,25 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	if not GameState.is_game_over and _camera.is_below_screen(_player.global_position.y):
 		GameState.end_game()
+
+
+func _unhandled_input(input_event: InputEvent) -> void:
+	if input_event.is_action_pressed(&"debug_skip_section") and not GameState.is_game_over:
+		_debug_skip_section()
+		get_viewport().set_input_as_handled()
+
+
+## Debug (F6): oyuncuyu bir sonraki bölüm platformuna (tam genişlik, ortada) ışınlar; kamera
+## başlangıçtaki gibi konumlanır. Temaları 100 kat tırmanmadan görmek için. Skor/kombo da atlar.
+func _debug_skip_section() -> void:
+	var interval: int = Tuning.SECTION_FLOOR_INTERVAL
+	var current: int = floori(ThemeRules.floor_value_at(_player.position.y))
+	var target: int = (floori(float(current) / interval) + 1) * interval
+	_spawner.spawn_through_floor(target)
+	var target_y: float = PlatformRules.floor_y(target)
+	_player.position = Vector2(0.0, target_y)
+	_player.velocity = Vector2.ZERO
+	_camera.position.y = target_y + Tuning.GROUND_SCREEN_MARGIN - Tuning.VIEW_HEIGHT * 0.5
 
 
 func _on_player_event(event_name: StringName, data: Dictionary) -> void:

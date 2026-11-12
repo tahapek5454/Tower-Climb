@@ -28,9 +28,14 @@ func setup(p_floor_number: int, p_width: float) -> void:
 
 	var visual := PlatformVisual.new()
 	visual.name = "Visual"
-	visual.setup(width, WorldPalette.PLATFORM_SECTION if is_section else WorldPalette.PLATFORM,
-			floor_number)
+	visual.setup(width, WorldPalette.PLATFORM_SECTION if is_section else _theme_color(), floor_number)
 	add_child(visual)
+
+
+## Platformun kendi katındaki tema rengi (geçiş bölgesinde iki tema arası).
+func _theme_color() -> Color:
+	var theme_position: float = ThemeRules.position(float(floor_number))
+	return WorldPalette.colors_at(theme_position)[&"platform"]
 
 
 ## Bölüm platformunun arkasında yumuşak, toplamalı sarı ışık hâlesi.

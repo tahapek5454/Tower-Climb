@@ -54,6 +54,10 @@ func _compose_text() -> String:
 		var scroll: String = "kayıyor" if camera.is_scrolling else "bekliyor"
 		lines.append("Kamera: %.1f px/s (%s)" % [camera.speed, scroll])
 		lines.append("Sarsıntı: %.2f" % camera.shake.trauma)
+		var theme_position: float = ThemeRules.position(
+				ThemeRules.floor_value_at(camera.get_screen_center_position().y))
+		lines.append("Tema: %s (%.2f)  (F6 sonraki bölüm)" % [
+				WorldPalette.theme_name(theme_position), theme_position])
 	return "\n".join(lines)
 
 

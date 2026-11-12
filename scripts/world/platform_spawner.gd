@@ -30,6 +30,13 @@ func platform_count() -> int:
 	return _platforms.size()
 
 
+## Verilen kata kadar (dahil) platformları hemen üretir (debug: bölüm atlama).
+func spawn_through_floor(floor_number: int) -> void:
+	while _next_floor <= floor_number:
+		_spawn(_next_floor)
+		_next_floor += 1
+
+
 func _spawn_up_to(top_y: float) -> void:
 	while PlatformRules.floor_y(_next_floor) > top_y:
 		_spawn(_next_floor)

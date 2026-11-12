@@ -13,6 +13,7 @@ Ruh hali: hızlı, akışkan, abartılı ve eğlenceli animasyonlar (takla, sekm
 | Duraklat | Esc |
 | Debug overlay | F3 |
 | Debug yavaş çekim (x0,25) | F4 |
+| Debug: sonraki bölüme ışınlan | F6 |
 | Tam ekran aç/kapat | F11 veya Alt+Enter |
 | Yeniden başla (oyun bitince) | R veya Space |
 

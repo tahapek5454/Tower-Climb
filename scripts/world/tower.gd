@@ -3,11 +3,15 @@ extends Node2D
 ## Kule: sol/sağ duvarlar ve zemin. Dünya orijini: x=0 kule ortası, y=0 zeminin üstü, yukarı = -y.
 ## Duvarlar kamerayı dikeyde takip eder; böylece kule sonsuz görünür.
 ## Desenler shader'da dünya koordinatından hesaplanır: duvar kamerayla kaysa da taşlar yerinde durur.
+## Renkler temadan gelir (ThemeTracker): kamera yükseldikçe bölüm temaları arasında yumuşak geçiş.
 
 const INTERIOR_SHADER: Shader = preload("res://assets/shaders/tower_interior.gdshader")
 const WALL_SHADER: Shader = preload("res://assets/shaders/tower_wall.gdshader")
 
 var _walls: Node2D
+var _interior_material: ShaderMaterial
+var _wall_materials: Array[ShaderMaterial] = []
+var _theme := ThemeTracker.new()
 
 
 func _ready() -> void:
@@ -22,6 +26,7 @@ func _ready() -> void:
 	_walls.add_child(_make_wall("RightWall", wall_x, -1.0))
 
 	add_child(_make_ground())
+	_apply_theme()
 
 
 func _physics_process(_delta: float) -> void:
@@ -30,12 +35,27 @@ func _physics_process(_delta: float) -> void:
 		_walls.position.y = camera.get_screen_center_position().y
 
 
+func _process(_delta: float) -> void:
+	var camera: Camera2D = get_viewport().get_camera_2d()
+	if camera != null and _theme.update(camera.get_screen_center_position().y):
+		_apply_theme()
+
+
+## Geçerli tema renklerini arka duvar ve yan duvar shader'larına yazar.
+func _apply_theme() -> void:
+	var colors: Dictionary = _theme.colors
+	_interior_material.set_shader_parameter(&"stone_color", colors[&"interior_stone"])
+	_interior_material.set_shader_parameter(&"joint_color", colors[&"interior_joint"])
+	for material: ShaderMaterial in _wall_materials:
+		material.set_shader_parameter(&"wall_color", colors[&"wall"])
+		material.set_shader_parameter(&"joint_color", colors[&"wall_joint"])
+		material.set_shader_parameter(&"lip_color", colors[&"wall_lip"])
+
+
 ## Arka duvar: taş deseni shader ile çizilir.
 func _make_interior() -> Polygon2D:
 	var material := ShaderMaterial.new()
 	material.shader = INTERIOR_SHADER
-	material.set_shader_parameter(&"stone_color", WorldPalette.INTERIOR_STONE)
-	material.set_shader_parameter(&"joint_color", WorldPalette.INTERIOR_JOINT)
 	material.set_shader_parameter(&"block_size", Tuning.INTERIOR_BLOCK_SIZE)
 	material.set_shader_parameter(&"corner_radius", Tuning.INTERIOR_BLOCK_CORNER_RADIUS)
 	material.set_shader_parameter(&"joint_width", Tuning.INTERIOR_JOINT_WIDTH)
@@ -52,6 +72,7 @@ func _make_interior() -> Polygon2D:
 	var interior: Polygon2D = make_rect_visual(interior_size, Color.WHITE)
 	interior.name = "Interior"
 	interior.material = material
+	_interior_material = material
 	return interior
 
 
@@ -60,9 +81,6 @@ func _make_interior() -> Polygon2D:
 func _make_wall(wall_name: String, center_x: float, inner_sign: float) -> StaticBody2D:
 	var material := ShaderMaterial.new()
 	material.shader = WALL_SHADER
-	material.set_shader_parameter(&"wall_color", WorldPalette.WALL)
-	material.set_shader_parameter(&"joint_color", WorldPalette.WALL_JOINT)
-	material.set_shader_parameter(&"lip_color", WorldPalette.WALL_LIP)
 	material.set_shader_parameter(&"center_x", center_x)
 	material.set_shader_parameter(&"thickness", Tuning.WALL_THICKNESS)
 	material.set_shader_parameter(&"inner_sign", inner_sign)
@@ -75,6 +93,7 @@ func _make_wall(wall_name: String, center_x: float, inner_sign: float) -> Static
 	var body: StaticBody2D = _make_body(wall_name, Vector2(center_x, 0.0), size)
 	var visual: Polygon2D = make_rect_visual(size, Color.WHITE)
 	visual.material = material
+	_wall_materials.append(material)
 	body.add_child(visual)
 	return body
 
