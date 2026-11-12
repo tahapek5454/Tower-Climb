@@ -168,6 +168,8 @@ const PLATFORM_WIDTH_MIN: float = 140.0
 const SECTION_FLOOR_INTERVAL: int = 100
 ## Yeni bölümün teması (renkler) bölüm platformundan sonra bu kadar kat boyunca yumuşakça gelir.
 const THEME_TRANSITION_FLOORS: float = 8.0
+## Her temanın iki platform stili var (WorldPalette.PLATFORM_STYLES); ikincisinin çıkma olasılığı.
+const PLATFORM_SECONDARY_STYLE_CHANCE: float = 0.35
 ## Platform genişliği bu kata kadar MAX'tan MIN'e doğrusal daralır.
 const PLATFORM_NARROW_FLOORS: int = 300
 ## Her bölüm bu kadar geniş başlar (nefes payı); bölüm boyunca pay erir.

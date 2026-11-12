@@ -71,3 +71,20 @@ func test_world_colors_avoid_pure_black_and_white() -> void:
 		for key: StringName in colors:
 			var luminance: float = (colors[key] as Color).get_luminance()
 			assert_true(luminance > 0.05 and luminance < 0.92, "tema %d %s çok uç: %.2f" % [i, key, luminance])
+
+
+func test_platform_style_mixes_primary_and_secondary() -> void:
+	var chance: float = Tuning.PLATFORM_SECONDARY_STYLE_CHANCE
+	var styles: Array = WorldPalette.PLATFORM_STYLES[0]
+	assert_eq(ThemeRules.platform_style(5, chance - 0.01), styles[1], "düşük zar ikinci stil")
+	assert_eq(ThemeRules.platform_style(5, chance + 0.01), styles[0], "yüksek zar ana stil")
+
+
+func test_platform_style_follows_theme() -> void:
+	var interval: int = Tuning.SECTION_FLOOR_INTERVAL
+	var after_transition: int = interval + ceili(Tuning.THEME_TRANSITION_FLOORS) + 1
+	assert_eq(ThemeRules.platform_style(after_transition, 0.99), WorldPalette.PLATFORM_STYLES[1][0])
+	var count: int = WorldPalette.PLATFORM_STYLES.size()
+	assert_eq(count, WorldPalette.theme_count(), "her temanın stil listesi var")
+	var wrapped: int = interval * count + ceili(Tuning.THEME_TRANSITION_FLOORS) + 1
+	assert_eq(ThemeRules.platform_style(wrapped, 0.99), WorldPalette.PLATFORM_STYLES[0][0], "döngü")

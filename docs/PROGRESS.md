@@ -1,7 +1,7 @@
 # İlerleme
 
 **Aktif aşama:** 4 — Dünya görselleri ve ses
-**Durum:** Devam ediyor (5/10 madde + 6a). 6a (tema renk sistemi + F6) yapıldı, kullanıcı testi bekleniyor; sıradaki 6b (bölüme özel platform tasarımları — önce kullanıcıya seçenek göster).
+**Durum:** Devam ediyor (6/10 madde). 6b (bölüme özel platform stilleri, iki stil karışık) yapıldı, kullanıcı testi bekleniyor; sıradaki 6c (platform üstü/altı ek objeler, basitten karmaşığa).
 
 ## Aşama 4 — Dünya görselleri ve ses
 Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
@@ -13,7 +13,8 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - [x] 4c. Platform genişlik kuralları: bölüme göre değişir + rastgele sapma (kimi katlarda dar/geniş); `PlatformRules` + GUT
 - [x] 5. Dış çevre + parallax (gökyüzü gradyanı, 2–3 bulut katmanı, uzak siluetler; kule içi arka duvar da hafif yavaş kayar)
 - [x] 6a. Tema renk sistemi: 5 tema, bölüm platformundan sonra 8 katta yumuşak geçiş (iç duvar, yan duvar, gökyüzü, bulut, dağ, platform); F6 debug bölüm atlama; overlay'de tema adı
-- [ ] 6b. Bölüme özel platform tasarımları (kodla; görünen kalınlık/biçim de değişebilir). Kullanıcı 4b'yi "çok düzenli" buldu → önce birkaç seçeneği görsel olarak göster, seçtir (`ThemeRules` saf + GUT; temaları hızlı görmek için debug tuşu)
+- [x] 6b. Bölüme özel platform stilleri: her temada iki stil rastgele karışık (kullanıcı onayladı)
+- [ ] 6c. Ek objeler (kullanıcı isteği, "basitten karmaşığa"): önce platformlara yapışık süsler (yosun, kar, sarmaşık, mantar vb.), sonra bağımsız objeler. Fener/ışık objeleri madde 7 ile birleşebilir (`ThemeRules` saf + GUT; temaları hızlı görmek için debug tuşu)
 - [ ] 7. Işık: sahte ışık hâleleri (pencere/fener), `Light2D` yok
 - [ ] 8. Ses efektleri: `AudioManager` autoload, `Master/SFX/Music` bus'ları; zıplama, iniş, duvar sekmesi, kombo artışı/bitişi, bölüm platformu, oyun sonu
 - [ ] 9. Müzik: tek döngü, oyun bitince kısılır
@@ -43,6 +44,8 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - Madde 6 için not: yükseldikçe gökyüzü (ve bulut yoğunluğu) temaya göre değişmeli; şu an ekran gradyanı sabit. HUD yazıları sol üstte açık bulutların üstüne denk gelebiliyor (madde 10).
 - Madde 6a: `ThemeRules` (saf: `position(kat_değeri)` sürekli tema konumu — tam kısım tema, kesir geçiş; geçiş bölüm platformunda başlar, `Tuning.THEME_TRANSITION_FLOORS`=8 katta biter; `theme_index` döngülü; `floor_value_at(y)`), `WorldPalette` artık tema tablosu (`_themes`, anahtarlar başta açıklandı; `colors_at(konum)` iki tema arası lerp; `PLATFORM_SECTION`, `MEADOW*`, `GROUND*` temadan bağımsız), `ThemeTracker` (kamera merkezinden renkleri izler; sadece konum değişince yeniden hesaplar). Tower ve Backdrop `_process`'te shader parametrelerini günceller; platform rengi kendi katının tema konumundan (oluşurken). Temalar: Taş kule · Yosunlu · Alacakaranlık · Buz · Gece (değerler `world_palette.gd`). 5 temanın görüntüsü alındı: karakter hepsinde okunuyor (Gece dahil; outline değişikliği gerekmedi). GUT toplam 88 (`test_theme_rules.gd` 8 test; palet uç değer testi dahil).
 - F6 (`debug_skip_section`, project.godot'a eklendi): oyuncuyu bir sonraki bölüm platformuna (tam genişlik, ortada) ışınlar, kamerayı başlangıçtaki gibi konumlar (`main._debug_skip_section`, `PlatformSpawner.spawn_through_floor`). Işınlanınca iniş olayı olmadığından HUD'daki kat ilk inişe kadar güncellenmez (sadece debug).
+- Madde 6b: stiller `scripts/world/platform_styles_stone.gd` (`masonry` düzensiz taş örgü, `rock` organik kaya levha), `platform_styles_themed.gd` (`plank`, `metal`, `ice`, `crystal`), ortak yardımcılar `platform_draw.gd` (`PlatformDraw`: yuvarlak dikdörtgen, yay, dolu şekil + koyu dış çizgi — karakterin dış çizgisiyle aynı aile `0.09,0.10,0.18`). `PlatformVisual.setup(..., style)`; `blocks` = eski düzenli taş (artık sadece altın bölüm platformu, "kapı"). Tema stilleri `WorldPalette.PLATFORM_STYLES` ([ana, ikinci]: Taş kule masonry/rock · Yosunlu plank/rock · Alacakaranlık metal/masonry · Buz ice/rock · Gece crystal/rock), seçim `ThemeRules.platform_style(kat, zar)` (ikinci stil olasılığı `Tuning.PLATFORM_SECONDARY_STYLE_CHANCE`=0,35; zar kattan tohumlu → aynı kat hep aynı). Stil geçişi tema geçişinin ortasında. Kullanıcıya önce 8 seçenekli galeri görseli gösterildi (scratchpad `gallery.gd`), "ürettiklerin güzel" + karıştırma onaylandı. Önerilmiş ama yapılmamış: Yosunlu'da kaya + yosun, Buz'da kaya + kar (6c'de süslerle). Tuzak: `rounded_rect` yarıçapı kenarın tam yarısı olursa çakışan noktalar `draw_colored_polygon` üçgenlemesini bozar ("Invalid polygon data") → yarıçap biraz kısılır. GUT toplam 90.
+- Kullanıcı geri bildirimi (6a): "çok güzel olmuş, özellikle gece favorim".
 - Madde 1 uygulama notu: arka duvar dikdörtgeni kamerayı takip eder ama desen shader'da dünya koordinatından (`MODEL_MATRIX * VERTEX`) hesaplanır → taşlar yerinde durur. Blok 128x64 (kat başına iki sıra), ayarlar `Tuning.INTERIOR_*`, renkler `WorldPalette`. Madde 5'te parallax için shader'a kaydırma çarpanı eklenecek; madde 6'da `WorldPalette` temalı hâle gelecek.
 
 ## ▶ Yeni oturumda buradan devam

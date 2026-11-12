@@ -24,6 +24,15 @@ static func floor_value_at(world_y: float) -> float:
 	return -world_y / Tuning.FLOOR_SPACING
 
 
+## Katın platform stili: katın temasının (geçişin ortasında yenisine geçer) ana stili, roll (0..1)
+## PLATFORM_SECONDARY_STYLE_CHANCE'ın altındaysa ikinci stili. Bölüm platformu ayrı (Platform'da).
+static func platform_style(floor_number: int, roll: float) -> StringName:
+	var theme_position: float = position(float(floor_number))
+	var styles: Array = WorldPalette.PLATFORM_STYLES[
+			theme_index(roundf(theme_position), WorldPalette.PLATFORM_STYLES.size())]
+	return styles[1] if roll < Tuning.PLATFORM_SECONDARY_STYLE_CHANCE else styles[0]
+
+
 ## Tema konumunun tam kısmının, count temalık döngüdeki sırası (son temadan sonra başa döner).
 static func theme_index(theme_position: float, count: int) -> int:
 	return posmod(floori(theme_position), count)

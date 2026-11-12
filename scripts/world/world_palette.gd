@@ -11,6 +11,18 @@ extends RefCounted
 
 const THEME_NAMES: PackedStringArray = ["Taş kule", "Yosunlu", "Alacakaranlık", "Buz", "Gece"]
 
+## Her temanın platform stilleri: [ana stil, araya karışan ikinci stil] (bkz. PlatformVisual).
+## Hangisinin çıkacağı ThemeRules.platform_style'da.
+const PLATFORM_STYLES: Array[Array] = [
+	[&"masonry", &"rock"],
+	[&"plank", &"rock"],
+	[&"metal", &"masonry"],
+	[&"ice", &"rock"],
+	[&"crystal", &"rock"],
+]
+## Bölüm platformunun stili (altın "kapı"; temadan bağımsız).
+const SECTION_PLATFORM_STYLE: StringName = &"blocks"
+
 ## Bölüm platformu (her 100 kat): altın sarısı, temadan bağımsız.
 const PLATFORM_SECTION := Color(0.95, 0.80, 0.35)
 ## Kulenin dibi (sadece başlangıçta görünür; temadan bağımsız): çimenli ova ve zemin.

@@ -28,7 +28,10 @@ func setup(p_floor_number: int, p_width: float) -> void:
 
 	var visual := PlatformVisual.new()
 	visual.name = "Visual"
-	visual.setup(width, WorldPalette.PLATFORM_SECTION if is_section else _theme_color(), floor_number)
+	if is_section:
+		visual.setup(width, WorldPalette.PLATFORM_SECTION, floor_number, WorldPalette.SECTION_PLATFORM_STYLE)
+	else:
+		visual.setup(width, _theme_color(), floor_number, ThemeRules.platform_style(floor_number, _style_roll()))
 	add_child(visual)
 
 
@@ -36,6 +39,13 @@ func setup(p_floor_number: int, p_width: float) -> void:
 func _theme_color() -> Color:
 	var theme_position: float = ThemeRules.position(float(floor_number))
 	return WorldPalette.colors_at(theme_position)[&"platform"]
+
+
+## Kata bağlı sabit rastgele sayı (0..1): aynı kat hep aynı stili alır.
+func _style_roll() -> float:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(floor_number * 7919 + 13)
+	return rng.randf()
 
 
 ## Bölüm platformunun arkasında yumuşak, toplamalı sarı ışık hâlesi.
