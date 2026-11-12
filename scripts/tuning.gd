@@ -428,6 +428,8 @@ const SFX_WHOOSH_DB: float = -17.0
 const UI_HOVER_DB: float = -16.0
 const UI_CLICK_DB: float = -9.0
 const UI_BACK_DB: float = -9.0
+## Yeni rekor fanfarı (oyun sonunda game_over sesinin yerine çalar).
+const SFX_RECORD_DB: float = -3.0
 ## Zıplama perdesi: en yavaş ve en hızlı zıplamada.
 const SFX_JUMP_PITCH_MIN: float = 0.9
 const SFX_JUMP_PITCH_MAX: float = 1.3

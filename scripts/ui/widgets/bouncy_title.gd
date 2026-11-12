@@ -17,6 +17,9 @@ const OUTLINE_SIZE: int = 8
 var text: String
 var font_size: int
 var accent_from: int
+## Harf renkleri: genel renk ve (accent_from'dan sonraki harfler için) vurgu rengi.
+var base_color: Color = UiStyle.TEXT
+var accent_color: Color = UiStyle.ACCENT
 var _font: Font
 var _time: float = 0.0
 
@@ -27,9 +30,20 @@ func _init(p_text: String = "", p_font_size: int = 40, p_accent_from: int = -1) 
 	accent_from = p_accent_from
 	_font = ThemeDB.fallback_font
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_update_size()
+	set_process(false)
+
+
+## Yazıyı değiştirir (boyut yeniden hesaplanır); animasyon play() ile baştan oynar.
+func set_text(new_text: String) -> void:
+	text = new_text
+	_update_size()
+	queue_redraw()
+
+
+func _update_size() -> void:
 	var width: float = _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
 	custom_minimum_size = Vector2(width + OUTLINE_SIZE, font_size * 1.25 + WAVE_AMPLITUDE * 2.0)
-	set_process(false)
 
 
 ## Giriş animasyonunu baştan oynatır.
@@ -55,7 +69,7 @@ func _draw() -> void:
 		var k: float = clampf((_time - i * LETTER_DELAY) / DROP_TIME, 0.0, 1.0)
 		var offset: float = -DROP * (1.0 - _ease_out_back(k))
 		offset += sin(_time * WAVE_SPEED - i * WAVE_SPREAD) * WAVE_AMPLITUDE * wave_weight
-		var color: Color = UiStyle.ACCENT if accent_from >= 0 and i >= accent_from else UiStyle.TEXT
+		var color: Color = accent_color if accent_from >= 0 and i >= accent_from else base_color
 		var alpha: float = clampf(k * 2.5, 0.0, 1.0)
 		var at := Vector2(x, baseline + offset)
 		draw_char_outline(_font, at, letter, font_size, OUTLINE_SIZE, Color(UiStyle.OUTLINE, alpha * 0.8))

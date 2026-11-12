@@ -51,7 +51,11 @@ func _on_floor_changed(floor_number: int) -> void:
 
 
 func _on_game_over(_score: int, _floor: int) -> void:
-	AudioManager.play(&"game_over", 1.0, Tuning.SFX_GAME_OVER_DB)
+	# Rekor kırıldıysa üzgün "game over" yerine fanfar.
+	if GameState.new_records.is_empty():
+		AudioManager.play(&"game_over", 1.0, Tuning.SFX_GAME_OVER_DB)
+	else:
+		AudioManager.play(&"record", 1.0, Tuning.SFX_RECORD_DB)
 
 
 ## Sık çalan sesler için küçük rastgele perde sapmasıyla çalar.

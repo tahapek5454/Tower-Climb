@@ -48,6 +48,8 @@ var bonus_score: int = 0
 
 ## Kayıtlı rekorlar (SaveData.KEYS); oyun bitince güncellenir.
 var records: Dictionary = {}
+## Bu oyunun süresi (s): sadece oyun sürerken sayılır (menüde ve duraklatmada değil).
+var run_time: float = 0.0
 ## Bu oyundaki en uzun kombo (puan kazandıran kombolarda kazanılan kat).
 var run_best_combo: int = 0
 ## Son biten oyunda kırılan rekorlar (SaveData.KEYS'ten); oyun sonu ekranı için.
@@ -67,6 +69,14 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	advance(delta)
+	if GameFlow.is_playing():
+		add_run_time(delta)
+
+
+## Oyun süresini ilerletir (oyun bittiyse sayılmaz).
+func add_run_time(delta: float) -> void:
+	if not is_game_over:
+		run_time += delta
 
 
 ## Kombo süresini ilerletir (testlerde elle çağrılabilir).
@@ -93,6 +103,7 @@ func reset() -> void:
 	_current_floor = 0
 	bonus_score = 0
 	run_best_combo = 0
+	run_time = 0.0
 	new_records = []
 	floor_number = 0
 	score = 0

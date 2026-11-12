@@ -201,11 +201,25 @@ def ui_back():
     return sweep_tone(0.15, 620, 380, 0.07, 0.002, 0.04, ((1, 1.0), (2, 0.15)))
 
 
+def record():
+    # Yeni rekor fanfarı: hızlı yükselen beş notalı arpej (Do-Mi-Sol-Do-Mi), sonunda parlak akor ve
+    # saçılan parıltılar. "section"dan daha uzun ve daha kutlama gibi.
+    out = silence(2.4)
+    notes = (523.3, 659.3, 784.0, 1046.5, 1318.5)
+    for i, freq in enumerate(notes):
+        mix(out, bell(0.6, freq, 0.22), start_seconds=i * 0.095, gain=0.75)
+    for freq in (1046.5, 1318.5, 1568.0, 2093.0):
+        mix(out, bell(1.6, freq, 0.7), start_seconds=0.5, gain=0.5)
+    for i in range(10):
+        mix(out, bell(0.3, rng.uniform(2800, 4600), 0.07), start_seconds=0.55 + i * 0.1, gain=0.16)
+    return out
+
+
 # Yeni sesler sözlüğün SONUNA eklenir: rastgelelik sırası değişmez, eski sesler aynı üretilir.
 SOUNDS = {
     "jump": jump, "land": land, "wall": wall, "combo": combo, "combo_end": combo_end,
     "section": section, "game_over": game_over, "whoosh": whoosh,
-    "ui_hover": ui_hover, "ui_click": ui_click, "ui_back": ui_back,
+    "ui_hover": ui_hover, "ui_click": ui_click, "ui_back": ui_back, "record": record,
 }
 
 

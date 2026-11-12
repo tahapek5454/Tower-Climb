@@ -4,6 +4,8 @@ extends Node2D
 const PLAYER_SCENE: PackedScene = preload("res://scenes/player/player.tscn")
 ## Oyun alanı dışında kalan şeritlerin rengi (16:9 olmayan ekranlarda).
 const BACKDROP_COLOR := Color(0.05, 0.05, 0.08)
+## Oyun sonundan "Tekrar"da kısa ekran kararması (s); hızlı yeniden başlama hissi korunur.
+const RESTART_FADE_TIME: float = 0.14
 
 var _player: Player
 var _camera: TowerCamera
@@ -106,10 +108,11 @@ func _ready() -> void:
 		screen.link_child(settings, screen.settings_requested)
 		screen.set_settings_available(true)
 
-	var game_over_label := GameOverLabel.new()
-	game_over_label.name = "GameOverLabel"
-	game_over_label.restart_requested.connect(_restart)
-	add_child(game_over_label)
+	var game_over_screen := GameOverScreen.new()
+	game_over_screen.name = "GameOverScreen"
+	game_over_screen.restart_requested.connect(_restart)
+	game_over_screen.menu_requested.connect(_on_main_menu_requested)
+	add_child(game_over_screen)
 
 	Events.game_over.connect(_on_game_over)
 	if GameFlow.state == FlowRules.State.MENU:
@@ -179,6 +182,7 @@ func _on_game_over(_final_score: int, _final_floor: int) -> void:
 
 ## Durumu sıfırlar ve sahneyi baştan yükler (platformlar, kamera, oyuncu yeniden kurulur).
 func _restart() -> void:
+	await ScreenFade.cover(RESTART_FADE_TIME)
 	GameFlow.request(FlowRules.State.PLAYING)
 	GameState.reset()
 	get_tree().reload_current_scene()
