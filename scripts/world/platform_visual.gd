@@ -1,24 +1,48 @@
 class_name PlatformVisual
 extends Node2D
-## Platformun görüntüsü (taş kule teması): yontma taşlardan örülmüş levha.
-## Uçlarda biraz daha kalın başlık taşları, arada tonu hafifçe değişen taşlar ve derzler,
-## altta küçük destek konsolları, arka duvara düşen hafif gölge.
-## Orijin üst yüzeyin ortasında (Platform ile aynı). Sadece çizim; çarpışma Platform'da.
-## Her genişliğe kendiliğinden uyar: taş sayısı genişlikten hesaplanır.
+## Platformun görüntüsü. Orijin üst yüzeyin ortasında (Platform ile aynı). Sadece çizim;
+## çarpışma Platform'da. Her genişliğe kendiliğinden uyar.
+## Stiller: &"blocks" (bu dosyada: düzenli taş bloklar, başlık taşları, destekler),
+## &"masonry", &"rock" (PlatformStylesStone), &"plank", &"metal", &"ice", &"crystal"
+## (PlatformStylesThemed). Rastgelelik variation_seed'den: aynı kat hep aynı görünür.
+
+## Yeni stillerin arka duvara düşen gölgesi: aşağı kayma (px) ve koyuluk.
+const SHADOW_OFFSET: float = 5.0
+const SHADOW_ALPHA: float = 0.22
 
 var _width: float = 0.0
 var _color: Color = Color.WHITE
 var _variation_seed: int = 0
+var _style: StringName = &"blocks"
 
 
-## add_child'dan önce çağrılır. variation_seed: taş tonlarının rastgeleliği (ör. kat numarası).
-func setup(width: float, color: Color, variation_seed: int) -> void:
+## add_child'dan önce çağrılır. variation_seed: rastgeleliğin tohumu (ör. kat numarası).
+func setup(width: float, color: Color, variation_seed: int, style: StringName = &"blocks") -> void:
 	_width = width
 	_color = color
 	_variation_seed = variation_seed
+	_style = style
 
 
 func _draw() -> void:
+	if _style == &"blocks":
+		_draw_blocks_style()
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(_variation_seed)
+	var shadow := Rect2(-_width * 0.5 + 3.0, SHADOW_OFFSET, _width - 6.0, Tuning.PLATFORM_THICKNESS)
+	draw_colored_polygon(PlatformDraw.rounded_rect(shadow, 8.0), Color(0.0, 0.0, 0.0, SHADOW_ALPHA))
+	match _style:
+		&"masonry": PlatformStylesStone.masonry(self, _width, _color, rng)
+		&"rock": PlatformStylesStone.rock(self, _width, _color, rng)
+		&"plank": PlatformStylesThemed.plank(self, _width, _color, rng)
+		&"metal": PlatformStylesThemed.metal(self, _width, _color, rng)
+		&"ice": PlatformStylesThemed.ice(self, _width, _color, rng)
+		&"crystal": PlatformStylesThemed.crystal(self, _width, _color, rng)
+		_: push_error("Bilinmeyen platform stili: %s" % _style)
+
+
+func _draw_blocks_style() -> void:
 	var thickness: float = Tuning.PLATFORM_THICKNESS
 	var left: float = -_width * 0.5
 	var cap_width: float = minf(Tuning.PLATFORM_CAP_WIDTH, _width * 0.5)
