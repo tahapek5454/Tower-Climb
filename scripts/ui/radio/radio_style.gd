@@ -13,7 +13,7 @@ const TRACK := UiStyle.TRACK
 const DISABLED := Color(0.45, 0.48, 0.56, 0.6)
 
 
-## İkon çizer (merkez, boyut px). kind: prev, next, play, pause, volume, volume_off, note, folder, add,
+## İkon çizer (merkez, boyut px). kind: prev, next, play, pause, volume, volume_off, note, folder,
 ## sfx, sfx_off, master, master_off (kulaklık = tüm ses).
 static func icon(canvas: CanvasItem, kind: StringName, center: Vector2, size: float, color: Color) -> void:
 	var s: float = size * 0.5
@@ -52,9 +52,6 @@ static func icon(canvas: CanvasItem, kind: StringName, center: Vector2, size: fl
 				var b: Vector2 = center + Vector2(s * 0.85, s * 0.85)
 				canvas.draw_line(a, b, PANEL, s * 0.38, true)
 				canvas.draw_line(a, b, color, s * 0.16, true)
-		&"add":
-			canvas.draw_line(center + Vector2(-s * 0.7, 0.0), center + Vector2(s * 0.7, 0.0), color, s * 0.25, true)
-			canvas.draw_line(center + Vector2(0.0, -s * 0.7), center + Vector2(0.0, s * 0.7), color, s * 0.25, true)
 
 
 ## Hoparlör; ses dalgası (açık) ya da çarpı (kapalı). sfx türünde dalga yerine küçük yıldız.

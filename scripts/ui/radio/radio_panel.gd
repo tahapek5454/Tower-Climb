@@ -86,9 +86,8 @@ func _build() -> void:
 			"Müziği kıs / aç")
 
 	var tools_y: float = height - 19.0
-	_add_button(&"add", 14.0, Vector2(9.0, tools_y), _import.open_dialog,
-			"Müzik ekle (mp3, ogg, wav)\nya da dosyaları oyun penceresine sürükle")
-	_add_button(&"folder", 14.0, Vector2(29.0, tools_y), _import.open_folder, "Müzik klasörünü aç")
+	_add_button(&"folder", 14.0, Vector2(9.0, tools_y), _import.open_folder,
+			"Müzik klasörünü aç (mp3, ogg, wav)\nya da dosyaları oyun penceresine sürükle")
 	_sfx = _add_button(&"sfx", 14.0, Vector2(width - 46.0, tools_y), _toggle_sfx,
 			"Efekt seslerini aç / kapat")
 	_master = _add_button(&"master", 14.0, Vector2(width - 25.0, tools_y), _toggle_master,

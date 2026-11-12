@@ -1,7 +1,7 @@
 class_name MusicLibrary
 extends RefCounted
 ## Oyuncunun müzik klasörü (sadece masaüstü; web'de müzik yok). Oyun müzik getirmez: oyuncu kendi
-## parçalarını ekler (panelden "Müzik ekle", klasöre sürükle-bırak ya da oyun penceresine bırakma).
+## parçalarını ekler (müzik klasörüne kopyalayarak ya da dosyaları oyun penceresine bırakarak).
 ## Desteklenen biçimler: mp3, ogg, wav (çalışma zamanında yüklenir; projeye gömülmez).
 
 const SUPPORTED: PackedStringArray = ["mp3", "ogg", "wav"]
