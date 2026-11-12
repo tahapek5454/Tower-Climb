@@ -37,7 +37,7 @@ func _spawn_up_to(top_y: float) -> void:
 
 
 func _spawn(floor_number: int) -> void:
-	var width: float = PlatformRules.width_for_floor(floor_number)
+	var width: float = PlatformRules.random_width(floor_number, _rng)
 	var center: float = PlatformRules.next_center(floor_number, _prev_center, _prev_width, width, _rng)
 	var platform := Platform.new()
 	platform.name = "Floor%d" % floor_number

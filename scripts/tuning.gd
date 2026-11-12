@@ -149,12 +149,24 @@ const WALL_BOUNCE_UP_BOOST: float = 150.0
 # --- Platformlar ---
 ## Katlar arası dikey mesafe.
 const FLOOR_SPACING: float = 128.0
+## Tipik genişliğin genel eğilimi: başta MAX, NARROW_FLOORS katta MIN (rastgelelik öncesi).
 const PLATFORM_WIDTH_MAX: float = 360.0
 const PLATFORM_WIDTH_MIN: float = 140.0
 ## Her bu kadar katta bir tam genişlikte bölüm platformu.
 const SECTION_FLOOR_INTERVAL: int = 100
 ## Platform genişliği bu kata kadar MAX'tan MIN'e doğrusal daralır.
 const PLATFORM_NARROW_FLOORS: int = 300
+## Her bölüm bu kadar geniş başlar (nefes payı); bölüm boyunca pay erir.
+const PLATFORM_SECTION_START_BONUS: float = 80.0
+## Her platform tipik genişliğin bu aralıkta rastgele bir katı olur.
+const PLATFORM_WIDTH_JITTER_MIN: float = 0.75
+const PLATFORM_WIDTH_JITTER_MAX: float = 1.15
+## Sürpriz dar platform: olasılık başta START, NARROW_FLOORS katta END; genişlik tipik x FACTOR.
+const PLATFORM_SURPRISE_CHANCE_START: float = 0.04
+const PLATFORM_SURPRISE_CHANCE_END: float = 0.15
+const PLATFORM_SURPRISE_FACTOR: float = 0.55
+## Hiçbir platform bundan dar olamaz (karakter hitbox'ı 32 px).
+const PLATFORM_WIDTH_ABS_MIN: float = 90.0
 ## Ardışık iki platformun kenarları arasındaki en fazla yatay boşluk (ulaşılabilirlik).
 const PLATFORM_MAX_EDGE_GAP: float = 200.0
 ## Ekranın üst kenarının bu kadar üstüne kadar platform hazır tutulur.

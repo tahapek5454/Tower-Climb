@@ -41,7 +41,7 @@ Zıplamayı oyuncu yapar (otomatik zıplama yok). Gamepad desteği sonra ekleneb
 ### Platformlar
 - Tek yönlü (alttan geçilir).
 - Her "kat" sabit aralıkla dizilir; her katta bir platform.
-- Platform genişliği yükseldikçe daralır; her 100 katta bir tam genişlikte "bölüm platformu" (tema değişimi için).
+- Platform genişliği yükseldikçe daralır; her bölüm (100 kat) biraz daha geniş başlar ve bölüm içinde daralır. Her platform bu tipik genişlikten rastgele sapar; ara sıra (yükseldikçe daha sık) sürpriz dar platform çıkar. Her 100 katta bir tam genişlikte "bölüm platformu" (tema değişimi için).
 - Platform yatay konumu rastgele ama oynanabilir: bir önceki platformdan ulaşılamayacak bir yere konmaz.
 
 ### Kamera
@@ -87,7 +87,12 @@ Değerler `const` olarak kalır (oyun içi canlı ayar paneli şimdilik yok). İ
 | `WALL_BOUNCE_UP_BOOST` | 150 px/s | sadece havadayken |
 | `FLOOR_SPACING` | 128 px | katlar arası dikey mesafe |
 | `PLATFORM_WIDTH_MAX` | 360 px | başlangıçta |
-| `PLATFORM_WIDTH_MIN` | 140 px | yükseklerde |
+| `PLATFORM_WIDTH_MIN` | 140 px | yükseklerde (tipik genişlik; 300. kat) |
+| `PLATFORM_SECTION_START_BONUS` | +80 px | her bölüm başında, bölüm boyunca erir |
+| `PLATFORM_WIDTH_JITTER_MIN/MAX` | x0.75 – x1.15 | rastgele sapma |
+| `PLATFORM_SURPRISE_CHANCE_START/END` | %4 → %15 | sürpriz dar platform olasılığı |
+| `PLATFORM_SURPRISE_FACTOR` | x0.55 | sürpriz dar platform |
+| `PLATFORM_WIDTH_ABS_MIN` | 90 px | mutlak alt sınır |
 | `CAMERA_START_FLOOR` | 5 | kamera bu katta kaymaya başlar |
 | `CAMERA_START_SPEED` | 40 px/s | |
 | `CAMERA_SPEED_STEP` | +12 px/s her 30 s | |
