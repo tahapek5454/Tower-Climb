@@ -21,6 +21,14 @@ func _ready() -> void:
 	tower.name = "Tower"
 	add_child(tower)
 
+	var wall_decor := WallDecor.new()
+	wall_decor.name = "WallDecor"
+	add_child(wall_decor)
+
+	var start_area := StartArea.new()
+	start_area.name = "StartArea"
+	add_child(start_area)
+
 	_spawner = PlatformSpawner.new()
 	_spawner.name = "Platforms"
 	add_child(_spawner)

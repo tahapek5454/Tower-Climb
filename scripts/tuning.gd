@@ -380,6 +380,26 @@ const LIGHT_CRYSTAL_ALPHA: float = 0.30
 const LIGHT_PLATFORM_HEIGHT: float = 70.0
 const LIGHT_GLOW_TILES_ALPHA: float = 0.20
 const LIGHT_CRYSTAL_PLATFORM_ALPHA: float = 0.12
+## Duvar meşalesi ve mangal: hâle çapı ve parlaklık.
+const LIGHT_TORCH_SIZE: float = 170.0
+const LIGHT_TORCH_ALPHA: float = 0.30
+## Pencereden sızan gökyüzü ışığı (pencere boyutuna göre ölçeklenir).
+const LIGHT_WINDOW_ALPHA: float = 0.16
+## Gece temasındaki ampul dizisi: ampul başına hâle çapı ve parlaklık.
+const LIGHT_BULB_SIZE: float = 46.0
+const LIGHT_BULB_ALPHA: float = 0.40
+
+# --- Duvar süsleri (görsel; scripts/world/wall_decor*.gd) ---
+## Süs yuvalarının arası (px, duvar uzayında), ilk yuvanın zeminden yüksekliği ve bir yuvanın dolu olma olasılığı.
+const WALL_DECOR_SPACING: float = 190.0
+const WALL_DECOR_START_HEIGHT: float = 330.0
+const WALL_DECOR_CHANCE: float = 0.8
+## Süslerin yan duvarlara en az uzaklığı (px).
+const WALL_DECOR_MARGIN: float = 60.0
+## Ekranın üstünde/altında hazır tutulan pay (px; süsler bu kadar uzanabilir).
+const WALL_DECOR_VIEW_MARGIN: float = 220.0
+## Süslerin renk çarpanı: arka plan öğesi olarak platformlardan hafifçe geri çekilsinler.
+const WALL_DECOR_TINT: Color = Color(0.9, 0.9, 0.94)
 
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
