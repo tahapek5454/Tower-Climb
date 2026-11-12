@@ -123,5 +123,6 @@ func _on_game_over(_final_score: int, _final_floor: int) -> void:
 
 ## Durumu sıfırlar ve sahneyi baştan yükler (platformlar, kamera, oyuncu yeniden kurulur).
 func _restart() -> void:
+	GameFlow.request(FlowRules.State.PLAYING)
 	GameState.reset()
 	get_tree().reload_current_scene()

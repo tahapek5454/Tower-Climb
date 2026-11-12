@@ -21,6 +21,7 @@ Events="*res://scripts/autoload/events.gd"
 GameState="*res://scripts/autoload/game_state.gd"
 WindowManager="*res://scripts/autoload/window_manager.gd"
 AudioManager="*res://scripts/autoload/audio_manager.gd"
+GameFlow="*res://scripts/autoload/game_flow.gd"
 
 [display]
 

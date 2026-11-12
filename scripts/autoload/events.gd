@@ -28,6 +28,10 @@ signal combo_ended(jumps: int, floors: int, bonus: int)
 @warning_ignore("unused_signal")
 signal high_score_changed(high_score: int)
 
+## Oyun akışı durumu değişti (FlowRules.State değerleri; GameFlow yayınlar).
+@warning_ignore("unused_signal")
+signal flow_changed(new_state: int, old_state: int)
+
 ## Ekran sarsıntısı iste (0..1 eklenir; kamera dinler).
 @warning_ignore("unused_signal")
 signal screen_shake(trauma: float)

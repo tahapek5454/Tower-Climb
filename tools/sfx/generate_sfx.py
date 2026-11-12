@@ -185,9 +185,27 @@ def whoosh():
     return samples
 
 
+def ui_hover():
+    # Menü üzerine gelme: çok kısa, yumuşak, yüksek "tik" (sönümlü sinüs).
+    return sweep_tone(0.07, 880, 960, 0.03, 0.002, 0.018, ((1, 1.0), (2, 0.12)))
+
+
+def ui_click():
+    # Menü tıklama: iki katlı küçük "pop" (alt nota + hemen üstüne tiz nota).
+    out = sweep_tone(0.16, 520, 700, 0.05, 0.002, 0.045, ((1, 1.0), (2, 0.2)))
+    return mix(out, sweep_tone(0.12, 1040, 1100, 0.04, 0.002, 0.03, ((1, 1.0),)), start_seconds=0.03, gain=0.5)
+
+
+def ui_back():
+    # Geri/kapat: aşağı kayan yumuşak "pof" (tıklamanın tersi yönü).
+    return sweep_tone(0.15, 620, 380, 0.07, 0.002, 0.04, ((1, 1.0), (2, 0.15)))
+
+
+# Yeni sesler sözlüğün SONUNA eklenir: rastgelelik sırası değişmez, eski sesler aynı üretilir.
 SOUNDS = {
     "jump": jump, "land": land, "wall": wall, "combo": combo, "combo_end": combo_end,
     "section": section, "game_over": game_over, "whoosh": whoosh,
+    "ui_hover": ui_hover, "ui_click": ui_click, "ui_back": ui_back,
 }
 
 

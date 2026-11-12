@@ -424,6 +424,10 @@ const SFX_SECTION_DB: float = -3.0
 const SFX_GAME_OVER_DB: float = -4.0
 ## Kullanıcı ilk sürümü (-9 dB, daha tiz) yüksek buldu; kısıldı ve yumuşatıldı.
 const SFX_WHOOSH_DB: float = -17.0
+## Arayüz sesleri (menü üzerine gelme, tıklama, geri). Efekt kanalından çalar; kısık, rahatsız etmesin.
+const UI_HOVER_DB: float = -16.0
+const UI_CLICK_DB: float = -9.0
+const UI_BACK_DB: float = -9.0
 ## Zıplama perdesi: en yavaş ve en hızlı zıplamada.
 const SFX_JUMP_PITCH_MIN: float = 0.9
 const SFX_JUMP_PITCH_MAX: float = 1.3
