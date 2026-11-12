@@ -15,7 +15,12 @@ const POOL_SIZE: int = 10
 ## Efekt sesleri açıldı/kapandı, tüm ses susturuldu/açıldı (panel ikonları güncellenir).
 signal sfx_enabled_changed(enabled: bool)
 signal muted_changed(muted: bool)
+## Genel veya efekt ses seviyesi değişti (bus: &"Master" / &"SFX").
+signal volume_changed(bus_name: StringName, value: float)
 
+## Genel ve efekt ses seviyeleri (0..1, doğrusal). Sessize alma (mute) bundan bağımsızdır.
+var master_volume: float = 1.0
+var sfx_volume: float = 1.0
 ## Oyuncunun müzikleri (radyo paneli bunu kullanır).
 var music: MusicPlayer
 ## Müzik kanalındaki alçak geçiren süzgeç (duraklatınca müzik boğuklaşır).
@@ -43,6 +48,8 @@ func _ready() -> void:
 	var settings: Dictionary = AudioSettings.load_all()
 	set_sfx_enabled(settings["sfx_enabled"], false)
 	set_muted(settings["muted"], false)
+	set_master_volume(settings["master_volume"], false)
+	set_sfx_volume(settings["sfx_volume"], false)
 	music = MusicPlayer.new()
 	music.name = "Music"
 	add_child(music)
@@ -54,6 +61,24 @@ func _unhandled_input(input_event: InputEvent) -> void:
 	if input_event.is_action_pressed(&"toggle_mute"):
 		set_muted(not is_muted())
 		get_viewport().set_input_as_handled()
+
+
+## Genel ses seviyesi (0..1). save: kalıcı kaydet (sürüklerken her adımda kaydetmemek için).
+func set_master_volume(value: float, save: bool = true) -> void:
+	master_volume = clampf(value, 0.0, 1.0)
+	_apply_volume(0, master_volume)
+	if save:
+		AudioSettings.save_value("master_volume", master_volume)
+	volume_changed.emit(&"Master", master_volume)
+
+
+## Efekt ses seviyesi (0..1).
+func set_sfx_volume(value: float, save: bool = true) -> void:
+	sfx_volume = clampf(value, 0.0, 1.0)
+	_apply_volume(AudioServer.get_bus_index(SFX_BUS), sfx_volume)
+	if save:
+		AudioSettings.save_value("sfx_volume", sfx_volume)
+	volume_changed.emit(SFX_BUS, sfx_volume)
 
 
 ## Müziği boğuklaştırır / açar (kesim frekansı yumuşakça kayar).
@@ -118,6 +143,12 @@ func _free_player() -> AudioStreamPlayer:
 	var oldest: AudioStreamPlayer = _players[_next]
 	_next = (_next + 1) % POOL_SIZE
 	return oldest
+
+
+## Kanal seviyesini ayarlar (mute'tan bağımsız: sıfır = çok kısık).
+func _apply_volume(bus: int, linear: float) -> void:
+	if bus != -1:
+		AudioServer.set_bus_volume_db(bus, linear_to_db(maxf(linear, 0.0001)))
 
 
 ## Müzik kanalına süzgeç ekler (kapalı başlar; efekt sırası 0).

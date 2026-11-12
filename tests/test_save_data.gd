@@ -103,6 +103,17 @@ func test_abandon_run_saves_records_without_game_over_signal() -> void:
 	assert_eq(SaveData.load_records()[SaveData.BEST_FLOOR], 5, "bırakılan oyunun rekoru yine kaydedilir")
 
 
+func test_reset_records_clears_saved_and_lowers_high_score() -> void:
+	SaveData.save_records({SaveData.BEST_SCORE: 900, SaveData.BEST_FLOOR: 42, SaveData.BEST_COMBO: 17})
+	var state: Node = _new_state()
+	assert_eq(state.high_score, 900)
+	state.register_landing(2)
+	state.reset_records()
+	assert_eq(SaveData.load_records(), SaveData.empty(), "kayıt sıfırlanır")
+	assert_eq(state.records, SaveData.empty())
+	assert_eq(state.high_score, state.score, "en iyi skor oyundaki skora iner")
+
+
 func _new_state() -> Node:
 	var state: Node = GameStateScript.new()
 	state.set_physics_process(false)

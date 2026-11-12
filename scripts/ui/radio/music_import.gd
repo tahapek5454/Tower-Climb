@@ -21,8 +21,7 @@ func _notification(what: int) -> void:
 
 ## Müzik klasörünü dosya gezgininde açar.
 func open_folder() -> void:
-	MusicLibrary.ensure_dir()
-	OS.shell_open(MusicLibrary.global_dir())
+	MusicLibrary.open_dir()
 
 
 func _import(paths: PackedStringArray) -> void:

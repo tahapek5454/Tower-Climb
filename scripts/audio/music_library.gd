@@ -25,6 +25,12 @@ static func global_dir() -> String:
 	return ProjectSettings.globalize_path(music_dir)
 
 
+## Müzik klasörünü dosya gezgininde açar (oyuncu parçaları oraya kopyalar).
+static func open_dir() -> void:
+	ensure_dir()
+	OS.shell_open(global_dir())
+
+
 static func is_supported(file_name: String) -> bool:
 	return SUPPORTED.has(file_name.get_extension().to_lower())
 

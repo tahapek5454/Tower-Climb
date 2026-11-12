@@ -1,6 +1,6 @@
 class_name HitStop
 extends Node
-## Hit-stop: puan kazandıran kombo bitince oyunu kısa bir an neredeyse durdurur.
+## Hit-stop (ekran sarsıntısı ayarı kapalıysa çalışmaz): puan kazandıran kombo bitince oyunu kısa bir an neredeyse durdurur.
 ## Süre gerçek zamanla ölçülür. Bitince önceki oyun hızına döner (ör. F4 yavaş çekim açıksa ona).
 
 ## Hit-stop başlamadan önceki oyun hızı; bitince buna dönülür.
@@ -52,5 +52,5 @@ func _release(generation: int) -> void:
 
 
 func _on_combo_ended(_jumps: int, floors: int, bonus: int) -> void:
-	if bonus > 0:
+	if bonus > 0 and GameSettings.get_setting("screen_shake"):
 		trigger(duration_for(floors))

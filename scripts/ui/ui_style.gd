@@ -45,17 +45,46 @@ static func label(font_size: int, color: Color, align: HorizontalAlignment = HOR
 
 
 ## Düğme yüzeyi: dolgu + isteğe bağlı çerçeve, yuvarlak köşe.
-static func button_style(fill: Color, border: Color = Color(0.0, 0.0, 0.0, 0.0), border_width: int = 0) -> StyleBoxFlat:
+static func button_style(fill: Color, border: Color = Color(0.0, 0.0, 0.0, 0.0), border_width: int = 0,
+		h_margin: float = 20.0, v_margin: float = 9.0) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
 	style.bg_color = fill
 	style.border_color = border
 	style.set_border_width_all(border_width)
 	style.set_corner_radius_all(CORNER_RADIUS)
-	style.content_margin_left = 20.0
-	style.content_margin_right = 20.0
-	style.content_margin_top = 9.0
-	style.content_margin_bottom = 9.0
+	style.content_margin_left = h_margin
+	style.content_margin_right = h_margin
+	style.content_margin_top = v_margin
+	style.content_margin_bottom = v_margin
 	return style
+
+
+## Küçük bölüm başlığı (soluk, büyük harf).
+static func section_label(text: String) -> Label:
+	var result: Label = label(11, TEXT_DIM)
+	result.text = text.to_upper()
+	return result
+
+
+## Klavye tuşu kapağı (kontroller sayfası): küçük yuvarlak köşeli etiket.
+static func key_cap(text: String) -> Control:
+	var cap := PanelContainer.new()
+	var style := StyleBoxFlat.new()
+	style.bg_color = BUTTON_IDLE
+	style.border_color = Color(1.0, 1.0, 1.0, 0.22)
+	style.set_border_width_all(1)
+	style.border_width_bottom = 2
+	style.set_corner_radius_all(6)
+	style.content_margin_left = 8.0
+	style.content_margin_right = 8.0
+	style.content_margin_top = 2.0
+	style.content_margin_bottom = 3.0
+	cap.add_theme_stylebox_override(&"panel", style)
+	cap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var caption: Label = label(13, TEXT, HORIZONTAL_ALIGNMENT_CENTER)
+	caption.text = text
+	cap.add_child(caption)
+	return cap
 
 
 ## Boş dikey aralık (fareyi engellemez).

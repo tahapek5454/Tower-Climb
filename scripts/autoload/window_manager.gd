@@ -1,7 +1,10 @@
 extends Node
 ## Pencere modu yönetimi: tam ekran aç/kapat (F11 veya Alt+Enter).
 ## Oyun büyütülmüş pencerede başlar (project.godot: display/window/size/mode).
-## Aşama 5'teki ayarlar menüsü de burayı kullanacak.
+## Ayarlar menüsü de burayı kullanır; tam ekran seçimi kaydedilir ve açılışta uygulanır.
+
+## Tam ekran açıldı/kapandı.
+signal fullscreen_changed(enabled: bool)
 
 ## Tam ekrandan çıkınca dönülecek mod.
 var _windowed_mode: DisplayServer.WindowMode = DisplayServer.WINDOW_MODE_MAXIMIZED
@@ -10,6 +13,8 @@ var _windowed_mode: DisplayServer.WindowMode = DisplayServer.WINDOW_MODE_MAXIMIZ
 func _ready() -> void:
 	# Duraklatılmışken de çalışsın.
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	if GameSettings.get_setting("fullscreen"):
+		set_fullscreen(true)
 
 
 func _unhandled_input(input_event: InputEvent) -> void:
@@ -32,6 +37,8 @@ func set_fullscreen(enabled: bool) -> void:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	else:
 		DisplayServer.window_set_mode(_windowed_mode)
+	GameSettings.save_value("fullscreen", enabled)
+	fullscreen_changed.emit(enabled)
 
 
 func toggle_fullscreen() -> void:

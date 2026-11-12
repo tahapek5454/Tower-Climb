@@ -97,6 +97,15 @@ func _ready() -> void:
 	pause_controller.main_menu_requested.connect(_on_main_menu_requested)
 	add_child(pause_controller)
 
+	# Ayarlar: hem ana menüden hem duraklatma menüsünden açılır.
+	var settings := SettingsMenu.new()
+	settings.name = "SettingsMenu"
+	add_child(settings)
+	var pause_menu: PauseMenu = pause_controller.get_menu()
+	for screen: UiScreen in [_menu, pause_menu]:
+		screen.link_child(settings, screen.settings_requested)
+		screen.set_settings_available(true)
+
 	var game_over_label := GameOverLabel.new()
 	game_over_label.name = "GameOverLabel"
 	game_over_label.restart_requested.connect(_restart)

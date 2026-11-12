@@ -8,7 +8,7 @@ extends CanvasLayer
 
 signal opened
 signal closed
-## Esc (ui_cancel) basıldı.
+## Esc (ui_cancel) ya da "Geri" istendi.
 signal back_requested
 
 const LAYER: int = 40
@@ -29,6 +29,8 @@ var first_focus: Control
 var dim_alpha: float = 0.5
 ## Bu ekranın açık olup olmadığı.
 var is_open: bool = false
+## Bu ekranı açan ekran (link_child ile); geri dönülünce yeniden açılır.
+var opener: UiScreen
 
 var _dim: ColorRect
 var _root: Control
@@ -65,6 +67,18 @@ func open() -> void:
 	opened.emit()
 
 
+## Alt ekran bağlar: trigger sinyali gelince bu ekran kapanır, child açılır; child'dan geri
+## (Esc / Geri) istenince child kapanır ve bu ekran yeniden açılır. Aynı child'ı birden çok ekran
+## bağlayabilir (ayarlar hem ana menüden hem duraklatma menüsünden açılır); son açan geri dönülür.
+func link_child(child: UiScreen, trigger: Signal) -> void:
+	trigger.connect(func() -> void:
+		child.opener = self
+		close()
+		child.open())
+	if not child.back_requested.is_connected(child._return_to_opener):
+		child.back_requested.connect(child._return_to_opener)
+
+
 ## Kartı dikey kaydırır (px; eksi = yukarı).
 func shift_card(pixels: float) -> void:
 	_center.offset_top = pixels
@@ -89,12 +103,24 @@ func close() -> void:
 	_tween.chain().tween_callback(_finish_close)
 
 
+## Geri istendi (Esc ya da Geri düğmesi). Alt sınıf önce kendi işini (ör. onayı kapatma) görebilir.
+func _on_cancel() -> void:
+	back_requested.emit()
+
+
+## Bu ekranı kapatıp açan ekrana döner.
+func _return_to_opener() -> void:
+	close()
+	if opener != null:
+		opener.open()
+
+
 func _unhandled_input(input_event: InputEvent) -> void:
 	if not is_open:
 		return
 	if input_event.is_action_pressed(&"ui_cancel"):
 		get_viewport().set_input_as_handled()
-		back_requested.emit()
+		_on_cancel()
 	elif get_viewport().gui_get_focus_owner() == null and _is_navigation_key(input_event):
 		# Boş yere tıklanınca odak kaybolur; ilk gezinme tuşu odağı geri getirir.
 		_focus_first()

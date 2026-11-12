@@ -109,6 +109,13 @@ func end_game() -> void:
 	Events.game_over.emit(score, floor_number)
 
 
+## Kayıtlı tüm rekorları siler (ayarlardan, onaydan sonra). En iyi skor, oyundaki skora iner.
+func reset_records() -> void:
+	records = SaveData.empty()
+	SaveData.save_records(records)
+	high_score = score
+
+
 ## Oyunu sonuç ekranı göstermeden bırakır (duraklatma menüsünden ana menüye): puan ve rekorlar
 ## yine sayılır ama game_over sinyali yayınlanmaz.
 func abandon_run() -> void:

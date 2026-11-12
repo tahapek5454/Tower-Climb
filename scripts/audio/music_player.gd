@@ -8,6 +8,8 @@ extends Node
 signal track_changed(title: String, position: String)
 signal playing_changed(playing: bool)
 signal library_changed(count: int)
+## Müzik seviyesi değişti (radyo kaydırıcısı ve ayarlar ekranı birbirini günceller).
+signal volume_changed(volume: float)
 
 var playlist := Playlist.new()
 ## Müzik seviyesi (0..1, doğrusal).
@@ -103,6 +105,7 @@ func set_volume(value: float, save: bool = true) -> void:
 		AudioServer.set_bus_mute(bus, volume <= 0.001)
 	if save:
 		AudioSettings.save_value("music_volume", volume)
+	volume_changed.emit(volume)
 
 
 func _change_track() -> void:

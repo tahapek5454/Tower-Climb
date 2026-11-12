@@ -6,10 +6,27 @@ extends RefCounted
 const SECTION: String = "game"
 const DEFAULTS: Dictionary = {
 	"pause_on_focus_loss": true,
+	"screen_shake": true,
+	"fullscreen": false,
 }
 
 ## Dosya yolu (testlerde geçici bir dosyayla değiştirilebilir).
 static var path: String = "user://settings.cfg"
+
+## Oyun sırasında sık okunan ayarlar için önbellek (dosya her seferinde okunmaz).
+static var _cache: Dictionary = {}
+
+
+## Tek bir ayarın değeri (önbellekten; ilk çağrıda dosya okunur).
+static func get_setting(key: String) -> Variant:
+	if _cache.is_empty():
+		_cache = load_all()
+	return _cache[key]
+
+
+## Önbelleği atar (testlerde dosya yolu değişince).
+static func reset_cache() -> void:
+	_cache = {}
 
 
 ## Kayıtlı ayarlar (eksikler varsayılanla doldurulur; tipi uymayan değer varsayılana döner).
@@ -29,3 +46,5 @@ static func save_value(key: String, value: Variant) -> void:
 	config.load(path)
 	config.set_value(SECTION, key, value)
 	config.save(path)
+	if not _cache.is_empty():
+		_cache[key] = value

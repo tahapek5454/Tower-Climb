@@ -26,6 +26,11 @@ func _ready() -> void:
 	Events.flow_changed.connect(_on_flow_changed)
 
 
+## Duraklatma menüsü (ayarlar ekranını bağlamak için).
+func get_menu() -> PauseMenu:
+	return _menu
+
+
 func _unhandled_input(input_event: InputEvent) -> void:
 	if not input_event.is_action_pressed(&"pause"):
 		return
@@ -40,7 +45,7 @@ func _unhandled_input(input_event: InputEvent) -> void:
 func _notification(what: int) -> void:
 	if what != NOTIFICATION_APPLICATION_FOCUS_OUT:
 		return
-	if GameFlow.is_playing() and not get_tree().paused and GameSettings.load_all()["pause_on_focus_loss"]:
+	if GameFlow.is_playing() and not get_tree().paused and GameSettings.get_setting("pause_on_focus_loss"):
 		GameFlow.request(FlowRules.State.PAUSED)
 
 

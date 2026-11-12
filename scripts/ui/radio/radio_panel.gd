@@ -100,6 +100,9 @@ func _build() -> void:
 	_slider.value_changed.connect(func(value: float) -> void: _music.set_volume(value, false); _update_volume_icon())
 	_slider.value_committed.connect(func(value: float) -> void: _music.set_volume(value))
 	_box.add_child(_slider)
+	_music.volume_changed.connect(func(value: float) -> void:
+		_slider.value = value
+		_update_volume_icon())
 
 
 func _add_button(kind: StringName, button_size: float, at: Vector2, action: Callable,
@@ -164,7 +167,7 @@ func _on_track_changed(title: String, position_text: String) -> void:
 	if _message_time > 0.0:
 		return
 	if title == "":
-		_title.text = "Müzik yok · + ile ekle ya da pencereye sürükle"
+		_title.text = "Müzik yok · klasöre ekle ya da pencereye sürükle"
 		_title.color = RadioStyle.TEXT_DIM
 	else:
 		_title.text = title

@@ -17,7 +17,7 @@ func _ready() -> void:
 	# Oyuncu fizik adımında hareket ettiği için kamera da fizik adımında güncellenir (titreme olmaz).
 	process_callback = Camera2D.CAMERA2D_PROCESS_PHYSICS
 	Events.floor_changed.connect(_on_floor_changed)
-	Events.screen_shake.connect(shake.add)
+	Events.screen_shake.connect(_add_shake)
 	Events.combo_ended.connect(_on_combo_ended)
 
 
@@ -45,10 +45,16 @@ func is_below_screen(world_y: float) -> bool:
 	return CameraRules.is_below_screen(world_y, global_position.y)
 
 
+## Ekran sarsıntısı ayardan kapatılabilir.
+func _add_shake(amount: float) -> void:
+	if GameSettings.get_setting("screen_shake"):
+		shake.add(amount)
+
+
 func _on_floor_changed(floor_number: int) -> void:
 	if not is_scrolling and CameraRules.should_start(floor_number):
 		is_scrolling = true
 
 
 func _on_combo_ended(_jumps: int, floors: int, bonus: int) -> void:
-	shake.add(CameraShake.combo_trauma(floors, bonus))
+	_add_shake(CameraShake.combo_trauma(floors, bonus))
