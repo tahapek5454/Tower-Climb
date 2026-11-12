@@ -1,5 +1,6 @@
 shader_type canvas_item;
-// Kule dışı (duvarların arkası): gökyüzü gradyanı, iki kat uzak tepe silueti, iki kat bulut.
+// Kule dışı (duvarların arkası): gökyüzü gradyanı, iki kat uzak tepe silueti, iki kat bulut,
+// kulenin dibinde çimenli ova (zeminle aynı derinlikte: platformlarla aynı hızda kayar).
 // Parallax: her katman kameranın hareketinin bir oranıyla (factor) kayar; 1 = platformlarla aynı,
 // 0 = ekrana sabit. Kamera konumu çizim matrisinden okunur (pencere ölçeğinden bağımsız, gecikmesiz).
 // Tepeler başlangıçta ekranın altında görünür, tırmandıkça yavaşça aşağı batar.
@@ -8,6 +9,9 @@ uniform vec4 sky_top : source_color = vec4(0.36, 0.45, 0.62, 1.0);
 uniform vec4 sky_bottom : source_color = vec4(0.60, 0.66, 0.77, 1.0);
 uniform vec4 hill_far_color : source_color = vec4(0.48, 0.55, 0.70, 1.0);
 uniform vec4 hill_near_color : source_color = vec4(0.36, 0.43, 0.58, 1.0);
+uniform vec4 meadow_color : source_color = vec4(0.40, 0.53, 0.33, 1.0);
+uniform vec4 meadow_light_color : source_color = vec4(0.52, 0.64, 0.40, 1.0);
+uniform vec4 meadow_dark_color : source_color = vec4(0.30, 0.42, 0.27, 1.0);
 uniform vec4 cloud_color : source_color = vec4(0.80, 0.84, 0.90, 1.0);
 uniform vec4 cloud_shade_color : source_color = vec4(0.67, 0.72, 0.82, 1.0);
 
@@ -24,6 +28,10 @@ uniform float cloud_near_factor = 0.45;
 // Tepeler: zeminin ne kadar üstünde başladıkları ve ortalama yükseklikleri (px).
 uniform float hill_far_height = 190.0;
 uniform float hill_near_height = 110.0;
+// Ova: üst kenarın dalgalanması (px), üstteki açık çimen şeridi ve koyu çimen bantlarının kalınlığı (px).
+uniform float meadow_wave = 5.0;
+uniform float meadow_light_height = 6.0;
+uniform float meadow_band_spacing = 34.0;
 // Bulut ızgarası: hücre boyutu, bir hücrede bulut olma olasılığı, yatay sürüklenme hızı (px/s).
 uniform vec2 cloud_cell = vec2(250.0, 210.0);
 uniform float cloud_density = 0.55;
@@ -77,6 +85,24 @@ float hills(vec2 p, float height, float seed) {
 }
 
 
+// Çimenli ova: zeminin hizasından aşağısı, hafif dalgalı üst kenar, açık üst şerit,
+// aşağıya doğru dalgalı koyu çimen bantları (sakin, düz renkler).
+vec3 meadow(vec2 p, vec3 color) {
+	float edge = ground_view_y - meadow_wave * (0.6 + 0.4 * sin(p.x * 0.021) * sin(p.x * 0.0057 + 1.7));
+	float inside = fill(edge - p.y);
+	if (inside <= 0.0) {
+		return color;
+	}
+	float depth = p.y - edge;
+	vec3 grass = meadow_color.rgb;
+	float band_y = depth + sin(p.x * 0.013 + floor(depth / meadow_band_spacing)) * 4.0;
+	float band = step(meadow_band_spacing * 0.55, mod(band_y, meadow_band_spacing));
+	grass = mix(grass, meadow_dark_color.rgb, band * 0.6);
+	grass = mix(grass, meadow_light_color.rgb, fill(depth - meadow_light_height));
+	return mix(color, grass, inside);
+}
+
+
 // Bir bulut katmanı: rgb = renk, a = örtme. size: bulut boyu çarpanı.
 vec4 clouds(vec2 p, float size, float seed) {
 	p.x += TIME * cloud_drift_speed * size;
@@ -126,6 +152,8 @@ void fragment() {
 
 	vec4 near_clouds = clouds(layer(cloud_near_factor), 1.0, 11.0);
 	color = mix(color, near_clouds.rgb, near_clouds.a);
+
+	color = meadow(layer(1.0), color);
 
 	COLOR = vec4(color, 1.0);
 }
