@@ -37,9 +37,13 @@ static func platform_style(floor_number: int, roll_of: Callable, depth: int = 4)
 	return styles[index][0]
 
 
+## Katın platformunun teması (stil ve süs için; geçişin ortasında yenisine geçer).
+static func platform_theme(floor_number: int) -> int:
+	return theme_index(roundf(position(float(floor_number))), WorldPalette.theme_count())
+
+
 static func _styles_for_floor(floor_number: int) -> Array:
-	var theme_position: float = position(float(floor_number))
-	return WorldPalette.PLATFORM_STYLES[theme_index(roundf(theme_position), WorldPalette.PLATFORM_STYLES.size())]
+	return WorldPalette.PLATFORM_STYLES[platform_theme(floor_number)]
 
 
 ## Ağırlıklı seçim: roll (0..1) ağırlıkların toplamına göre ölçeklenir.

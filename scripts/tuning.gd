@@ -168,6 +168,9 @@ const PLATFORM_WIDTH_MIN: float = 140.0
 const SECTION_FLOOR_INTERVAL: int = 100
 ## Yeni bölümün teması (renkler) bölüm platformundan sonra bu kadar kat boyunca yumuşakça gelir.
 const THEME_TRANSITION_FLOORS: float = 8.0
+## Platform süsleri (PlatformDecor): bir platformun süslü olma olasılığı ve ikinci bir süs alma olasılığı.
+const PLATFORM_DECOR_CHANCE: float = 0.7
+const PLATFORM_DECOR_SECOND_CHANCE: float = 0.35
 ## Platform genişliği bu kata kadar MAX'tan MIN'e doğrusal daralır.
 const PLATFORM_NARROW_FLOORS: int = 300
 ## Her bölüm bu kadar geniş başlar (nefes payı); bölüm boyunca pay erir.

@@ -16,14 +16,18 @@ var _width: float = 0.0
 var _color: Color = Color.WHITE
 var _variation_seed: int = 0
 var _style: StringName = &"blocks"
+var _decor_theme: int = -1
 
 
 ## add_child'dan önce çağrılır. variation_seed: rastgeleliğin tohumu (ör. kat numarası).
-func setup(width: float, color: Color, variation_seed: int, style: StringName = &"blocks") -> void:
+## decor_theme: süslerin teması (PlatformDecor); -1 = süs yok.
+func setup(width: float, color: Color, variation_seed: int, style: StringName = &"blocks",
+		decor_theme: int = -1) -> void:
 	_width = width
 	_color = color
 	_variation_seed = variation_seed
 	_style = style
+	_decor_theme = decor_theme
 
 
 func _draw() -> void:
@@ -34,6 +38,13 @@ func _draw() -> void:
 	rng.seed = hash(_variation_seed)
 	var shadow := Rect2(-_width * 0.5 + 3.0, SHADOW_OFFSET, _width - 6.0, Tuning.PLATFORM_THICKNESS)
 	draw_colored_polygon(PlatformDraw.rounded_rect(shadow, 8.0), Color(0.0, 0.0, 0.0, SHADOW_ALPHA))
+	# Süsler kendi rng'siyle: stil çizimi kaç sayı çekerse çeksin süsler aynı kalır.
+	var decor_rng := RandomNumberGenerator.new()
+	decor_rng.seed = hash(_variation_seed * 31 + 7)
+	var decor: Array[StringName] = []
+	if _decor_theme >= 0:
+		decor = PlatformDecor.pick(_decor_theme, _style, decor_rng)
+		PlatformDecor.draw_behind(self, _width, decor, decor_rng)
 	match _style:
 		&"masonry": PlatformStylesStone.masonry(self, _width, _color, rng)
 		&"rock": PlatformStylesStone.rock(self, _width, _color, rng)
@@ -50,6 +61,7 @@ func _draw() -> void:
 		&"cloud": PlatformStylesSoft.cloud(self, _width, _color, rng)
 		&"glow_tiles": PlatformStylesSoft.glow_tiles(self, _width, _color, rng)
 		_: push_error("Bilinmeyen platform stili: %s" % _style)
+	PlatformDecor.draw_front(self, _width, decor, decor_rng)
 
 
 func _draw_blocks_style() -> void:

@@ -32,7 +32,8 @@ func setup(p_floor_number: int, p_width: float) -> void:
 		visual.setup(width, WorldPalette.PLATFORM_SECTION, floor_number, WorldPalette.SECTION_PLATFORM_STYLE)
 	else:
 		visual.setup(width, _theme_color(), floor_number,
-				ThemeRules.platform_style(floor_number, Platform.style_roll))
+				ThemeRules.platform_style(floor_number, Platform.style_roll),
+				ThemeRules.platform_theme(floor_number))
 	add_child(visual)
 
 
