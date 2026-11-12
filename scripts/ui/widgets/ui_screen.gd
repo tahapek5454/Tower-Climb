@@ -32,6 +32,7 @@ var is_open: bool = false
 
 var _dim: ColorRect
 var _root: Control
+var _center: CenterContainer
 var _tween: Tween
 
 
@@ -62,6 +63,17 @@ func open() -> void:
 	_stagger_rows()
 	_focus_first()
 	opened.emit()
+
+
+## Kartı dikey kaydırır (px; eksi = yukarı).
+func shift_card(pixels: float) -> void:
+	_center.offset_top = pixels
+	_center.offset_bottom = pixels
+
+
+## Kartın dışında, ekranla birlikte belirip kaybolan serbest bir denetim ekler (ör. köşe kartı).
+func add_free(control: Control) -> void:
+	_root.add_child(control)
 
 
 func close() -> void:
@@ -99,13 +111,13 @@ func _build() -> void:
 	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_root)
-	var center := CenterContainer.new()
-	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_root.add_child(center)
+	_center = CenterContainer.new()
+	_center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.add_child(_center)
 	card = PanelContainer.new()
 	card.add_theme_stylebox_override(&"panel", UiStyle.panel_style(PADDING))
-	center.add_child(card)
+	_center.add_child(card)
 	content = VBoxContainer.new()
 	content.add_theme_constant_override(&"separation", 10)
 	card.add_child(content)

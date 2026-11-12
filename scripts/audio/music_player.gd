@@ -1,8 +1,9 @@
 class_name MusicPlayer
 extends Node
 ## Oyuncunun müziklerini çalar (Music kanalında). AudioManager'ın çocuğu; sahne yeniden yüklense de
-## müzik kesilmez. Parça bitince sonrakine geçer (döngüsel). Seviye, çalıyor/duraklatıldı durumu ve
-## son parça AudioSettings ile kaydedilir. Web'de devre dışı (MusicLibrary.is_available).
+## müzik kesilmez. Parça bitince sonrakine geçer (döngüsel). Seviye ve son parça AudioSettings ile
+## kaydedilir. Oyun açılınca müzik kendiliğinden başlamaz (kullanıcı kararı); oyuncu radyodan başlatır,
+## sonra yeniden başlatma/menü geçişlerinde kesilmeden sürer. Web'de devre dışı (MusicLibrary.is_available).
 
 signal track_changed(title: String, position: String)
 signal playing_changed(playing: bool)
@@ -26,8 +27,6 @@ func _ready() -> void:
 	var settings: Dictionary = AudioSettings.load_all()
 	set_volume(settings["music_volume"], false)
 	rescan(settings["last_track"])
-	if settings["music_playing"] and not playlist.is_empty():
-		play()
 
 
 ## Klasörü yeniden tarar; çalan parça listede kalırsa kesilmez.
@@ -140,7 +139,6 @@ func _set_playing(playing: bool) -> void:
 	if playing == _is_playing:
 		return
 	_is_playing = playing
-	AudioSettings.save_value("music_playing", playing)
 	playing_changed.emit(playing)
 
 

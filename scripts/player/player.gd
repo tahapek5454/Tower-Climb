@@ -23,7 +23,8 @@ var _can_cut_jump: bool = false
 func _physics_process(delta: float) -> void:
 	var was_on_floor: bool = is_on_floor()
 	_update_jump_timers(delta)
-	_apply_horizontal(Input.get_axis(&"move_left", &"move_right"), delta)
+	var input_dir: float = Input.get_axis(&"move_left", &"move_right") if _controls_enabled() else 0.0
+	_apply_horizontal(input_dir, delta)
 	_apply_gravity(delta)
 	_try_jump()
 	_try_cut_jump()
@@ -69,7 +70,7 @@ func _update_jump_timers(delta: float) -> void:
 	else:
 		_coyote_timer = maxf(_coyote_timer - delta, 0.0)
 
-	if Input.is_action_just_pressed(&"jump"):
+	if _controls_enabled() and Input.is_action_just_pressed(&"jump"):
 		_jump_buffer_timer = Tuning.JUMP_BUFFER_TIME
 	else:
 		_jump_buffer_timer = maxf(_jump_buffer_timer - delta, 0.0)
@@ -86,6 +87,19 @@ func _try_jump() -> void:
 	var jump_speed: float = jump_speed_for(run_speed)
 	velocity.y = -jump_speed
 	event.emit(&"jumped", {"speed": jump_speed, "run_speed": run_speed})
+
+
+## Kendiliğinden küçük zıplama (menüde, oyuncu kontrolü yokken canlılık için). Yerde değilse yok sayılır.
+func hop(speed: float) -> void:
+	if not is_on_floor():
+		return
+	velocity.y = -speed
+	event.emit(&"jumped", {"speed": speed, "run_speed": 0.0})
+
+
+## Oyuncu tuşları sadece oyun sürerken çalışır (menüde, duraklatmada kapalı).
+func _controls_enabled() -> bool:
+	return FlowRules.accepts_player_input(GameFlow.state)
 
 
 ## Değişken zıplama: yükselirken tuş basılı değilse yukarı hız bir kez kesilir.

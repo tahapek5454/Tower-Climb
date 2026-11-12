@@ -4,7 +4,8 @@ extends Node
 ## PROCESS_MODE_ALWAYS olduğu için çalışmaya devam eder). Oyun bitince Events.game_over'ı dinleyip
 ## kendiliğinden GAME_OVER'a geçer.
 
-var state: FlowRules.State = FlowRules.State.PLAYING
+## Oyun ana menüyle açılır.
+var state: FlowRules.State = FlowRules.State.MENU
 
 
 func _ready() -> void:

@@ -3,6 +3,7 @@ extends CanvasLayer
 ## HUD: kulenin sol dışında, sol üstte küçük bir kart (radyo paneliyle aynı genişlik ve stil, UiStyle).
 ## Satırlar: KAT (büyük), SKOR (sayarak artar, bonusla kısa büyür), EN İYİ; kombo sürerken altın
 ## renkli kombo satırı ve kalan süre çubuğu açılır. Değerleri GameState/Events'ten okur.
+## Ana menüde gizli; oyun başlayınca yukarıdan süzülerek belirir.
 
 const FLOOR_FONT_SIZE: int = 22
 const SCORE_FONT_SIZE: int = 16
@@ -11,6 +12,10 @@ const CAPTION_FONT_SIZE: int = 10
 const COMBO_FONT_SIZE: int = 13
 const PADDING: float = 8.0
 const COMBO_BAR_HEIGHT: float = 3.0
+const SHOW_TIME: float = 0.35
+const SHOW_SLIDE: float = 14.0
+
+var _card: PanelContainer
 
 var _floor_label: Label
 var _score_label: Label
@@ -40,6 +45,8 @@ func _ready() -> void:
 	_update_score_text()
 	_on_high_score_changed(GameState.high_score)
 	_combo_box.visible = false
+	_card.visible = GameFlow.state != FlowRules.State.MENU
+	Events.flow_changed.connect(_on_flow_changed)
 
 
 func _process(delta: float) -> void:
@@ -81,16 +88,16 @@ func _pulse_score() -> void:
 
 func _build() -> void:
 	var side: float = (Tuning.VIEW_WIDTH - Tuning.TOWER_WIDTH) * 0.5 - Tuning.WALL_THICKNESS
-	var card := PanelContainer.new()
-	card.add_theme_stylebox_override(&"panel", UiStyle.panel_style(PADDING))
-	card.position = Vector2.ONE * Tuning.RADIO_SIDE_PADDING
-	card.custom_minimum_size.x = side - Tuning.RADIO_SIDE_PADDING * 2.0
-	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(card)
+	_card = PanelContainer.new()
+	_card.add_theme_stylebox_override(&"panel", UiStyle.panel_style(PADDING))
+	_card.position = Vector2.ONE * Tuning.RADIO_SIDE_PADDING
+	_card.custom_minimum_size.x = side - Tuning.RADIO_SIDE_PADDING * 2.0
+	_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_card)
 
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override(&"separation", 1)
-	card.add_child(column)
+	_card.add_child(column)
 
 	_floor_label = _add_row(column, "KAT", FLOOR_FONT_SIZE, UiStyle.TEXT)
 	# Container'lar çocuklarının ölçeğini sıfırlar; skor yazısı büyüyebilsin diye ara katmanda durur.
@@ -159,6 +166,18 @@ func _on_score_changed(score: int) -> void:
 		# Sıfırlamada geriye saymasın.
 		_shown_score = score
 		_update_score_text()
+
+
+## Menüden oyuna geçince kart yukarıdan süzülerek belirir.
+func _on_flow_changed(new_state: int, old_state: int) -> void:
+	if old_state != FlowRules.State.MENU or new_state != FlowRules.State.PLAYING:
+		return
+	_card.visible = true
+	_card.modulate.a = 0.0
+	_card.position.y = Tuning.RADIO_SIDE_PADDING - SHOW_SLIDE
+	var tween := create_tween().set_parallel()
+	tween.tween_property(_card, ^"modulate:a", 1.0, SHOW_TIME)
+	tween.tween_property(_card, ^"position:y", Tuning.RADIO_SIDE_PADDING, SHOW_TIME) 			.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 
 func _on_high_score_changed(high_score: int) -> void:

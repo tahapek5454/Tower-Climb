@@ -8,6 +8,9 @@ const BACKDROP_COLOR := Color(0.05, 0.05, 0.08)
 var _player: Player
 var _camera: TowerCamera
 var _spawner: PlatformSpawner
+var _menu: MainMenu
+## Menüde kartalın arada bir kendiliğinden zıplaması.
+var _hop_timer: Timer
 
 
 func _ready() -> void:
@@ -79,12 +82,25 @@ func _ready() -> void:
 	debug_overlay.camera = _camera
 	add_child(debug_overlay)
 
+	_menu = MainMenu.new()
+	_menu.name = "MainMenu"
+	_menu.play_requested.connect(_on_play_requested)
+	add_child(_menu)
+
+	_hop_timer = Timer.new()
+	_hop_timer.one_shot = true
+	_hop_timer.timeout.connect(_on_hop_timer)
+	add_child(_hop_timer)
+
 	var game_over_label := GameOverLabel.new()
 	game_over_label.name = "GameOverLabel"
 	game_over_label.restart_requested.connect(_restart)
 	add_child(game_over_label)
 
 	Events.game_over.connect(_on_game_over)
+	if GameFlow.state == FlowRules.State.MENU:
+		_menu.open()
+		_schedule_hop()
 
 
 func _physics_process(_delta: float) -> void:
@@ -93,7 +109,7 @@ func _physics_process(_delta: float) -> void:
 
 
 func _unhandled_input(input_event: InputEvent) -> void:
-	if input_event.is_action_pressed(&"debug_skip_section") and not GameState.is_game_over:
+	if input_event.is_action_pressed(&"debug_skip_section") and GameFlow.is_playing():
 		_debug_skip_section()
 		get_viewport().set_input_as_handled()
 
@@ -109,6 +125,22 @@ func _debug_skip_section() -> void:
 	_player.position = Vector2(0.0, target_y)
 	_player.velocity = Vector2.ZERO
 	_camera.position.y = target_y + Tuning.GROUND_SCREEN_MARGIN - Tuning.VIEW_HEIGHT * 0.5
+
+
+func _on_play_requested() -> void:
+	_menu.close()
+	GameFlow.request(FlowRules.State.PLAYING)
+
+
+func _schedule_hop() -> void:
+	_hop_timer.start(randf_range(Tuning.MENU_HOP_INTERVAL_MIN, Tuning.MENU_HOP_INTERVAL_MAX))
+
+
+func _on_hop_timer() -> void:
+	if GameFlow.state != FlowRules.State.MENU:
+		return
+	_player.hop(Tuning.MENU_HOP_SPEED)
+	_schedule_hop()
 
 
 func _on_player_event(event_name: StringName, data: Dictionary) -> void:

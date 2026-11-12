@@ -18,6 +18,9 @@ func _ready() -> void:
 
 
 func _on_player_event(event_name: StringName, data: Dictionary) -> void:
+	# Menüdeki kendiliğinden zıplamalar sessiz.
+	if not GameFlow.is_playing():
+		return
 	match event_name:
 		&"jumped":
 			var speed: float = data["speed"]

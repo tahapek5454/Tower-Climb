@@ -447,6 +447,16 @@ const RADIO_FADE_SPEED: float = 8.0
 ## Ekleme sonucu mesajının başlıkta kalma süresi (s).
 const RADIO_MESSAGE_TIME: float = 2.5
 
+# --- Ana menü (Aşama 5) ---
+## Menü açıkken dünyanın karartılması (0..1); düşük: arkadaki canlı dünya görünsün.
+const MENU_DIM_ALPHA: float = 0.28
+## Menü kartının dikey kayması (px, eksi = yukarı); kartal kartın altında görünsün.
+const MENU_CARD_SHIFT: float = -50.0
+## Menüde kartalın kendiliğinden yaptığı küçük zıplamanın hızı ve aralığı (s).
+const MENU_HOP_SPEED: float = JUMP_BASE * 0.42
+const MENU_HOP_INTERVAL_MIN: float = 2.8
+const MENU_HOP_INTERVAL_MAX: float = 6.0
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25

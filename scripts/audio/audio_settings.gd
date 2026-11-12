@@ -6,7 +6,6 @@ extends RefCounted
 const SECTION: String = "audio"
 const DEFAULTS: Dictionary = {
 	"music_volume": 0.6,
-	"music_playing": true,
 	"last_track": "",
 	"sfx_enabled": true,
 	"muted": false,
