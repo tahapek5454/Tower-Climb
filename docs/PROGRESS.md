@@ -1,14 +1,14 @@
 # İlerleme
 
 **Aktif aşama:** 4 — Dünya görselleri ve ses
-**Durum:** Devam ediyor (3/10 madde). Madde 3 için kullanıcının onayı bekleniyor; sıradaki madde 4.
+**Durum:** Devam ediyor (4/10 madde). Madde 4 için kullanıcının onayı bekleniyor; sıradaki madde 5.
 
 ## Aşama 4 — Dünya görselleri ve ses
 Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - [x] 1. Palet kaynağı (`WorldPalette`) + kule içi taş deseni (`assets/shaders/tower_interior.gdshader`)
 - [x] 2. Karakter okunurluğu: yeni zeminde outline/rim yeniden ayarı (`Tuning.MODEL_OUTLINE_*`, `MODEL_RIM_*`)
 - [x] 3. Yan duvarlar ve zemin (taş sütun görünümü, iç kenar gölgesi; `TOWER_WIDTH`'ten türetilir)
-- [ ] 4. Platformlar (yuvarlak köşe, üst vurgu, alt gölge; renk temadan; bölüm platformu altın sarısı kalır)
+- [x] 4. Platformlar (yuvarlak köşe, üst vurgu, alt gölge; renk temadan; bölüm platformu altın sarısı kalır)
 - [ ] 5. Dış çevre + parallax (gökyüzü gradyanı, 2–3 bulut katmanı, uzak siluetler; kule içi arka duvar da hafif yavaş kayar)
 - [ ] 6. Tema sistemi: her 100 katta yumuşak palet geçişi (`ThemeRules` saf + GUT; temaları hızlı görmek için debug tuşu)
 - [ ] 7. Işık: sahte ışık hâleleri (pencere/fener), `Light2D` yok
@@ -28,6 +28,7 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - Madde 2: orta tonlu zeminde açık outline + güçlü rim gövdede beyaz "karalama" çizgileri yapıyordu. → Outline koyu lacivert (`0.09, 0.10, 0.18`), rim gücü 0,55 → 0,28. Yakın plan görüntüyle karşılaştırıldı (idle/zıplama): beyaz kafa ve gaga öne çıkıyor, koyu gövde zeminden ayrışıyor. Tema koyu bir zemine geçerse (ör. Gece) outline yeniden değerlendirilmeli; gerekirse outline rengi temaya bağlanır (madde 6).
 - Doğrulama script tuzağı: `-s` script'inde `root.add_child(scene)` sonrası düğümler hemen hazır değil; oyuncuyu bulmadan önce bekle (`create_timer`), yoksa script hata verip pencere açık kalır (takılır).
 - Madde 3: yan duvarlar `assets/shaders/tower_wall.gdshader` (koyu sütun, her iki katta bir yatay derz, kule içine bakan kenarda 5 px açık pervaz, dışa doğru hafif kararma; desen dünya koordinatında). Zemin: çarpışma levhası aynı (24 px); görüntü üst açık şerit + levha + ekranın altına inen dolu taban (`Tuning.GROUND_VISUAL_DEPTH`). Ayarlar `Tuning.WALL_*`/`GROUND_*`, renkler `WorldPalette`. `Tower._make_body` artık görselsiz; görseller ayrı eklenir.
+- Madde 4: platform görüntüsü `scripts/world/platform_visual.gd` (`PlatformVisual`, `_draw` içinde üst üste üç `StyleBoxFlat`: koyu alt kenar + gölge, açık üst şerit, gövde). Yuvarlak köşe 9 px, soluk turkuaz (`WorldPalette.PLATFORM`); bölüm platformu altın sarısı (`PLATFORM_SECTION`), hâlesi aynı. Üst/alt tonlar gövde renginden türetilir (`Tuning.PLATFORM_*`). Çarpışma değişmedi. Bölüm platformu (100. kat) oyunda görsel olarak henüz doğrulanmadı — madde 6'daki debug tuşuyla bakılacak.
 - Madde 1 uygulama notu: arka duvar dikdörtgeni kamerayı takip eder ama desen shader'da dünya koordinatından (`MODEL_MATRIX * VERTEX`) hesaplanır → taşlar yerinde durur. Blok 128x64 (kat başına iki sıra), ayarlar `Tuning.INTERIOR_*`, renkler `WorldPalette`. Madde 5'te parallax için shader'a kaydırma çarpanı eklenecek; madde 6'da `WorldPalette` temalı hâle gelecek.
 
 ## ▶ Yeni oturumda buradan devam

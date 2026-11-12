@@ -42,6 +42,19 @@ const WALL_OUTER_SHADE: float = 0.15
 const GROUND_TOP_HEIGHT: float = 4.0
 const GROUND_VISUAL_DEPTH: float = VIEW_HEIGHT * 0.5
 
+# --- Platform görünümü (görsel; scripts/world/platform_visual.gd) ---
+## Köşe yuvarlaklığı (px).
+const PLATFORM_CORNER_RADIUS: float = 9.0
+## Üstteki açık şeridin ve alttaki koyu kenarın kalınlığı (px); ne kadar açık/koyu oldukları.
+const PLATFORM_TOP_HEIGHT: float = 5.0
+const PLATFORM_UNDERSIDE_HEIGHT: float = 5.0
+const PLATFORM_TOP_LIGHTEN: float = 0.35
+const PLATFORM_UNDERSIDE_DARKEN: float = 0.30
+## Platformun arka duvara düşen gölgesi: yayılma (px), aşağı kayma (px) ve koyuluk.
+const PLATFORM_SHADOW_SIZE: float = 5.0
+const PLATFORM_SHADOW_OFFSET: float = 5.0
+const PLATFORM_SHADOW_ALPHA: float = 0.28
+
 # --- Karakter ---
 const PLAYER_WIDTH: float = 32.0
 const PLAYER_HEIGHT: float = 48.0
