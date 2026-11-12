@@ -44,7 +44,7 @@ const GROUND_VISUAL_DEPTH: float = VIEW_HEIGHT * 0.5
 
 # --- Platform görünümü (görsel; scripts/world/platform_visual.gd) ---
 ## Köşe yuvarlaklığı (px).
-const PLATFORM_CORNER_RADIUS: float = 9.0
+const PLATFORM_CORNER_RADIUS: float = 7.0
 ## Üstteki açık şeridin ve alttaki koyu kenarın kalınlığı (px); ne kadar açık/koyu oldukları.
 const PLATFORM_TOP_HEIGHT: float = 5.0
 const PLATFORM_UNDERSIDE_HEIGHT: float = 5.0
@@ -54,6 +54,22 @@ const PLATFORM_UNDERSIDE_DARKEN: float = 0.30
 const PLATFORM_SHADOW_SIZE: float = 5.0
 const PLATFORM_SHADOW_OFFSET: float = 5.0
 const PLATFORM_SHADOW_ALPHA: float = 0.28
+## Uçlardaki başlık taşları: genişlik, levhadan aşağı taşma (px) ve gövdeye göre ne kadar açık.
+const PLATFORM_CAP_WIDTH: float = 24.0
+const PLATFORM_CAP_DROP: float = 5.0
+const PLATFORM_CAP_LIGHTEN: float = 0.10
+## Aradaki taşların yaklaşık boyu (px; genişliğe tam bölünecek şekilde ayarlanır) ve ton farkı (±oran).
+const PLATFORM_STONE_LENGTH: float = 52.0
+const PLATFORM_STONE_VARIATION: float = 0.11
+## Taşlar arası derz: kalınlık (px) ve koyuluk.
+const PLATFORM_JOINT_WIDTH: float = 2.0
+const PLATFORM_JOINT_DARKEN: float = 0.32
+## Alttaki destek taşları: üst genişlik, yükseklik, başlıktan içeri mesafe (px), alt/üst genişlik oranı, koyuluk.
+const PLATFORM_CORBEL_WIDTH: float = 32.0
+const PLATFORM_CORBEL_HEIGHT: float = 12.0
+const PLATFORM_CORBEL_INSET: float = 14.0
+const PLATFORM_CORBEL_TAPER: float = 0.5
+const PLATFORM_CORBEL_DARKEN: float = 0.30
 
 # --- Karakter ---
 const PLAYER_WIDTH: float = 32.0

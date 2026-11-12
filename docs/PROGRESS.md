@@ -1,7 +1,7 @@
 # İlerleme
 
 **Aktif aşama:** 4 — Dünya görselleri ve ses
-**Durum:** Devam ediyor (4/10 madde). Madde 4 için kullanıcının onayı bekleniyor; sıradaki madde 5.
+**Durum:** Devam ediyor (4/10 madde). Madde 4 genişletildi: 4b (detaylı taş platform) yapıldı, onay bekleniyor; sıradaki 4c (platform genişlik kuralları), sonra madde 5.
 
 ## Aşama 4 — Dünya görselleri ve ses
 Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
@@ -9,8 +9,10 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - [x] 2. Karakter okunurluğu: yeni zeminde outline/rim yeniden ayarı (`Tuning.MODEL_OUTLINE_*`, `MODEL_RIM_*`)
 - [x] 3. Yan duvarlar ve zemin (taş sütun görünümü, iç kenar gölgesi; `TOWER_WIDTH`'ten türetilir)
 - [x] 4. Platformlar (yuvarlak köşe, üst vurgu, alt gölge; renk temadan; bölüm platformu altın sarısı kalır)
+- [x] 4b. Taş kule platformu detaylandırıldı (başlık taşları, tonlu bloklar, derzler, destek taşları)
+- [ ] 4c. Platform genişlik kuralları: bölüme göre değişir + rastgele sapma (kimi katlarda dar/geniş); `PlatformRules` + GUT
 - [ ] 5. Dış çevre + parallax (gökyüzü gradyanı, 2–3 bulut katmanı, uzak siluetler; kule içi arka duvar da hafif yavaş kayar)
-- [ ] 6. Tema sistemi: her 100 katta yumuşak palet geçişi (`ThemeRules` saf + GUT; temaları hızlı görmek için debug tuşu)
+- [ ] 6. Tema sistemi: her 100 katta yumuşak palet geçişi + **bölüme özel platform tasarımı** (kodla; görünen kalınlık/biçim de değişebilir) (`ThemeRules` saf + GUT; temaları hızlı görmek için debug tuşu)
 - [ ] 7. Işık: sahte ışık hâleleri (pencere/fener), `Light2D` yok
 - [ ] 8. Ses efektleri: `AudioManager` autoload, `Master/SFX/Music` bus'ları; zıplama, iniş, duvar sekmesi, kombo artışı/bitişi, bölüm platformu, oyun sonu
 - [ ] 9. Müzik: tek döngü, oyun bitince kısılır
@@ -29,6 +31,8 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - Doğrulama script tuzağı: `-s` script'inde `root.add_child(scene)` sonrası düğümler hemen hazır değil; oyuncuyu bulmadan önce bekle (`create_timer`), yoksa script hata verip pencere açık kalır (takılır).
 - Madde 3: yan duvarlar `assets/shaders/tower_wall.gdshader` (koyu sütun, her iki katta bir yatay derz, kule içine bakan kenarda 5 px açık pervaz, dışa doğru hafif kararma; desen dünya koordinatında). Zemin: çarpışma levhası aynı (24 px); görüntü üst açık şerit + levha + ekranın altına inen dolu taban (`Tuning.GROUND_VISUAL_DEPTH`). Ayarlar `Tuning.WALL_*`/`GROUND_*`, renkler `WorldPalette`. `Tower._make_body` artık görselsiz; görseller ayrı eklenir.
 - Madde 4: platform görüntüsü `scripts/world/platform_visual.gd` (`PlatformVisual`, `_draw` içinde üst üste üç `StyleBoxFlat`: koyu alt kenar + gölge, açık üst şerit, gövde). Yuvarlak köşe 9 px, soluk turkuaz (`WorldPalette.PLATFORM`); bölüm platformu altın sarısı (`PLATFORM_SECTION`), hâlesi aynı. Üst/alt tonlar gövde renginden türetilir (`Tuning.PLATFORM_*`). Çarpışma değişmedi. Bölüm platformu (100. kat) oyunda görsel olarak henüz doğrulanmadı — madde 6'daki debug tuşuyla bakılacak.
+- Kullanıcı geri bildirimi (madde 4, ilk sürüm): düz yuvarlak çubuk "çok basit" bulundu; ayaklar yüzeye oturuyor (sorun yok). İstek: platformlar üzerinde tasarım çalışması, **bölüm bölüm görünüm ve boyut değişsin**; genişlik hem bölüme göre hem **rastgele** değişsin (kimi yerlerde oyun zorlaşsın). Karar: kodla çizim (Blender değil; yeterli olmazsa bir temayı Blender'da deneyip karşılaştırma önerildi). Tema platform fikirleri: Taş kule = yontma taş levha · Yosunlu = ahşap kalas + yosun/sarmaşık · Alacakaranlık = dövme metal/bakır + perçin, zincir/fener · Buz = buz levhası + saçaklar · Gece = ışıldayan kristal/ay taşı.
+- Madde 4b: `PlatformVisual._draw` — levha (`_draw_block`: alt kenar+gölge, üst şerit, gövde), uçlarda 24 px başlık taşları (5 px aşağı taşar, biraz açık), arada ~52 px'lik taşlar (ton farkı ±%11, kat numarasıyla tohumlanır → aynı kat hep aynı görünür), derzler, altta iki destek taşı. Her genişliğe uyar (taş sayısı genişlikten). Ayarlar `Tuning.PLATFORM_*`. Çarpışma aynı. İlk denemede ton farkı (%7) ve destekler (9 px, çok koyu) okunmuyordu → belirginleştirildi.
 - Madde 1 uygulama notu: arka duvar dikdörtgeni kamerayı takip eder ama desen shader'da dünya koordinatından (`MODEL_MATRIX * VERTEX`) hesaplanır → taşlar yerinde durur. Blok 128x64 (kat başına iki sıra), ayarlar `Tuning.INTERIOR_*`, renkler `WorldPalette`. Madde 5'te parallax için shader'a kaydırma çarpanı eklenecek; madde 6'da `WorldPalette` temalı hâle gelecek.
 
 ## ▶ Yeni oturumda buradan devam

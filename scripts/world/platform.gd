@@ -28,7 +28,8 @@ func setup(p_floor_number: int, p_width: float) -> void:
 
 	var visual := PlatformVisual.new()
 	visual.name = "Visual"
-	visual.setup(width, WorldPalette.PLATFORM_SECTION if is_section else WorldPalette.PLATFORM)
+	visual.setup(width, WorldPalette.PLATFORM_SECTION if is_section else WorldPalette.PLATFORM,
+			floor_number)
 	add_child(visual)
 
 
