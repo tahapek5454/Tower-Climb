@@ -1,6 +1,7 @@
 extends Node
 ## Ses yöneticisi (autoload): ses kanallarını (Master, SFX, Music) kurar, ses efektlerini bir oynatıcı
-## havuzundan çalar. Ses ayarları (Aşama 5) bu kanalların seviyesini değiştirir.
+## havuzundan çalar, oyuncunun müziklerini `music` (MusicPlayer) ile çalar. Efektleri aç/kapa ve
+## tümünü sustur burada (ayarlar kaydedilir). Ses ayarları (Aşama 5) bu kanalları kullanır.
 ## Sesler assets/audio/sfx/*.wav (tools/sfx/generate_sfx.py üretir); dosyası olmayan ses sessizce atlanır.
 
 const SFX_DIR: String = "res://assets/audio/sfx/"
@@ -11,6 +12,8 @@ const MUSIC_BUS: StringName = &"Music"
 ## Aynı anda çalabilecek en fazla efekt sayısı.
 const POOL_SIZE: int = 10
 
+## Oyuncunun müzikleri (radyo paneli bunu kullanır).
+var music: MusicPlayer
 var _streams: Dictionary = {}
 var _players: Array[AudioStreamPlayer] = []
 var _next: int = 0
@@ -30,6 +33,34 @@ func _ready() -> void:
 		player.bus = SFX_BUS
 		add_child(player)
 		_players.append(player)
+	var settings: Dictionary = AudioSettings.load_all()
+	set_sfx_enabled(settings["sfx_enabled"], false)
+	set_muted(settings["muted"], false)
+	music = MusicPlayer.new()
+	music.name = "Music"
+	add_child(music)
+
+
+## Efekt sesleri açık mı?
+func is_sfx_enabled() -> bool:
+	return not AudioServer.is_bus_mute(AudioServer.get_bus_index(SFX_BUS))
+
+
+func set_sfx_enabled(enabled: bool, save: bool = true) -> void:
+	AudioServer.set_bus_mute(AudioServer.get_bus_index(SFX_BUS), not enabled)
+	if save:
+		AudioSettings.save_value("sfx_enabled", enabled)
+
+
+## Tüm ses kapalı mı? (Master kanalı.)
+func is_muted() -> bool:
+	return AudioServer.is_bus_mute(0)
+
+
+func set_muted(muted: bool, save: bool = true) -> void:
+	AudioServer.set_bus_mute(0, muted)
+	if save:
+		AudioSettings.save_value("muted", muted)
 
 
 ## Efekt çalar. pitch: perde çarpanı (1 = normal), volume_db: ses yüksekliği.
