@@ -5,6 +5,8 @@ extends RefCounted
 ## sarmaşık, kök, fener, buz saçağı. "Ön" süsler üst yüzeydedir ve platformdan sonra çizilir:
 ## çimen, çiçek, yosun, mantar, kar, kristal filizi. Ön süsler ayakların bastığı yeri kapatmasın diye
 ## sadece uçlara yakın ve kısadır.
+## Işık veren süsler (fener, kristal filizi) konumlarını `lights` dizisine ekler: [konum, boyut, renk]
+## (PlatformGlow çizer).
 
 const BEHIND: Array[StringName] = [&"vines", &"roots", &"lanterns", &"icicles"]
 ## Her temanın süsleri (WorldPalette tema sırasıyla).
@@ -57,18 +59,18 @@ static func pick(theme: int, style: StringName, rng: RandomNumberGenerator) -> A
 
 ## Arka süsler (platform gövdesinden önce çağrılır).
 static func draw_behind(canvas: CanvasItem, width: float, kinds: Array[StringName],
-		rng: RandomNumberGenerator) -> void:
+		rng: RandomNumberGenerator, lights: Array = []) -> void:
 	for kind: StringName in kinds:
 		match kind:
 			&"vines": _vines(canvas, width, rng, GRASS_DARK, true)
 			&"roots": _vines(canvas, width, rng, ROOT, false)
-			&"lanterns": _lanterns(canvas, width, rng)
+			&"lanterns": _lanterns(canvas, width, rng, lights)
 			&"icicles": _icicles(canvas, width, rng)
 
 
 ## Ön süsler (platform gövdesinden sonra çağrılır).
 static func draw_front(canvas: CanvasItem, width: float, kinds: Array[StringName],
-		rng: RandomNumberGenerator) -> void:
+		rng: RandomNumberGenerator, lights: Array = []) -> void:
 	for kind: StringName in kinds:
 		match kind:
 			&"grass": _at_ends(canvas, width, rng, PlatformDecor._grass)
@@ -76,17 +78,24 @@ static func draw_front(canvas: CanvasItem, width: float, kinds: Array[StringName
 			&"moss": _moss(canvas, width, rng)
 			&"mushrooms": _at_ends(canvas, width, rng, PlatformDecor._mushroom)
 			&"snow": _snow(canvas, width, rng)
-			&"crystals": _at_ends(canvas, width, rng, PlatformDecor._crystal_sprout)
+			&"crystals":
+				for base: Vector2 in _at_ends(canvas, width, rng, PlatformDecor._crystal_sprout):
+					lights.append([base + Vector2(0.0, -6.0), Tuning.LIGHT_CRYSTAL_SIZE,
+							Color(CRYSTAL, Tuning.LIGHT_CRYSTAL_ALPHA)])
 
 
-## Bir ya da iki uçta, uca yakın rastgele bir noktada çizer.
-static func _at_ends(canvas: CanvasItem, width: float, rng: RandomNumberGenerator, painter: Callable) -> void:
+## Bir ya da iki uçta, uca yakın rastgele bir noktada çizer; çizilen noktaları döndürür.
+static func _at_ends(canvas: CanvasItem, width: float, rng: RandomNumberGenerator,
+		painter: Callable) -> Array[Vector2]:
+	var bases: Array[Vector2] = []
 	var sides: Array[float] = [-1.0, 1.0]
 	if rng.randf() >= 0.4:
 		sides = [1.0 if rng.randf() < 0.5 else -1.0]
 	for side: float in sides:
 		var x: float = (width * 0.5 - rng.randf_range(6.0, minf(END_ZONE, width * 0.3))) * side
 		painter.call(canvas, Vector2(x, 0.5), rng)
+		bases.append(Vector2(x, 0.5))
+	return bases
 
 
 static func _grass(canvas: CanvasItem, base: Vector2, rng: RandomNumberGenerator) -> void:
@@ -176,7 +185,7 @@ static func _vines(canvas: CanvasItem, width: float, rng: RandomNumberGenerator,
 
 
 ## Fener: platformun altına iple asılı küçük sıcak renkli fener (ışığı madde 7'de).
-static func _lanterns(canvas: CanvasItem, width: float, rng: RandomNumberGenerator) -> void:
+static func _lanterns(canvas: CanvasItem, width: float, rng: RandomNumberGenerator, lights: Array) -> void:
 	var count: int = 1 if width < 200.0 or rng.randf() < 0.6 else 2
 	for i: int in count:
 		var x: float = rng.randf_range(-width * 0.35, width * 0.35) if count == 1 \
@@ -189,6 +198,8 @@ static func _lanterns(canvas: CanvasItem, width: float, rng: RandomNumberGenerat
 		PlatformDraw.shape(canvas, PlatformDraw.rounded_rect(
 				Rect2(body_top + Vector2(-7.5, -2.0), Vector2(15.0, 4.0)), 1.5), LANTERN_FRAME)
 		canvas.draw_circle(body_top + Vector2(-2.0, 5.5), 2.0, LANTERN.lightened(0.5), true, -1.0, true)
+		lights.append([body_top + Vector2(0.0, 7.5), Tuning.LIGHT_LANTERN_SIZE,
+				Color(LANTERN, Tuning.LIGHT_LANTERN_ALPHA)])
 
 
 ## Buz saçakları: platformun altından sarkan ince sivri buzlar.

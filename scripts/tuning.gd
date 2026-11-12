@@ -367,6 +367,20 @@ const GLOW_AURA_SMOOTHING: float = 6.0
 const GLOW_SECTION_HEIGHT: float = 90.0
 const GLOW_SECTION_ALPHA: float = 0.22
 
+# --- Işık (görsel; "sahte ışık" hâleleri, scripts/world/platform_glow.gd) ---
+## Fener: hâle çapı (px), parlaklık ve titreşim (oran, hız rad/s).
+const LIGHT_LANTERN_SIZE: float = 120.0
+const LIGHT_LANTERN_ALPHA: float = 0.32
+const LIGHT_FLICKER_AMOUNT: float = 0.14
+const LIGHT_FLICKER_SPEED: float = 3.2
+## Kristal filizi: hâle çapı ve parlaklık.
+const LIGHT_CRYSTAL_SIZE: float = 64.0
+const LIGHT_CRYSTAL_ALPHA: float = 0.30
+## Kendi ışığı olan platform stilleri: platform boyunca parıltının yüksekliği ve parlaklığı.
+const LIGHT_PLATFORM_HEIGHT: float = 70.0
+const LIGHT_GLOW_TILES_ALPHA: float = 0.20
+const LIGHT_CRYSTAL_PLATFORM_ALPHA: float = 0.12
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25

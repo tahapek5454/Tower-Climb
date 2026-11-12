@@ -7,6 +7,7 @@ extends Node2D
 ## (PlatformStylesThemed), &"cobble", &"arch", &"log", &"truss", &"pipe" (PlatformStylesBuilt),
 ## &"snowdrift", &"cloud", &"glow_tiles" (PlatformStylesSoft).
 ## Rastgelelik variation_seed'den: aynı kat hep aynı görünür.
+## Işıklar (fener, kristal, parlayan stiller) çizim sırasında toplanır, PlatformGlow çocuğu çizer.
 
 ## Yeni stillerin arka duvara düşen gölgesi: aşağı kayma (px) ve koyuluk.
 const SHADOW_OFFSET: float = 5.0
@@ -17,6 +18,8 @@ var _color: Color = Color.WHITE
 var _variation_seed: int = 0
 var _style: StringName = &"blocks"
 var _decor_theme: int = -1
+var _glow: PlatformGlow
+var _lights_sent: bool = false
 
 
 ## add_child'dan önce çağrılır. variation_seed: rastgeleliğin tohumu (ör. kat numarası).
@@ -28,6 +31,9 @@ func setup(width: float, color: Color, variation_seed: int, style: StringName = 
 	_variation_seed = variation_seed
 	_style = style
 	_decor_theme = decor_theme
+	_glow = PlatformGlow.new()
+	_glow.name = "Glow"
+	add_child(_glow)
 
 
 func _draw() -> void:
@@ -42,9 +48,10 @@ func _draw() -> void:
 	var decor_rng := RandomNumberGenerator.new()
 	decor_rng.seed = hash(_variation_seed * 31 + 7)
 	var decor: Array[StringName] = []
+	var lights: Array = []
 	if _decor_theme >= 0:
 		decor = PlatformDecor.pick(_decor_theme, _style, decor_rng)
-		PlatformDecor.draw_behind(self, _width, decor, decor_rng)
+		PlatformDecor.draw_behind(self, _width, decor, decor_rng, lights)
 	match _style:
 		&"masonry": PlatformStylesStone.masonry(self, _width, _color, rng)
 		&"rock": PlatformStylesStone.rock(self, _width, _color, rng)
@@ -61,7 +68,22 @@ func _draw() -> void:
 		&"cloud": PlatformStylesSoft.cloud(self, _width, _color, rng)
 		&"glow_tiles": PlatformStylesSoft.glow_tiles(self, _width, _color, rng)
 		_: push_error("Bilinmeyen platform stili: %s" % _style)
-	PlatformDecor.draw_front(self, _width, decor, decor_rng)
+	PlatformDecor.draw_front(self, _width, decor, decor_rng, lights)
+	_add_style_light(lights)
+	if not _lights_sent:
+		_lights_sent = true
+		_glow.set_lights(lights, decor.has(&"lanterns"), float(_variation_seed))
+
+
+## Kendi ışığı olan stiller: platformun boyunca geniş, yumuşak bir parıltı.
+func _add_style_light(lights: Array) -> void:
+	var alpha: float = 0.0
+	match _style:
+		&"glow_tiles": alpha = Tuning.LIGHT_GLOW_TILES_ALPHA
+		&"crystal": alpha = Tuning.LIGHT_CRYSTAL_PLATFORM_ALPHA
+	if alpha > 0.0:
+		var size := Vector2(_width * 1.25, Tuning.LIGHT_PLATFORM_HEIGHT)
+		lights.append([Vector2(0.0, Tuning.PLATFORM_THICKNESS * 0.5), size, Color(_color.lightened(0.4), alpha)])
 
 
 func _draw_blocks_style() -> void:
