@@ -3,13 +3,13 @@ extends RefCounted
 ## Radyo panelinin renkleri ve ikon çizimleri (ortak). Dünya paletiyle uyumlu: koyu arduvaz zemin,
 ## soluk turkuaz vurgu; neon/parlak renk yok.
 
-const PANEL := Color(0.09, 0.10, 0.15, 0.85)
-const BORDER := Color(0.40, 0.66, 0.68, 0.45)
-const TEXT := Color(0.88, 0.90, 0.95)
-const TEXT_DIM := Color(0.60, 0.65, 0.76)
-const ACCENT := Color(0.42, 0.74, 0.76)
+const PANEL := UiStyle.PANEL
+const BORDER := UiStyle.BORDER
+const TEXT := UiStyle.TEXT
+const TEXT_DIM := UiStyle.TEXT_DIM
+const ACCENT := UiStyle.ACCENT
 const ACCENT_DARK := Color(0.08, 0.12, 0.16)
-const TRACK := Color(1.0, 1.0, 1.0, 0.14)
+const TRACK := UiStyle.TRACK
 const DISABLED := Color(0.45, 0.48, 0.56, 0.6)
 
 

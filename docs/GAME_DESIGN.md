@@ -113,10 +113,19 @@ Değerler `const` olarak kalır (oyun içi canlı ayar paneli şimdilik yok). İ
 - Kombo yazısı: büyüyerek beliren, sallanan "COMBO x7!" etiketleri; skor sayacı tween ile.
 - Glow ve renk vurguları. (Uygulama: WorldEnvironment yerine toplamalı ışık hâleleri — Compatibility renderer/web uyumu için; bkz. PROGRESS.md.)
 
-## Görsel yön (Aşama 4'te netleşecek)
+## Görsel yön (Aşama 4'te yapıldı)
 - Karakter (Aşama 3'te yapıldı): chibi **kartal maskotu** — beyaz kafa, turuncu gaga ve ayaklar, düz gri tişört, koyu pantolon, siyah tüylü kollar, beyaz kuyruk. Tripo ile üretilmiş 3D model; yan kamerayla şeffaf bir katmanda çizilir, toon shader + açık renkli dış çizgi. Ekranda ~94 px; hitbox 32x48 sabit.
 - Karakter animasyonları: bekleme, koşu (hız koşu hızına bağlı), zıplama, kanat çırpma, düşme, iniş; taklada rastgele **topak** ya da **yıldız** (yan takla).
 - Karakter siyah-beyaz-turuncu olduğu için **kule içi orta tonda** olmalı (siyah ve beyazdan uzak).
 - Dünya: kodla/shader ile üretilen şık bir kule; parallax katmanlar; her 100 katta tema değişimi.
 - Duvarların dışındaki boşluklar (dekor alanı): dış çevre — doğa, bulutlar vb. (Aşama 4). Kule genişliği değişirse dekor kalan alana kendiliğinden uymalı.
-- Şimdilik dünya düz renkli şekiller.
+- Dünya tamamen kodla/shader ile çizilir (dış görsel dosyası yok): taş kule iç duvarı (parallax), taş sütun yan duvarlar, kule dışında gökyüzü + bulutlar + kahve dağlar + kule dibinde çimenli ova.
+- 5 bölüm teması (her 100 katta, altın bölüm platformundan sonra yumuşak geçiş): Taş kule, Yosunlu, Alacakaranlık, Buz, Gece; sonra döngü.
+- Platformlar: tema başına 4 stil (ağırlıklı, art arda aynı stil gelmez) + süsler (yosun, çimen, mantar, kar, kristal, sarmaşık, fener, saçak).
+- Duvar süsleri: meşale, pencere, sancak, flama (Gece'de ampul dizisi); başlangıç alanı (sandık, fıçı, tabela, mangal).
+- Işık: toplamalı "sahte ışık" hâleleri (fener/meşale titrer). Ortam parçacıkları: toz, yaprak, kar, ateş böceği.
+- Arayüz: koyu arduvaz yarı saydam kartlar, soluk turkuaz vurgu, altın kombo (UiStyle).
+
+## Ses
+- Efektler kodla sentezlenir (`tools/sfx/generate_sfx.py`): zıplama (hıza göre perde), iniş, duvar, kombo (majör gamda yükselir), kombo bitişi, bölüm, oyun sonu, takla vuuşu.
+- Müzik oyunla gelmez: masaüstünde sol alttaki **radyo paneli** oyuncunun kendi müziklerini (mp3/ogg/wav, `user://music`) çalar; ekleme: + düğmesi, klasörü aç, pencereye sürükle-bırak. Web'de müzik yok. Efekt aç/kapa ve tüm sesi kapat (M) panelde.

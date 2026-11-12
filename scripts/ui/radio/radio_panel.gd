@@ -180,12 +180,7 @@ func _on_playing_changed(playing: bool) -> void:
 ## Zemin, nota, sıra yazısı ve ilerleme çizgisi.
 func _draw_box() -> void:
 	var rect := Rect2(Vector2.ZERO, _box.size)
-	var style := StyleBoxFlat.new()
-	style.bg_color = RadioStyle.PANEL
-	style.border_color = RadioStyle.BORDER
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(10)
-	_box.draw_style_box(style, rect)
+	_box.draw_style_box(UiStyle.panel_style(), rect)
 	RadioStyle.icon(_box, &"note", Vector2(13.0, 12.5), 11.0, RadioStyle.ACCENT)
 	var font: Font = _box.get_theme_default_font()
 	if _position_text != "":

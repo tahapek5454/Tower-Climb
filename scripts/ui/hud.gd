@@ -1,16 +1,16 @@
 class_name Hud
 extends CanvasLayer
-## Basit HUD: kat, skor, en iyi skor; kombo sürerken kombo sayacı ve kalan süre çubuğu.
-## Değerleri GameState/Events'ten okur; oyun mantığına dokunmaz. Görsel cilası Aşama 2/5'te.
+## HUD: kulenin sol dışında, sol üstte küçük bir kart (radyo paneliyle aynı genişlik ve stil, UiStyle).
+## Satırlar: KAT (büyük), SKOR (sayarak artar, bonusla kısa büyür), EN İYİ; kombo sürerken altın
+## renkli kombo satırı ve kalan süre çubuğu açılır. Değerleri GameState/Events'ten okur.
 
-const MARGIN: int = 16
-const FONT_SIZE: int = 24
-const COMBO_FONT_SIZE: int = 28
-const OUTLINE_SIZE: int = 6
-const TEXT_COLOR := Color(1.0, 1.0, 1.0)
-const COMBO_COLOR := Color(1.0, 0.8, 0.3)
-const OUTLINE_COLOR := Color(0.0, 0.0, 0.0)
-const COMBO_BAR_SIZE := Vector2(180.0, 10.0)
+const FLOOR_FONT_SIZE: int = 22
+const SCORE_FONT_SIZE: int = 16
+const BEST_FONT_SIZE: int = 12
+const CAPTION_FONT_SIZE: int = 10
+const COMBO_FONT_SIZE: int = 13
+const PADDING: float = 8.0
+const COMBO_BAR_HEIGHT: float = 3.0
 
 var _floor_label: Label
 var _score_label: Label
@@ -19,7 +19,8 @@ var _score_holder: Control
 var _best_label: Label
 var _combo_box: VBoxContainer
 var _combo_label: Label
-var _combo_bar: ProgressBar
+var _combo_floors: Label
+var _combo_bar: Control
 ## Skor yazısı anında atlamaz; gösterilen değer hedefe doğru sayar.
 var _shown_score: float = 0.0
 var _target_score: int = 0
@@ -43,7 +44,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if _combo_box.visible:
-		_combo_bar.value = GameState.combo_time_ratio
+		_combo_bar.queue_redraw()
 	if _shown_score != _target_score:
 		_shown_score = PopupRules.count_toward(_shown_score, _target_score, delta)
 		_update_score_text()
@@ -55,17 +56,23 @@ func shown_score() -> int:
 
 
 func _update_score_text() -> void:
-	_score_label.text = "Skor: %d" % roundi(_shown_score)
+	_score_label.text = "%d" % roundi(_shown_score)
 	var text_size: Vector2 = _score_label.get_minimum_size()
 	_score_label.size = text_size
-	_score_holder.custom_minimum_size = text_size
+	_score_holder.custom_minimum_size = Vector2(0.0, text_size.y)
+	_align_score()
 
 
-## Skor yazısı kısa bir an büyüyüp yerine oturur.
+## Skor yazısı ara katmanın sağ kenarına yaslanır (ara katman container değil, elle hizalanır).
+func _align_score() -> void:
+	_score_label.position.x = _score_holder.size.x - _score_label.size.x
+
+
+## Skor yazısı kısa bir an büyüyüp yerine oturur (sağ kenarından).
 func _pulse_score() -> void:
 	if _score_pulse != null:
 		_score_pulse.kill()
-	_score_label.pivot_offset = Vector2(0.0, _score_label.size.y * 0.5)
+	_score_label.pivot_offset = Vector2(_score_label.size.x, _score_label.size.y * 0.5)
 	_score_label.scale = Vector2.ONE * Tuning.SCORE_PULSE_SCALE
 	_score_pulse = create_tween()
 	_score_pulse.tween_property(_score_label, ^"scale", Vector2.ONE, Tuning.SCORE_PULSE_TIME) \
@@ -73,52 +80,77 @@ func _pulse_score() -> void:
 
 
 func _build() -> void:
-	var margin := MarginContainer.new()
-	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	for side in [&"margin_left", &"margin_top", &"margin_right", &"margin_bottom"]:
-		margin.add_theme_constant_override(side, MARGIN)
-	add_child(margin)
+	var side: float = (Tuning.VIEW_WIDTH - Tuning.TOWER_WIDTH) * 0.5 - Tuning.WALL_THICKNESS
+	var card := PanelContainer.new()
+	card.add_theme_stylebox_override(&"panel", UiStyle.panel_style(PADDING))
+	card.position = Vector2.ONE * Tuning.RADIO_SIDE_PADDING
+	card.custom_minimum_size.x = side - Tuning.RADIO_SIDE_PADDING * 2.0
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(card)
 
 	var column := VBoxContainer.new()
-	column.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	column.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	margin.add_child(column)
+	column.add_theme_constant_override(&"separation", 1)
+	card.add_child(column)
 
-	_floor_label = _make_label(FONT_SIZE, TEXT_COLOR)
-	_score_label = _make_label(FONT_SIZE, TEXT_COLOR)
-	_best_label = _make_label(FONT_SIZE, TEXT_COLOR)
-	column.add_child(_floor_label)
+	_floor_label = _add_row(column, "KAT", FLOOR_FONT_SIZE, UiStyle.TEXT)
 	# Container'lar çocuklarının ölçeğini sıfırlar; skor yazısı büyüyebilsin diye ara katmanda durur.
+	var score_row: HBoxContainer = _row(column, "SKOR")
 	_score_holder = Control.new()
 	_score_holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_score_holder.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_score_label = UiStyle.label(SCORE_FONT_SIZE, UiStyle.TEXT)
 	_score_holder.add_child(_score_label)
-	column.add_child(_score_holder)
-	column.add_child(_best_label)
+	_score_holder.resized.connect(_align_score)
+	score_row.add_child(_score_holder)
+	_best_label = _add_row(column, "EN İYİ", BEST_FONT_SIZE, UiStyle.TEXT_DIM)
 
 	_combo_box = VBoxContainer.new()
-	_combo_label = _make_label(COMBO_FONT_SIZE, COMBO_COLOR)
-	_combo_bar = ProgressBar.new()
-	_combo_bar.min_value = 0.0
-	_combo_bar.max_value = 1.0
-	_combo_bar.show_percentage = false
-	_combo_bar.custom_minimum_size = COMBO_BAR_SIZE
-	_combo_box.add_child(_combo_label)
+	_combo_box.add_theme_constant_override(&"separation", 3)
+	var separator := HSeparator.new()
+	separator.add_theme_color_override(&"separator", UiStyle.TRACK)
+	_combo_box.add_child(separator)
+	var combo_row := HBoxContainer.new()
+	_combo_label = UiStyle.label(COMBO_FONT_SIZE, UiStyle.COMBO)
+	_combo_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_combo_floors = UiStyle.label(CAPTION_FONT_SIZE, UiStyle.TEXT_DIM, HORIZONTAL_ALIGNMENT_RIGHT)
+	combo_row.add_child(_combo_label)
+	combo_row.add_child(_combo_floors)
+	_combo_box.add_child(combo_row)
+	_combo_bar = Control.new()
+	_combo_bar.custom_minimum_size.y = COMBO_BAR_HEIGHT + 2.0
+	_combo_bar.draw.connect(_draw_combo_bar)
 	_combo_box.add_child(_combo_bar)
 	column.add_child(_combo_box)
 
 
-func _make_label(font_size: int, color: Color) -> Label:
-	var label := Label.new()
-	label.add_theme_font_size_override(&"font_size", font_size)
-	label.add_theme_color_override(&"font_color", color)
-	label.add_theme_color_override(&"font_outline_color", OUTLINE_COLOR)
-	label.add_theme_constant_override(&"outline_size", OUTLINE_SIZE)
-	return label
+## Başlık (solda, soluk) + değer (sağda) satırı; değer etiketini döndürür.
+func _add_row(column: VBoxContainer, caption: String, font_size: int, color: Color) -> Label:
+	var row: HBoxContainer = _row(column, caption)
+	var value: Label = UiStyle.label(font_size, color, HORIZONTAL_ALIGNMENT_RIGHT)
+	value.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(value)
+	return value
+
+
+func _row(column: VBoxContainer, caption: String) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	var caption_label: Label = UiStyle.label(CAPTION_FONT_SIZE, UiStyle.TEXT_DIM)
+	caption_label.text = caption
+	row.add_child(caption_label)
+	column.add_child(row)
+	return row
+
+
+func _draw_combo_bar() -> void:
+	var y: float = _combo_bar.size.y * 0.5
+	var width: float = _combo_bar.size.x
+	_combo_bar.draw_line(Vector2(0.0, y), Vector2(width, y), UiStyle.TRACK, COMBO_BAR_HEIGHT, true)
+	_combo_bar.draw_line(Vector2(0.0, y), Vector2(width * GameState.combo_time_ratio, y), UiStyle.COMBO,
+			COMBO_BAR_HEIGHT, true)
 
 
 func _on_floor_changed(floor_number: int) -> void:
-	_floor_label.text = "Kat: %d" % floor_number
+	_floor_label.text = "%d" % floor_number
 
 
 func _on_score_changed(score: int) -> void:
@@ -130,12 +162,12 @@ func _on_score_changed(score: int) -> void:
 
 
 func _on_high_score_changed(high_score: int) -> void:
-	_best_label.text = "En iyi: %d" % high_score
+	_best_label.text = "%d" % high_score
 
 
 func _on_combo_changed(jumps: int, floors: int) -> void:
-	_combo_label.text = "KOMBO x%d  (%d kat)" % [jumps, floors]
-	_combo_bar.value = GameState.combo_time_ratio
+	_combo_label.text = "KOMBO x%d" % jumps
+	_combo_floors.text = "%d kat" % floors
 	_combo_box.visible = true
 
 

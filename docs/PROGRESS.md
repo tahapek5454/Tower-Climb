@@ -1,7 +1,7 @@
 # İlerleme
 
 **Aktif aşama:** 4 — Dünya görselleri ve ses
-**Durum:** Devam ediyor. 9 (radyo: 9a/9b/9c) tamamlandı, kullanıcı testi bekleniyor; sıradaki madde 10 (kapanış: HUD/yazı renkleri, ince ayar) — ardından Aşama 4 bildirimi.
+**Durum:** Tamamlandı (2026-11-12) — Aşama 5'e geçmek için kullanıcının "devam" demesi bekleniyor.
 
 ## Aşama 4 — Dünya görselleri ve ses
 Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
@@ -23,7 +23,7 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - [x] 9a. Müzik çalar altyapısı: oyuncu klasöründen (user://music) mp3/ogg/wav okuma, çalma listesi, Music kanalı seviyesi, ayarların kaydı (user://settings.cfg)
 - [x] 9b. Radyo paneli: sol alt (dipten biraz yukarıda), yatay, minimal, boştayken ~%35 saydam, fare gelince tam; çal/duraklat, önceki/sonraki, kayan parça adı, ilerleme çizgisi, müzik seviyesi
 - [x] 9c. Müzik ekleme ("Müzik ekle" dosya seçici, "Klasörü aç", pencereye sürükle-bırak) + ses kontrolleri (efektleri aç/kapa, tümünü sustur, M tuşu)
-- [ ] 10. Kapanış: HUD/yazı renkleri, `CREDITS.md`, ince ayar
+- [x] 10. Kapanış: HUD/yazı renkleri (UiStyle), oyun sonu kartı, `CREDITS.md`
 
 ### Aşama 4 kararları (2026-11-12)
 - **Dokular:** yok; her şey shader/kodla.
@@ -61,12 +61,13 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - Madde 9a: `scripts/audio/` — `Playlist` (saf, döngüsel, yeniden taramada çalan parçayı korur), `MusicLibrary` (klasör `user://music` = Windows'ta `%APPDATA%/Godot/app_userdata/Tower Climb/music`; mp3/ogg/wav çalışma zamanında `load_from_file` ile; doğal sıralama; `title_of`; `import_files` kopyalar, desteklenmeyen/aynı adlıyı atlar; `is_available()` web'de false), `AudioSettings` (`user://settings.cfg` [audio]: music_volume, music_playing, last_track, sfx_enabled, muted), `MusicPlayer` (AudioManager'ın çocuğu `AudioManager.music` → sahne yeniden yüklense de müzik kesilmez; Music kanalı; play/pause (kaldığı yerden)/toggle/next/previous/set_volume/progress/rescan; okunamayan parçayı atlar; bitince sonraki; sinyaller track_changed/playing_changed/library_changed). `AudioManager`: `set_sfx_enabled`, `set_muted` (Master) — kaydedilir. Doğrulama: geçici klasörle headless script (çalma, ilerleme, sonraki, duraklat-devam, otomatik sonraki + sarma). Testler `test_music.gd` (4; geçici klasör/dosya, `MusicLibrary.music_dir`/`AudioSettings.path` statik değişkenleri değiştirilir). GUT toplam 110.
 - Madde 9b: `scripts/ui/radio/` — `RadioPanel` (CanvasLayer 50; kutu sol altta, genişlik = kule dışı alan − 2×`RADIO_SIDE_PADDING`, `TOWER_WIDTH`'ten türetilir; `RADIO_BOTTOM_OFFSET`=120 px dipten; fare kutunun dikdörtgenindeyse alfa 1, değilse `RADIO_IDLE_ALPHA`=0,35, üstel yumuşatma; satırlar: nota + `MarqueeLabel` parça adı + sıra, ilerleme çizgisi, önceki/çal-duraklat/sonraki + ses ikonu (müziği 0'a kısar/geri getirir) + `MiniSlider`), `RadioIconButton` (kodla çizilen ikon düğmesi, klavye odağı almaz), `MiniSlider` (sürüklerken değer, bırakınca kayıt), `MarqueeLabel` (sığmayan yazıyı ileri-geri kaydırır), `RadioStyle` (renkler + ikon çizimleri). Web'de panel oluşturulmaz (main.gd). Doğrulama: geçici müzik klasörüyle ekran görüntüleri (boş, saydam, fare üstünde). İlk denemede çal düğmesi alt kenardan taşıyordu → yükseklik 58.
 - Madde 9c: `scripts/ui/radio/music_import.gd` (`MusicImport`: native `FileDialog` çoklu seçim + filtre, açıkken `get_tree().paused`; "Klasörü aç" `OS.shell_open(MusicLibrary.global_dir())`; `get_window().files_dropped` → içe aktarma; `NOTIFICATION_APPLICATION_FOCUS_IN`'de yeniden tarama; liste boşken ekleme yapılırsa çalmaya başlar; `imported(count, skipped)` → panel başlığında `RADIO_MESSAGE_TIME` s mesaj). Panel ikinci satırı: + (ekle), klasör, efekt aç/kapa (`AudioManager.set_sfx_enabled`), tüm ses (kulaklık ikonu; `set_muted`, Master). `AudioManager`: `sfx_enabled_changed`/`muted_changed` sinyalleri, `toggle_mute` eylemi (M, project.godot'a eklendi) `_unhandled_input`'ta. Panel `PROCESS_MODE_ALWAYS` (dosya seçici açıkken oyun duraklıyor). Tüm ikonlarda Türkçe ipucu (tooltip). Doğrulama: geçici klasörle içe aktarma (png atlandı), M ile susturma, efekt kapatma, ekran görüntüleri.
+- Madde 10: `scripts/ui/ui_style.gd` (`UiStyle`: ortak kart stili/renkler; radyo da kullanır). HUD (`hud.gd`) sol üstte radyo genişliğinde kart: KAT (büyük), SKOR (sağa yaslı, sayar, bonusla büyür — Container ölçek sıfırlaması yüzünden elle hizalanan ara katmanda), EN İYİ; kombo sürerken altın "KOMBO xN · M kat" + süre çubuğu. Oyun sonu (`game_over_label.gd`) ortada küçük kart, büyüyerek belirir. Kombo yazıları altın/turuncu, dış çizgi `UiStyle.OUTLINE`. İlk denemede skor sola kayıp başlığın üstüne biniyordu → `_align_score`.
 - Kullanıcı geri bildirimi (6a): "çok güzel olmuş, özellikle gece favorim".
 - Madde 1 uygulama notu: arka duvar dikdörtgeni kamerayı takip eder ama desen shader'da dünya koordinatından (`MODEL_MATRIX * VERTEX`) hesaplanır → taşlar yerinde durur. Blok 128x64 (kat başına iki sıra), ayarlar `Tuning.INTERIOR_*`, renkler `WorldPalette`. Madde 5'te parallax için shader'a kaydırma çarpanı eklenecek; madde 6'da `WorldPalette` temalı hâle gelecek.
 
 ## ▶ Yeni oturumda buradan devam
 1. CLAUDE.md bölüm 0'daki ortam kontrolünü yap ve tabloyla raporla.
-2. Aşama 4 sürüyor: yukarıdaki listede işaretsiz ilk maddeden devam et (tek seferde tek madde, her madde sonunda test talimatı + ekran görüntüsü iste).
+2. Aşama 4 bitti (2026-11-12); aşama bildirimi yapıldı, "devam" bekleniyor. Kullanıcı "devam" deyince **Aşama 5 — Oyun döngüsü ve arayüz**: ana menü, duraklatma (Esc; `pause` eylemi var ama bir şey yapmıyor), gerçek oyun sonu ekranı (şu an `GameOverLabel` geçici kart), yerel en yüksek skor kaydı (`GameState.high_score` sadece oturumluk), ayarlar (ses seviyeleri: Master/SFX/Music kanalları ve `AudioSettings` [audio] hazır; tam ekran: `WindowManager`). Önce maddeleri kullanıcıyla netleştir. Arayüz stili `UiStyle` (radyo ve HUD ile aynı dil). Radyo paneli zaten var; ayarlar menüsünde müzik klasörü/ekleme de gösterilebilir.
 3. Aşama 4 başlangıç notları (eski):
    - **Kontrast (karar verildi, kullanıcı onayladı):** kule içi orta tonda olacak (siyah/beyazdan uzak, soğuk mavi-mor taş gibi); karakter siyah-beyaz-turuncu. Zemin değişince karakterin açık renkli outline/rim ayarını yeniden değerlendir (`Tuning.MODEL_OUTLINE_*`, `MODEL_RIM_*`).
    - Dünya kodla/shader ile üretilecek (GAME_DESIGN "Görsel yön"); parallax, her 100 katta tema, duvar dışı dekor alanı `TOWER_WIDTH`'ten türetilir.
@@ -159,6 +160,7 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - Aşama 1 — Fizik prototipi (2026-11-10)
 - Aşama 2 — Juice / animasyon (2026-11-11)
 - Aşama 3 — Karakter (2026-11-12)
+- Aşama 4 — Dünya görselleri ve ses (2026-11-12)
 
 ## Aşama 6 için fikirler (kullanıcı, 2026-11-12 — temel bitince; kapsam o aşamada netleşecek)
 - **Para toplama.**

@@ -4,9 +4,10 @@ extends CanvasLayer
 ## "COMBO x3" ve kombo bitişinde "+144". Ekran koordinatında çizilir. Minimal tutulur.
 ## Yeni kombo yazısı öncekinin yerini alır (ekran dolmasın); bonus yazısı ayrıdır.
 
-const COMBO_COLOR := Color(1.0, 0.86, 0.4)
-const BONUS_COLOR := Color(1.0, 0.62, 0.32)
-const OUTLINE_COLOR := Color(0.08, 0.05, 0.1)
+## Kombo altın (HUD kombo satırıyla aynı), bonus sıcak turuncu; dış çizgi karakter/platformlarla aynı lacivert.
+const COMBO_COLOR := UiStyle.COMBO
+const BONUS_COLOR := Color(1.0, 0.66, 0.36)
+const OUTLINE_COLOR := UiStyle.OUTLINE
 const OUTLINE_SIZE: int = 4
 ## Yazının ekran kenarlarına en fazla bu kadar yaklaşmasına izin verilir.
 const SCREEN_MARGIN: float = 24.0
