@@ -31,7 +31,8 @@ func setup(p_floor_number: int, p_width: float) -> void:
 	if is_section:
 		visual.setup(width, WorldPalette.PLATFORM_SECTION, floor_number, WorldPalette.SECTION_PLATFORM_STYLE)
 	else:
-		visual.setup(width, _theme_color(), floor_number, ThemeRules.platform_style(floor_number, _style_roll()))
+		visual.setup(width, _theme_color(), floor_number,
+				ThemeRules.platform_style(floor_number, Platform.style_roll))
 	add_child(visual)
 
 
@@ -42,9 +43,9 @@ func _theme_color() -> Color:
 
 
 ## Kata bağlı sabit rastgele sayı (0..1): aynı kat hep aynı stili alır.
-func _style_roll() -> float:
+static func style_roll(for_floor: int) -> float:
 	var rng := RandomNumberGenerator.new()
-	rng.seed = hash(floor_number * 7919 + 13)
+	rng.seed = hash(for_floor * 7919 + 13)
 	return rng.randf()
 
 

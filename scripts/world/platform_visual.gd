@@ -4,7 +4,9 @@ extends Node2D
 ## çarpışma Platform'da. Her genişliğe kendiliğinden uyar.
 ## Stiller: &"blocks" (bu dosyada: düzenli taş bloklar, başlık taşları, destekler),
 ## &"masonry", &"rock" (PlatformStylesStone), &"plank", &"metal", &"ice", &"crystal"
-## (PlatformStylesThemed). Rastgelelik variation_seed'den: aynı kat hep aynı görünür.
+## (PlatformStylesThemed), &"cobble", &"arch", &"log", &"truss", &"pipe" (PlatformStylesBuilt),
+## &"snowdrift", &"cloud", &"glow_tiles" (PlatformStylesSoft).
+## Rastgelelik variation_seed'den: aynı kat hep aynı görünür.
 
 ## Yeni stillerin arka duvara düşen gölgesi: aşağı kayma (px) ve koyuluk.
 const SHADOW_OFFSET: float = 5.0
@@ -39,6 +41,14 @@ func _draw() -> void:
 		&"metal": PlatformStylesThemed.metal(self, _width, _color, rng)
 		&"ice": PlatformStylesThemed.ice(self, _width, _color, rng)
 		&"crystal": PlatformStylesThemed.crystal(self, _width, _color, rng)
+		&"cobble": PlatformStylesBuilt.cobble(self, _width, _color, rng)
+		&"arch": PlatformStylesBuilt.arch(self, _width, _color, rng)
+		&"log": PlatformStylesBuilt.wood_log(self, _width, _color, rng)
+		&"truss": PlatformStylesBuilt.truss(self, _width, _color, rng)
+		&"pipe": PlatformStylesBuilt.pipe(self, _width, _color, rng)
+		&"snowdrift": PlatformStylesSoft.snowdrift(self, _width, _color, rng)
+		&"cloud": PlatformStylesSoft.cloud(self, _width, _color, rng)
+		&"glow_tiles": PlatformStylesSoft.glow_tiles(self, _width, _color, rng)
 		_: push_error("Bilinmeyen platform stili: %s" % _style)
 
 

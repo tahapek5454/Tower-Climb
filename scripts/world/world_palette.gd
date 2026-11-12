@@ -11,14 +11,14 @@ extends RefCounted
 
 const THEME_NAMES: PackedStringArray = ["Taş kule", "Yosunlu", "Alacakaranlık", "Buz", "Gece"]
 
-## Her temanın platform stilleri: [ana stil, araya karışan ikinci stil] (bkz. PlatformVisual).
-## Hangisinin çıkacağı ThemeRules.platform_style'da.
+## Her temanın platform stilleri ve ağırlıkları: [[stil, ağırlık], ...] (bkz. PlatformVisual).
+## Büyük ağırlık = daha sık. Seçim ThemeRules.platform_style'da (aynı stil art arda gelmez).
 const PLATFORM_STYLES: Array[Array] = [
-	[&"masonry", &"rock"],
-	[&"plank", &"rock"],
-	[&"metal", &"masonry"],
-	[&"ice", &"rock"],
-	[&"crystal", &"rock"],
+	[[&"masonry", 3.0], [&"rock", 2.0], [&"cobble", 2.0], [&"arch", 2.0]],
+	[[&"plank", 3.0], [&"log", 2.0], [&"rock", 2.0], [&"cobble", 1.0]],
+	[[&"metal", 3.0], [&"truss", 2.0], [&"pipe", 2.0], [&"masonry", 1.0]],
+	[[&"ice", 3.0], [&"snowdrift", 2.0], [&"crystal", 2.0], [&"rock", 1.0]],
+	[[&"crystal", 3.0], [&"glow_tiles", 2.0], [&"cloud", 2.0], [&"rock", 1.0]],
 ]
 ## Bölüm platformunun stili (altın "kapı"; temadan bağımsız).
 const SECTION_PLATFORM_STYLE: StringName = &"blocks"

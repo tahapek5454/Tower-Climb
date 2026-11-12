@@ -24,13 +24,35 @@ static func floor_value_at(world_y: float) -> float:
 	return -world_y / Tuning.FLOOR_SPACING
 
 
-## Katın platform stili: katın temasının (geçişin ortasında yenisine geçer) ana stili, roll (0..1)
-## PLATFORM_SECONDARY_STYLE_CHANCE'ın altındaysa ikinci stili. Bölüm platformu ayrı (Platform'da).
-static func platform_style(floor_number: int, roll: float) -> StringName:
+## Katın platform stili: katın temasının (geçişin ortasında yenisine geçer) stillerinden, ağırlığa
+## göre katın zarıyla (roll_of.call(kat) -> 0..1, kata bağlı sabit) seçilir. Alt katın stiliyle
+## aynıysa listede bir sonraki stil alınır: aynı stil art arda gelmez. Alt katın stili de aynı kuralla
+## hesaplanır; zincir `depth` kat aşağıda kesilir (orada nadiren tekrar kaçabilir).
+## Bölüm platformu ayrı (Platform'da).
+static func platform_style(floor_number: int, roll_of: Callable, depth: int = 4) -> StringName:
+	var styles: Array = _styles_for_floor(floor_number)
+	var index: int = _weighted_index(styles, roll_of.call(floor_number))
+	if depth > 0 and styles[index][0] == platform_style(floor_number - 1, roll_of, depth - 1):
+		index = (index + 1) % styles.size()
+	return styles[index][0]
+
+
+static func _styles_for_floor(floor_number: int) -> Array:
 	var theme_position: float = position(float(floor_number))
-	var styles: Array = WorldPalette.PLATFORM_STYLES[
-			theme_index(roundf(theme_position), WorldPalette.PLATFORM_STYLES.size())]
-	return styles[1] if roll < Tuning.PLATFORM_SECONDARY_STYLE_CHANCE else styles[0]
+	return WorldPalette.PLATFORM_STYLES[theme_index(roundf(theme_position), WorldPalette.PLATFORM_STYLES.size())]
+
+
+## Ağırlıklı seçim: roll (0..1) ağırlıkların toplamına göre ölçeklenir.
+static func _weighted_index(styles: Array, roll: float) -> int:
+	var total: float = 0.0
+	for entry: Array in styles:
+		total += entry[1]
+	var target: float = clampf(roll, 0.0, 0.9999) * total
+	for i: int in styles.size():
+		target -= styles[i][1]
+		if target < 0.0:
+			return i
+	return styles.size() - 1
 
 
 ## Tema konumunun tam kısmının, count temalık döngüdeki sırası (son temadan sonra başa döner).

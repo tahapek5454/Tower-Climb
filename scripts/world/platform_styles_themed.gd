@@ -32,8 +32,12 @@ static func plank(canvas: CanvasItem, width: float, color: Color, rng: RandomNum
 		for side: float in [-5.0, 5.0]:
 			canvas.draw_circle(Vector2(x_seam + side, 6.0), 1.6, color.darkened(0.6), true, -1.0, true)
 		x_seam += rng.randf_range(70.0, 120.0)
-	for side: float in [-1.0, 1.0]:
-		_rope(canvas, -left * side - side * 16.0, thickness, color)
+	if rng.randf() < 0.45:
+		canvas.draw_line(Vector2(left + 2.0, thickness * 0.5), Vector2(-left - 2.0, thickness * 0.5),
+				PlatformDraw.OUTLINE_COLOR, 1.4, true)
+	if rng.randf() < 0.65:
+		for side: float in [-1.0, 1.0]:
+			_rope(canvas, -left * side - side * 16.0, thickness, color)
 	PlatformDraw.outline(canvas, body, OUTLINE_WIDTH)
 
 
@@ -50,8 +54,9 @@ static func _rope(canvas: CanvasItem, center_x: float, thickness: float, wood: C
 static func metal(canvas: CanvasItem, width: float, color: Color, rng: RandomNumberGenerator) -> void:
 	var thickness: float = Tuning.PLATFORM_THICKNESS - 2.0
 	var left: float = -width * 0.5
-	for side: float in [-1.0, 1.0]:
-		_chain(canvas, Vector2(-left * side - side * 22.0, thickness), color)
+	if rng.randf() < 0.5:
+		for side: float in [-1.0, 1.0]:
+			_chain(canvas, Vector2(-left * side - side * 22.0, thickness), color)
 	var body: PackedVector2Array = PlatformDraw.rounded_rect(Rect2(left, 0.0, width, thickness), 4.0)
 	PlatformDraw.shape(canvas, body, color.darkened(0.3))
 	PlatformDraw.shape(canvas, PlatformDraw.rounded_rect(
@@ -81,14 +86,15 @@ static func _chain(canvas: CanvasItem, top: Vector2, color: Color) -> void:
 static func ice(canvas: CanvasItem, width: float, color: Color, rng: RandomNumberGenerator) -> void:
 	var thickness: float = Tuning.PLATFORM_THICKNESS - 2.0
 	var left: float = -width * 0.5
+	var spacing: float = rng.randf_range(0.7, 1.8)
 	var x: float = left + rng.randf_range(10.0, 22.0)
 	while x < -left - 10.0:
-		var length: float = rng.randf_range(7.0, 20.0)
+		var length: float = rng.randf_range(7.0, 20.0) / sqrt(spacing)
 		var half_width: float = rng.randf_range(3.0, 6.0)
 		var icicle := PackedVector2Array([Vector2(x - half_width, thickness - 3.0),
 				Vector2(x + half_width, thickness - 3.0), Vector2(x + 0.5, thickness + length)])
 		PlatformDraw.shape(canvas, icicle, color.lightened(0.12), 1.3)
-		x += rng.randf_range(14.0, 34.0)
+		x += rng.randf_range(14.0, 34.0) * spacing
 	var body: PackedVector2Array = PlatformDraw.rounded_rect(Rect2(left, 0.0, width, thickness), 9.0)
 	PlatformDraw.shape(canvas, body, color.darkened(0.12))
 	PlatformDraw.shape(canvas, PlatformDraw.rounded_rect(
@@ -107,7 +113,7 @@ static func ice(canvas: CanvasItem, width: float, color: Color, rng: RandomNumbe
 static func crystal(canvas: CanvasItem, width: float, color: Color, rng: RandomNumberGenerator) -> void:
 	var thickness: float = Tuning.PLATFORM_THICKNESS
 	var left: float = -width * 0.5
-	var steps: int = maxi(3, int(width / 34.0))
+	var steps: int = maxi(3, int(width / rng.randf_range(24.0, 44.0)))
 	var bottom := PackedVector2Array()
 	for i: int in steps + 1:
 		var u: float = float(i) / steps

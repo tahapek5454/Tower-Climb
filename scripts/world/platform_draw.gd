@@ -37,6 +37,25 @@ static func arc(center: Vector2, radius: float, from_angle: float, to_angle: flo
 	return points
 
 
+## Elips çevresi.
+static func ellipse(center: Vector2, radii: Vector2, segments: int = 16) -> PackedVector2Array:
+	var points := PackedVector2Array()
+	for i: int in segments:
+		var angle: float = TAU * float(i) / segments
+		points.append(center + Vector2(cos(angle) * radii.x, sin(angle) * radii.y))
+	return points
+
+
+## Yay şeridi (kalın kemer): iç ve dış yarıçap arasında, açılar radyan.
+static func arc_band(center: Vector2, inner: float, outer: float, from_angle: float,
+		to_angle: float, segments: int) -> PackedVector2Array:
+	var points: PackedVector2Array = arc(center, outer, from_angle, to_angle, segments)
+	var inner_points: PackedVector2Array = arc(center, inner, from_angle, to_angle, segments)
+	inner_points.reverse()
+	points.append_array(inner_points)
+	return points
+
+
 ## Dolu şekil + isteğe bağlı koyu dış çizgi.
 static func shape(canvas: CanvasItem, points: PackedVector2Array, fill: Color,
 		outline_width: float = 0.0) -> void:
