@@ -413,6 +413,24 @@ const AMBIENT_FIREFLY_ALPHA: float = 1.0
 ## Yayıcı dikdörtgeninin görüntüden taşma payı (px).
 const AMBIENT_VIEW_MARGIN: float = 120.0
 
+# --- Ses efektleri (scripts/game/sfx_rules.gd, game_audio.gd; dosyalar tools/sfx/generate_sfx.py) ---
+## Temel ses yükseklikleri (dB; 0 = dosyanın kendi seviyesi). Güce bağlı olanlar bundan biraz kısılır.
+const SFX_JUMP_DB: float = -7.0
+const SFX_LAND_DB: float = -5.0
+const SFX_WALL_DB: float = -5.0
+const SFX_COMBO_DB: float = -8.0
+const SFX_COMBO_END_DB: float = -4.0
+const SFX_SECTION_DB: float = -3.0
+const SFX_GAME_OVER_DB: float = -4.0
+const SFX_WHOOSH_DB: float = -9.0
+## Zıplama perdesi: en yavaş ve en hızlı zıplamada.
+const SFX_JUMP_PITCH_MIN: float = 0.9
+const SFX_JUMP_PITCH_MAX: float = 1.3
+## Bu düşüş hızının altındaki inişler sessiz.
+const SFX_LAND_MIN_SPEED: float = 250.0
+## Sık çalan seslerin rastgele perde sapması (±oran).
+const SFX_PITCH_JITTER: float = 0.04
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25

@@ -9,6 +9,8 @@
 
 ## Görseller ve modeller
 
+Dünya görselleri (kule, platformlar, süsler, gökyüzü, parçacıklar) kodla/shader ile üretilir; dış görsel dosyası yok.
+
 | Ne | Kaynak | Lisans | Nerede |
 |---|---|---|---|
 | Kartal karakter konsept görseli | Proje sahibi tarafından ChatGPT ile üretildi | Proje sahibine ait | `docs/concept/hero_chibi_v1.jpg` |
@@ -16,4 +18,8 @@
 
 ## Ses ve müzik
 
-(henüz yok)
+| Ne | Kaynak | Lisans | Nerede |
+|---|---|---|---|
+| Ses efektleri (zıplama, iniş, duvar, kombo, bölüm, oyun sonu, vuuş) | Proje içinde kodla sentezlendi: `tools/sfx/generate_sfx.py` (dış kaynak yok) | MIT (proje kodu) | `assets/audio/sfx/` |
+
+Müzik henüz yok.

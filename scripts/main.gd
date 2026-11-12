@@ -49,6 +49,11 @@ func _ready() -> void:
 	_camera.target = _player
 	add_child(_camera)
 
+	var game_audio := GameAudio.new()
+	game_audio.name = "GameAudio"
+	game_audio.player = _player
+	add_child(game_audio)
+
 	var hit_stop := HitStop.new()
 	hit_stop.name = "HitStop"
 	add_child(hit_stop)
