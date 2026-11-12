@@ -67,6 +67,12 @@ func _ready() -> void:
 	combo_popups.player = _player
 	add_child(combo_popups)
 
+	# Radyo: oyuncunun müzikleri (web'de müzik yok).
+	if MusicLibrary.is_available():
+		var radio := RadioPanel.new()
+		radio.name = "Radio"
+		add_child(radio)
+
 	var debug_overlay := DebugOverlay.new()
 	debug_overlay.name = "DebugOverlay"
 	debug_overlay.player = _player

@@ -432,6 +432,15 @@ const SFX_LAND_MIN_SPEED: float = 250.0
 ## Sık çalan seslerin rastgele perde sapması (±oran).
 const SFX_PITCH_JITTER: float = 0.04
 
+# --- Radyo paneli (arayüz; scripts/ui/radio/) ---
+## Panel yüksekliği, kule dışındaki alanın kenarlarından boşluk ve ekranın altından yüksekliği (px).
+const RADIO_HEIGHT: float = 58.0
+const RADIO_SIDE_PADDING: float = 8.0
+const RADIO_BOTTOM_OFFSET: float = 120.0
+## Fare üstünde değilken saydamlık ve fareye tepki hızı (büyük = daha ani).
+const RADIO_IDLE_ALPHA: float = 0.35
+const RADIO_FADE_SPEED: float = 8.0
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25
