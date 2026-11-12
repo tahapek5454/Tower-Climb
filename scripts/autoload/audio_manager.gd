@@ -121,13 +121,15 @@ func set_muted(muted: bool, save: bool = true) -> void:
 	muted_changed.emit(muted)
 
 
-## Efekt çalar. pitch: perde çarpanı (1 = normal), volume_db: ses yüksekliği.
-func play(sound: StringName, pitch: float = 1.0, volume_db: float = 0.0) -> void:
+## Efekt çalar. pitch: perde çarpanı (1 = normal), volume_db: ses yüksekliği, bus: hangi kanaldan
+## (varsayılan efekt; ayarlarda müzik seviyesini duyurmak için müzik kanalı).
+func play(sound: StringName, pitch: float = 1.0, volume_db: float = 0.0, bus: StringName = SFX_BUS) -> void:
 	var stream: AudioStream = _streams.get(sound)
 	if stream == null:
 		return
 	var player: AudioStreamPlayer = _free_player()
 	player.stream = stream
+	player.bus = bus
 	player.pitch_scale = maxf(pitch, 0.05)
 	player.volume_db = volume_db
 	player.play()

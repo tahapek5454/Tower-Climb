@@ -63,7 +63,7 @@ func _init() -> void:
 	content.add_child(back)
 	first_focus = _master
 
-	AudioManager.muted_changed.connect(func(muted: bool) -> void: _mute.set_on(muted))
+	AudioManager.muted_changed.connect(_on_muted_changed)
 	AudioManager.volume_changed.connect(_on_bus_volume_changed)
 	if AudioManager.music != null:
 		AudioManager.music.volume_changed.connect(func(value: float) -> void: _music_slider.value = value)
@@ -94,6 +94,7 @@ func _sync_widgets() -> void:
 	_sfx.value = AudioManager.sfx_volume
 	_music_slider.value = AudioManager.music.volume if AudioManager.music != null else 0.0
 	_mute.set_on(AudioManager.is_muted(), false)
+	_lock_volume_sliders(AudioManager.is_muted(), false)
 	_fullscreen.set_on(WindowManager.is_fullscreen(), false)
 	_shake.set_on(GameSettings.get_setting("screen_shake"), false)
 	_focus_pause.set_on(GameSettings.get_setting("pause_on_focus_loss"), false)
@@ -184,6 +185,18 @@ func _flash(text: String) -> void:
 	_status_tween.tween_property(_status, ^"modulate:a", 0.0, 0.4)
 
 
+## Tümü susturuldu / açıldı (anahtar ya da M tuşu): ses kaydırıcıları sıfıra kayar ve kilitlenir,
+## açılınca eski yerlerine döner. Kayıtlı seviyeler değişmez.
+func _on_muted_changed(muted: bool) -> void:
+	_mute.set_on(muted)
+	_lock_volume_sliders(muted, true)
+
+
+func _lock_volume_sliders(locked: bool, animate: bool) -> void:
+	for slider: UiSlider in [_master, _sfx, _music_slider]:
+		slider.set_locked(locked, animate)
+
+
 func _preview_click() -> void:
 	AudioManager.play(&"ui_click", 1.0, Tuning.UI_CLICK_DB)
 
@@ -214,6 +227,8 @@ func _on_music_changed(value: float) -> void:
 func _on_music_committed(value: float) -> void:
 	if AudioManager.music != null:
 		AudioManager.music.set_volume(value)
+	# Aynı tık sesi, bu kez müzik kanalından: sesin yüksekliği müzik seviyesini yansıtır.
+	AudioManager.play(&"ui_click", 1.0, Tuning.UI_CLICK_DB, AudioManager.MUSIC_BUS)
 
 
 ## Başka yerden (ör. kısayol) değişen genel/efekt seviyesi kaydırıcıya yansır.
