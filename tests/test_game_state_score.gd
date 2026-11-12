@@ -2,15 +2,26 @@ extends GutTest
 ## GameState skor hesabı testleri. Global autoload'a dokunmamak için taze bir örnek kullanılır.
 
 const GameStateScript: GDScript = preload("res://scripts/autoload/game_state.gd")
+## Gerçek rekor kaydına dokunmamak için geçici dosya.
+const TEMP_SAVE: String = "user://test_save_score.cfg"
 
 var state: Node
+var _saved_path: String
 
 
 func before_each() -> void:
+	_saved_path = SaveData.path
+	SaveData.path = TEMP_SAVE
 	state = GameStateScript.new()
 	# _physics_process kendi kendine süre ilerletmesin; testte advance() elle çağrılır.
 	state.set_physics_process(false)
 	add_child_autofree(state)
+
+
+func after_each() -> void:
+	if FileAccess.file_exists(TEMP_SAVE):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(TEMP_SAVE))
+	SaveData.path = _saved_path
 
 
 func test_score_is_highest_floor_times_points() -> void:

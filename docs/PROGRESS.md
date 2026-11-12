@@ -1,7 +1,25 @@
 # İlerleme
 
-**Aktif aşama:** 4 — Dünya görselleri ve ses
-**Durum:** Tamamlandı (2026-11-12) — Aşama 5'e geçmek için kullanıcının "devam" demesi bekleniyor.
+**Aktif aşama:** 5 — Oyun döngüsü ve arayüz
+**Durum:** Devam ediyor (2026-11-12'de başladı). Aşama 4 tamamlandı ve onaylandı.
+
+## Aşama 5 — Oyun döngüsü ve arayüz
+Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
+- [x] 1. Kalıcı rekor kaydı: `SaveData` (saf + GUT), `user://save.cfg` [records]; HUD "EN İYİ" kayıttan
+- [ ] 2. Arayüz parçaları + akış: UiStyle düğme/kaydırıcı/anahtar, klavye+fare odak gezinmesi, ekran geçişleri, durum makinesi `MENU → PLAYING ⇄ PAUSED → GAME_OVER`, UI sesleri (hover/tık; sentez)
+- [ ] 3. Ana menü (dünyanın üstünde): harfleri zıplayarak gelen başlık, Oyna/Ayarlar/Çıkış (web'de Çıkış yok), rekorlar, tuş ipuçları; kartal arada küçük zıplama; sağ altta yapımcı alanı
+- [ ] 4. Duraklatma (Esc): dünya kararır, müzik boğuklaşır (low-pass); Devam/Ayarlar/Ana menü; devamda 3-2-1
+- [ ] 5. Ayarlar: Genel/Efekt/Müzik seviyeleri, sustur, tam ekran (`WindowManager`), müzik klasörü (ekle/aç), ekran sarsıntısı aç/kapa, kontroller sayfası, rekorları sıfırla (onaylı), odak kaybında duraklat (aç/kapa)
+- [ ] 6. Oyun sonu ekranı: kat/skor/süre sayarak, "YENİ REKOR!" (altın parıltı + konfeti + ses), Tekrar (R) / Ana menü, kısa giriş gecikmesi
+- [ ] 7. Kapanış: cilalar, `CREDITS.md`, aşama bildirimi
+
+### Aşama 5 kararları (2026-11-12)
+- **Ana menü:** ayrı sahne değil; oyun dünyasının başlangıç alanının üstünde (dünya canlı). "Oyna" ile kart kayar, HUD belirir. Oyun sonundan "Tekrar" doğrudan yeni oyuna (menüsüz). Radyo her ekranda erişilebilir.
+- **Rekorlar:** en iyi skor + en yüksek kat + en uzun kombo; her biri ayrı "yeni rekor" olabilir.
+- **Yazı tipi:** Godot varsayılanı kalıyor (kullanıcı kararı).
+- **Yapımcı alanı (kullanıcı isteği):** ana menünün sağ alt köşesi: "Oyunu yapan: Taha Pek", GitHub ikonu + `github.com/tahapek5454`, web ikonu + `www.tahapek.com` (tıklanınca `OS.shell_open`). Bilgiler tek yapılandırma yerinde; bir sabitle kapatılabilir ("beğenmezsem anında sileriz").
+- Gamepad yok (klavye+fare); istenirse Aşama 6.
+- Madde 1: `scripts/game/save_data.gd` (`SaveData`: `improved`/`merged` saf; `load_records` bozuk/negatif değeri 0'a çeker; `save_records` diğer bölümlere dokunmaz; `path` testte geçici dosya). `GameState`: `records` açılışta yüklenir, `high_score` kayıtlı en iyi skorla başlar; `run_best_combo` = puan kazandıran (≥ `COMBO_MIN_JUMPS`) kombolarda kazanılan en çok kat; `end_game` → `new_records` (kırılan anahtarlar) ve sadece rekor varsa kayıt. Testler `test_save_data.gd` (7); `test_game_state_score.gd` geçici kayıt dosyası kullanır. Tuzak: yeni `class_name` ekleyince autoload'dan başvurmadan önce `godot --headless --path . --import` (sınıf önbelleği), yoksa "Identifier not declared". GUT toplam 117.
 
 ## Aşama 4 — Dünya görselleri ve ses
 Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
@@ -67,7 +85,7 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 
 ## ▶ Yeni oturumda buradan devam
 1. CLAUDE.md bölüm 0'daki ortam kontrolünü yap ve tabloyla raporla.
-2. Aşama 4 bitti (2026-11-12); aşama bildirimi yapıldı, "devam" bekleniyor. Kullanıcı "devam" deyince **Aşama 5 — Oyun döngüsü ve arayüz**: ana menü, duraklatma (Esc; `pause` eylemi var ama bir şey yapmıyor), gerçek oyun sonu ekranı (şu an `GameOverLabel` geçici kart), yerel en yüksek skor kaydı (`GameState.high_score` sadece oturumluk), ayarlar (ses seviyeleri: Master/SFX/Music kanalları ve `AudioSettings` [audio] hazır; tam ekran: `WindowManager`). Önce maddeleri kullanıcıyla netleştir. Arayüz stili `UiStyle` (radyo ve HUD ile aynı dil). Radyo paneli zaten var; ayarlar menüsünde müzik klasörü/ekleme de gösterilebilir.
+2. **Aşama 5 sürüyor** — yukarıdaki madde listesinde ilk işaretsiz maddeden devam et (kararlar "Aşama 5 kararları"nda). Eski not: Aşama 4 bitti (2026-11-12). **Aşama 5 — Oyun döngüsü ve arayüz**: ana menü, duraklatma (Esc; `pause` eylemi var ama bir şey yapmıyor), gerçek oyun sonu ekranı (şu an `GameOverLabel` geçici kart), yerel en yüksek skor kaydı (`GameState.high_score` sadece oturumluk), ayarlar (ses seviyeleri: Master/SFX/Music kanalları ve `AudioSettings` [audio] hazır; tam ekran: `WindowManager`). Önce maddeleri kullanıcıyla netleştir. Arayüz stili `UiStyle` (radyo ve HUD ile aynı dil). Radyo paneli zaten var; ayarlar menüsünde müzik klasörü/ekleme de gösterilebilir.
 3. Aşama 4 başlangıç notları (eski):
    - **Kontrast (karar verildi, kullanıcı onayladı):** kule içi orta tonda olacak (siyah/beyazdan uzak, soğuk mavi-mor taş gibi); karakter siyah-beyaz-turuncu. Zemin değişince karakterin açık renkli outline/rim ayarını yeniden değerlendir (`Tuning.MODEL_OUTLINE_*`, `MODEL_RIM_*`).
    - Dünya kodla/shader ile üretilecek (GAME_DESIGN "Görsel yön"); parallax, her 100 katta tema, duvar dışı dekor alanı `TOWER_WIDTH`'ten türetilir.
