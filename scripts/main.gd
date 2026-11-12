@@ -29,6 +29,10 @@ func _ready() -> void:
 	start_area.name = "StartArea"
 	add_child(start_area)
 
+	var ambient := AmbientParticles.new()
+	ambient.name = "Ambient"
+	add_child(ambient)
+
 	_spawner = PlatformSpawner.new()
 	_spawner.name = "Platforms"
 	add_child(_spawner)

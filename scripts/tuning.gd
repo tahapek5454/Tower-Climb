@@ -401,6 +401,18 @@ const WALL_DECOR_VIEW_MARGIN: float = 220.0
 ## Süslerin renk çarpanı: arka plan öğesi olarak platformlardan hafifçe geri çekilsinler.
 const WALL_DECOR_TINT: Color = Color(0.9, 0.9, 0.94)
 
+# --- Ortam parçacıkları (görsel; scripts/world/ambient_particles.gd) ---
+## Görüntü başına parçacık sayısı ve en yüksek saydamlık (tür başına).
+const AMBIENT_DUST_AMOUNT: int = 40
+const AMBIENT_DUST_ALPHA: float = 0.5
+const AMBIENT_LEAF_AMOUNT: int = 26
+const AMBIENT_SNOW_AMOUNT: int = 120
+const AMBIENT_SNOW_ALPHA: float = 0.95
+const AMBIENT_FIREFLY_AMOUNT: int = 34
+const AMBIENT_FIREFLY_ALPHA: float = 1.0
+## Yayıcı dikdörtgeninin görüntüden taşma payı (px).
+const AMBIENT_VIEW_MARGIN: float = 120.0
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25
