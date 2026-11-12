@@ -24,6 +24,7 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - **Palet ilkesi:** dünya orta parlaklık (%30–50), düşük doygunluk; saf siyah/beyaz ve doygun turuncu dünyada yok (turuncu/altın: karakter, kombo, bölüm platformu).
 - **Temalar (öneri, itiraz gelmedi):** Taş kule 0–99 (mavi-mor taş / koyu lacivert-gri duvar / soluk turkuaz platform) · Yosunlu 100–199 (adaçayı-teal / koyu çam / soluk kum) · Alacakaranlık 200–299 (mürdüm / koyu erik / soluk lila) · Buz 300–399 (soluk çelik mavisi / koyu petrol / buz mavisi) · Gece 400+ (lacivert-mor / koyu indigo / soluk mor); sonra döngü.
 - **Dış çevre (öneri, itiraz gelmedi):** gökyüzü + bulut + uzak siluetler.
+- Kullanıcı geri bildirimi (madde 1, ilk sürüm): doygun mor-mavi ton ve yumuşak (bulanık) derzler "gözü yordu". → Daha gri arduvaz tonu, ince ve net derzler (yumuşaklık 3 → 1 px), daha az blok/kenar kontrastı. Kullanıcı rengi henüz kesinleştirmedi; tüm tasarım bitince yeniden bakılacak (renkler `WorldPalette`, desen `Tuning.INTERIOR_*` — tek satırlık değişiklik). Genel ilke: arka plan sakin, net ve düşük doygunlukta olmalı; bulanık desenlerden kaçın.
 - Madde 1 uygulama notu: arka duvar dikdörtgeni kamerayı takip eder ama desen shader'da dünya koordinatından (`MODEL_MATRIX * VERTEX`) hesaplanır → taşlar yerinde durur. Blok 128x64 (kat başına iki sıra), ayarlar `Tuning.INTERIOR_*`, renkler `WorldPalette`. Madde 5'te parallax için shader'a kaydırma çarpanı eklenecek; madde 6'da `WorldPalette` temalı hâle gelecek.
 
 ## ▶ Yeni oturumda buradan devam
