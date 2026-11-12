@@ -168,16 +168,20 @@ def game_over():
 
 
 def whoosh():
-    # Takla "vuuş": süzgeci açılıp kapanan gürültü.
+    # Takla "vuuş": süzgeci açılıp kapanan gürültü. Kullanıcı ilk sürümü yüksek/sert buldu →
+    # daha boğuk (tavan 1100 Hz, iki kat süzgeç) ve daha yavaş yükselip inen, biraz daha uzun.
+    length = 0.42
     samples = []
     low = 0.0
-    for i in range(int(RATE * 0.34)):
+    low2 = 0.0
+    for i in range(int(RATE * length)):
         t = i / RATE
-        k = t / 0.34
-        cutoff = 300 + 2600 * math.sin(math.pi * k)
+        k = t / length
+        cutoff = 220 + 900 * math.sin(math.pi * k)
         a = 1.0 - math.exp(-2 * math.pi * cutoff / RATE)
         low += a * (rng.uniform(-1.0, 1.0) - low)
-        samples.append(low * math.sin(math.pi * k) ** 1.5)
+        low2 += a * (low - low2)
+        samples.append(low2 * math.sin(math.pi * k) ** 2.2)
     return samples
 
 
