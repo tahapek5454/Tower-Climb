@@ -1,7 +1,7 @@
 class_name UiToggle
 extends Control
 ## Aç/kapa anahtarı (kodla çizilir): yuvarlak düğme kayarak yer değiştirir. Fare, Enter/Space ile
-## değişir; fare üstüne gelince odak alır (UiButton ile aynı tek vurgu). Değişince toggled yayınlanır;
+## değişir; fare üstünde hareket edince odak alır (UiButton ile aynı tek vurgu; durağan imleç odağı çalmaz). Değişince toggled yayınlanır;
 ## set_on sinyal yaymaz (ilk değer atamak için).
 
 signal toggled(on: bool)
@@ -25,9 +25,6 @@ func _init(p_on: bool = false) -> void:
 	custom_minimum_size = TRACK_SIZE + Vector2(10.0, 10.0)
 	focus_mode = Control.FOCUS_ALL
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	mouse_entered.connect(func() -> void:
-		if not has_focus():
-			grab_focus())
 	focus_entered.connect(queue_redraw)
 	focus_exited.connect(queue_redraw)
 
@@ -46,6 +43,8 @@ func toggle() -> void:
 
 
 func _gui_input(input_event: InputEvent) -> void:
+	if input_event is InputEventMouseMotion and not has_focus():
+		grab_focus()
 	var click := input_event as InputEventMouseButton
 	if click != null and click.button_index == MOUSE_BUTTON_LEFT and click.pressed:
 		toggle()

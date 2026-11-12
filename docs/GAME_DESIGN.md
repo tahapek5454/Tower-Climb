@@ -17,12 +17,13 @@ Ruh hali: hızlı, akışkan, abartılı ve eğlenceli animasyonlar (takla, sekm
 | Tam ekran aç/kapat | F11 veya Alt+Enter |
 | Tüm sesi kapat/aç | M |
 | Yeniden başla (oyun bitince) | R veya Space |
+| Menülerde gezin / seç / geri | ↑ ↓ ← → / Enter veya Space / Esc (fare de çalışır) |
 
 Zıplamayı oyuncu yapar (otomatik zıplama yok). Gamepad desteği sonra eklenebilir.
 
 ## Ekran
 - Temel (tasarım) çözünürlüğü: **1280 x 720**, stretch mode `canvas_items`, aspect `keep`. Bu, oyun dünyasının koordinat sistemidir; pencere boyutu değildir. Görüntü pencereye/ekrana ölçeklenir, 16:9 olmayan ekranlarda kenarlarda siyah bant kalır.
-- Oyun **büyütülmüş (maximized) pencerede** başlar. **F11** veya **Alt+Enter** tam ekranı açıp kapatır (`WindowManager` autoload'u). Kalıcı tam ekran ayarı Aşama 5'teki ayarlar menüsünde.
+- Oyun **büyütülmüş (maximized) pencerede** başlar. **F11** veya **Alt+Enter** tam ekranı açıp kapatır (`WindowManager` autoload'u). Tam ekran seçimi ayarlar menüsünden de yapılır ve kaydedilir.
 - Oynanabilir kule genişliği: **896 px** (`TOWER_WIDTH`; ekranın %70'i), ekranın ortasında. Sol ve sağda duvarlar (duvar kalınlığı 48 px); duvarların dışı dekor alanı.
 
 ## Temel mekanikler
@@ -126,6 +127,15 @@ Değerler `const` olarak kalır (oyun içi canlı ayar paneli şimdilik yok). İ
 - Işık: toplamalı "sahte ışık" hâleleri (fener/meşale titrer). Ortam parçacıkları: toz, yaprak, kar, ateş böceği.
 - Arayüz: koyu arduvaz yarı saydam kartlar, soluk turkuaz vurgu, altın kombo (UiStyle).
 
+## Oyun akışı ve arayüz (Aşama 5'te yapıldı)
+- Akış: **ana menü → oyun ⇄ duraklatma → oyun sonu** (`FlowRules` / `GameFlow`). Menü oyun dünyasının üstünde açılır (kule, kartal ve parçacıklar arkada canlı).
+- **Ana menü:** zıplayarak gelen "TOWER CLIMB" başlığı, rekorlar (en iyi skor / en yüksek kat / en uzun kombo), Oyna / Ayarlar / Çıkış (web'de Çıkış yok); kartal arada küçük zıplamalar yapar; sağ altta yapımcı kartı (`CreatorInfo`; tek satırla kapatılır).
+- **Duraklatma (Esc):** dünya donar ve kararır, müzik boğuklaşır; Devam (3-2-1 sayımı) / Ayarlar / Ana menü. Pencere arka plana geçince de duraklar (ayarlanabilir).
+- **Ayarlar:** genel / efekt / müzik ses seviyeleri, tümünü sustur (açılınca kaydırıcılar sıfıra kayıp kilitlenir), tam ekran, ekran sarsıntısı (hit-stop dahil), odak kaybında duraklat, müzik klasörünü aç, kontroller sayfası, rekorları sıfırla (onaylı). Değişiklikler anında kaydedilir.
+- **Oyun sonu:** zıplayan başlık, sayarak gelen Kat / Skor / En uzun kombo / Süre; kırılan rekor altın "REKOR" rozeti, altın çerçeve, konfeti ve fanfarla kutlanır; Tekrar (R) / Ana menü; 0,5 s giriş gecikmesi.
+- **Kayıt:** rekorlar `user://save.cfg`, ayarlar `user://settings.cfg` (Windows: `%APPDATA%\Godot\app_userdata\Tower Climb\`).
+- Stil: koyu arduvaz yarı saydam kart, soluk turkuaz vurgu, altın = ödül/rekor; ekranlar `UiScreen` tabanlıdır (belirme animasyonu, klavye + fare gezinmesi, arayüz sesleri).
+
 ## Ses
-- Efektler kodla sentezlenir (`tools/sfx/generate_sfx.py`): zıplama (hıza göre perde), iniş, duvar, kombo (majör gamda yükselir), kombo bitişi, bölüm, oyun sonu, takla vuuşu.
-- Müzik oyunla gelmez: masaüstünde sol alttaki **radyo paneli** oyuncunun kendi müziklerini (mp3/ogg/wav, `user://music`) çalar; ekleme: + düğmesi, klasörü aç, pencereye sürükle-bırak. Web'de müzik yok. Efekt aç/kapa ve tüm sesi kapat (M) panelde.
+- Efektler kodla sentezlenir (`tools/sfx/generate_sfx.py`): zıplama (hıza göre perde), iniş, duvar, kombo (majör gamda yükselir), kombo bitişi, bölüm, oyun sonu, takla vuuşu, arayüz (üzerine gelme / tık / geri), yeni rekor fanfarı.
+- Müzik oyunla gelmez: masaüstünde sol alttaki **radyo paneli** oyuncunun kendi müziklerini (mp3/ogg/wav, `user://music`) çalar; ekleme: klasörü aç (kopyala) ya da dosyaları pencereye sürükle-bırak (dosya seçici yok). Web'de müzik yok. Efekt aç/kapa ve tüm sesi kapat (M) panelde.

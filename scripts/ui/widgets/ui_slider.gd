@@ -1,7 +1,7 @@
 class_name UiSlider
 extends MiniSlider
 ## Menü kaydırıcısı: MiniSlider'ın klavye odağı alan, ok tuşlarıyla (sol/sağ) ayarlanan hâli.
-## Fare üstüne gelince odak alır. Sürükleme/ok tuşu bırakılınca value_committed (kayıt için) yayınlanır.
+## Fare üstünde hareket edince odak alır (durağan imleç odağı çalmaz). Sürükleme/ok tuşu bırakılınca value_committed (kayıt için) yayınlanır.
 ## Kilitliyken (set_locked) düğme sıfıra kayar, çizgi söner ve kaydırıcı girişi yok sayar; gerçek `value`
 ## değişmez, kilit açılınca düğme yerine geri kayar (ör. "Tümünü sustur" açıkken ses kaydırıcıları).
 
@@ -23,9 +23,6 @@ func _init() -> void:
 	super()
 	focus_mode = Control.FOCUS_ALL
 	custom_minimum_size = Vector2(160.0, HEIGHT)
-	mouse_entered.connect(func() -> void:
-		if not has_focus():
-			grab_focus())
 	focus_entered.connect(queue_redraw)
 	focus_exited.connect(queue_redraw)
 
@@ -46,6 +43,8 @@ func set_locked(is_locked: bool, animate: bool = true) -> void:
 func _gui_input(input_event: InputEvent) -> void:
 	if locked:
 		return
+	if input_event is InputEventMouseMotion and not has_focus():
+		grab_focus()
 	var direction: float = 0.0
 	if input_event.is_action_pressed(&"ui_left", true):
 		direction = -1.0

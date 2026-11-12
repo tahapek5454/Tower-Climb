@@ -1,7 +1,8 @@
 class_name UiButton
 extends Button
-## Menü düğmesi (UiStyle): sade yuvarlak yüzey. Fare üstüne gelince odak alır, yani fare ve klavye
-## aynı tek vurguyu kullanır; vurgulu düğmede soldan turkuaz bir çizgi uzayarak belirir.
+## Menü düğmesi (UiStyle): sade yuvarlak yüzey. Fare üstünde HAREKET edince odak alır (durağan imleç
+## odağı çalmaz: imleç "Çıkış"ın üstünde dururken menü açılırsa Space/Enter yine "Oyna"yı seçer),
+## yani fare ve klavye aynı tek vurguyu kullanır; vurgulu düğmede soldan turkuaz bir çizgi uzayarak belirir.
 ## Odak (üzerine gelme / ok tuşları) "hover" sesi, basma "click" (is_back ise "back") sesi çalar.
 ## primary: ana eylem (turkuaz dolu).
 
@@ -40,7 +41,7 @@ func _init(p_text: String = "", p_primary: bool = false, p_back: bool = false, p
 	custom_minimum_size.y = COMPACT_MIN_HEIGHT if compact else MIN_HEIGHT
 	add_theme_font_size_override(&"font_size", COMPACT_FONT_SIZE if compact else FONT_SIZE)
 	_apply_styles()
-	mouse_entered.connect(_on_mouse_entered)
+	gui_input.connect(_on_gui_input)
 	focus_entered.connect(_on_focus_entered)
 	focus_exited.connect(_on_focus_exited)
 	pressed.connect(_on_pressed)
@@ -93,8 +94,9 @@ func _apply_styles() -> void:
 	add_theme_color_override(&"font_disabled_color", UiStyle.DISABLED)
 
 
-func _on_mouse_entered() -> void:
-	if not disabled and not has_focus():
+## Fare düğmenin üstünde gerçekten hareket ettiyse odağı alır.
+func _on_gui_input(input_event: InputEvent) -> void:
+	if input_event is InputEventMouseMotion and not disabled and not has_focus():
 		grab_focus()
 
 

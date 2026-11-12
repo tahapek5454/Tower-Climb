@@ -1,9 +1,34 @@
 # İlerleme
 
-**Aktif aşama:** 5 — Oyun döngüsü ve arayüz
-**Durum:** Devam ediyor (2026-11-12'de başladı). Aşama 4 tamamlandı ve onaylandı.
+**Aktif aşama:** — (Aşama 5 tamamlandı; sıradaki **Aşama 6 — Ek özellikler**, henüz başlamadı)
+**Durum:** Aşama 1–5 tamam ve kullanıcı tarafından onaylı (Aşama 5: 2026-11-12, "her şey harika olmuş"). Aşama 6 yeni bir sohbette, kullanıcı başlatınca başlayacak.
 
-## Aşama 5 — Oyun döngüsü ve arayüz
+## ▶ Yeni oturumda buradan devam
+**Durum:** Aşama 1–5 tamam. Sıradaki: **Aşama 6 — Ek özellikler**. Kapsam belirlenmedi; kullanıcıyla netleştirilecek. Altın kural: kullanıcı onaylamadan kod yazma, aşamayı kendiliğinden bitirip bir sonrakine geçme.
+
+1. CLAUDE.md bölüm 0 ortam kontrolünü yap, tabloyla raporla (godot 4.7.2 — mono değil, git, node, `claude mcp list` → godot ✔ / blender ✔ (rea ve playwright bu projede kapalı olabilir), `godot --headless --path . --quit`). Ayrıca GUT testlerini çalıştır: **134 test geçmeli** (`godot --headless --path . -s res://addons/gut/gut_cmdln.gd`).
+2. Oku: bu dosyadaki **"Aşama 6 hazırlığı"** ve **"Aşama 5 sonrası mimari özeti"** bölümleri, `docs/GAME_DESIGN.md` ("Başlangıç ayar değerleri"), ayrıca bu dosyadaki "Aşama 3 model notları" altındaki **"Genişletilebilirlik"** notu (yeni animasyon / kemiğe takılan aksesuar nasıl eklenir).
+3. Kullanıcıya tek cümleyle durumu söyle; ardından **Aşama 6'nın maddelerini ve yaklaşımını kullanıcıyla netleştir** ("Aşama 6 hazırlığı"ndaki sorular). Onay almadan kod yazma. Tek seferde tek madde: bitir → doğrula (GUT + ekran görüntüsü) → commit → bu dosyayı güncelle → kullanıcıya nasıl test edeceğini söyle.
+4. Araç ön koşulları (CLAUDE.md bölüm 2): Aşama 6 için kullanıcının kurması gereken bir şey kapsama göre belirlenir. Yeni 3D model/animasyon gerekirse Blender 5.3 + blender-mcp hazır (`get_addon_status` ile doğrula); Tripo API'de kredi yok, üretim Tripo web sitesinde (ücretsiz plan, **H2.5**) kullanıcı tarafından yapılır. İnternetten asset indirme, ücretli servis ve hesap açma yasak (kullanıcıya bırak).
+5. Web doğrulaması ertelendi: export şablonları kurulu değil (`%APPDATA%\Godot\export_templates` boş) — Aşama 7'nin ön koşulu. Aşama 7'de özellikle kontrol et: SubViewport + şeffaf arka plan + MSAA + `next_pass` outline WebGL2'de çalışıyor mu; web'de `MusicLibrary.is_available()` false (radyo yok), Çıkış düğmesi gizli (`OS.has_feature("web")`).
+
+### Kullanıcı ve çalışma tarzı
+- Kullanıcı kısa yanıt verir ("devam", "uygun"). Görsel kararları çoğu zaman Claude'a bırakır ama sonucu oyunda görüp yorumlar; karar gerekçelerini merak eder → sessizce karar verme, kısa gerekçe ver. Görsel doğrulamada ekran görüntüsü iste/al; görmediğini "güzel oldu" diye raporlama.
+- **Canlılık katan küçük detayları (animasyon, parçacık, ses, geçiş efekti) çok sever** ("bayıldım", "oyunu gerçekten canlı hissettiriyor"); uygun yerlerde öner. Sade, yumuşak, köşesiz, silik/hafif efektleri sever; "çok düzenli", "çok yoğun/köşeli", bulanık, doygun renkleri beğenmez.
+- Bir özelliği beğenmezse "anında silinsin" ister (ör. yapımcı kartı tek sabitle kapanır; radyodaki "+" tamamen silindi). Yapılandırılabilir/kolay kaldırılabilir tasarla.
+- Her aşama sonunda CLAUDE.md'deki aşama bildirimi formatını kullan ve "devam" bekle.
+
+### Araç tuzakları (Aşama 3–5'te öğrenilenler)
+- **Uzun Bash heredoc komutları** (~180+ satır) "unexpected EOF" ile ayrıştırılamaz ve hiçbir şey çalışmaz. Düzenleme betiğini `Write` aracıyla scratchpad'e yaz, `python dosya.py` ile çalıştır (`edit(p, [(eski, yeni)])` + `assert count == 1`). Dosyalar LF yazılır; git CRLF uyarıları zararsız. Bash'te `python` var (`py` yok, PIL yok); `godot` sadece PowerShell'de.
+- Yeni `class_name` ekleyince testten/autoload'dan önce `godot --headless --path . --import` (sınıf önbelleği), yoksa "Identifier not declared".
+- **Doğrulama script'leri** (`godot --path . -s betik.gd`, scratchpad'de; repoya koyma): `_init()` değil **`_initialize()`** kullan (autoload'lar o zaman hazır); autoload'a bağlı sınıfları `load("res://...").new()` ile oluştur; `root.add_child(main)` + `current_scene = main` (yoksa `reload_current_scene` çalışmaz); ekran görüntüsü `root.get_texture().get_image().save_png(...)`; headless'ta render yok. `InputEventAction` yalnız o eylemi tetikler (gerçek Esc = `pause` + `ui_cancel`); düğmeler tuşta **bırakınca** çalışır (basış+bırakış gönder); tasarım koordinatıyla fare olayı için `root.push_input(olay, true)`. Betik asılı kalırsa `TaskStop` ile durdur; **tüm godot süreçlerini öldürme** (kullanıcının editörü açık olabilir).
+- Doğrulama kullanıcı verisine dokunuyorsa (oyun sonu, ayar değiştirme, rekor sıfırlama): `%APPDATA%\Godot\app_userdata\Tower Climb\settings.cfg` ve `save.cfg` dosyalarını **çalıştırmadan hemen önce** yedekle, sonra geri yükle (kullanıcı da oyunu deniyor, dosyalar değişmiş olabilir).
+- Testlerde `SaveData.path`, `AudioSettings.path`, `GameSettings.path` geçici dosyaya çevrilir (`GameSettings.reset_cache()` ile). `GameFlow`'u test ederken tek kare içinde PAUSED→PLAYING'e dön (ağaç donuk kalmasın).
+- `project.godot`'u editör açıkken dışarıdan değiştirince kullanıcıya editörü yeniden açmasını söyle; yoksa editör eski hâlini geri yazabilir.
+- Blender: çalışma dosyası açık değilse kullanıcıdan `assets/models/source/eagle_hero.blend`'i açmasını iste. Model/animasyon değişince: `eagle_anims.py`'yi çalıştır → pozu sıfırla → kaydet → glb'yi aynı ayarlarla dışa aktar → `godot --headless --path . --import`.
+- Godot tuzakları: Container'lar çocuklarının `scale`/`rotation`'ını her yerleşimde sıfırlar (ölçek animasyonu için düz `Control` ara katmanı); `Engine.time_scale`'e dokunan kod `HitStop` ve F4 yavaş çekimle uyumlu olmalı; `draw_colored_polygon` çakışan noktalarda "Invalid polygon data" verir.
+
+## Aşama 5 — Oyun döngüsü ve arayüz (TAMAMLANDI 2026-11-12)
 Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - [x] 1. Kalıcı rekor kaydı: `SaveData` (saf + GUT), `user://save.cfg` [records]; HUD "EN İYİ" kayıttan
 - [x] 2. Arayüz parçaları + akış: UiStyle düğme/kaydırıcı/anahtar, klavye+fare odak gezinmesi, ekran geçişleri, durum makinesi `MENU → PLAYING ⇄ PAUSED → GAME_OVER`, UI sesleri (hover/tık; sentez)
@@ -11,9 +36,10 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - [x] 4. Duraklatma (Esc): dünya kararır, müzik boğuklaşır (low-pass); Devam/Ayarlar/Ana menü; devamda 3-2-1
 - [x] 5. Ayarlar: Genel/Efekt/Müzik seviyeleri, sustur, tam ekran (`WindowManager`), müzik klasörü (yalnız "klasörü aç"; "+" yok), ekran sarsıntısı aç/kapa, kontroller sayfası, rekorları sıfırla (onaylı), odak kaybında duraklat (aç/kapa)
 - [x] 6. Oyun sonu ekranı: kat/skor/süre sayarak, "YENİ REKOR!" (altın parıltı + konfeti + ses), Tekrar (R) / Ana menü, kısa giriş gecikmesi
-- [ ] 7. Kapanış: cilalar, `CREDITS.md`, aşama bildirimi
+- [x] 7. Kapanış: cilalar, belgeler (`CREDITS.md`, `GAME_DESIGN.md`, `CLAUDE.md`, bu dosya), aşama bildirimi, yeni oturum promptu (`docs/YENI_OTURUM_PROMPTU.md`)
 
 ### Aşama 5 kararları (2026-11-12)
+- Madde 7 (kapanış) cilası: `UiButton` / `UiToggle` / `UiSlider` odağı `mouse_entered` yerine fare **hareketiyle** alır (açılış animasyonunda düğmeler durağan imlecin altından kayarken odak titremesin). Gözlem: Windows pencere açılırken imleç hareketi gönderir; imleç "Çıkış" düğmesinin üstündeyken menü açılırsa vurgu oraya geçer ve Space/Enter oyundan çıkarır (standart menü davranışı, bilinçli bırakıldı). Düğmeler tuşta bırakınca çalıştığı için "Oyna"ya Space ile basmak kartalı zıplatmaz (doğrulandı). Belgeler güncellendi: `CREDITS.md` (Godot, sesler, yazı tipi), `GAME_DESIGN.md` ("Oyun akışı ve arayüz"), `CLAUDE.md` (autoload'lar + arayüz kuralları), bu dosya (yeni oturum bölümü, Aşama 6 hazırlığı, mimari özeti); yeni oturum promptu `docs/YENI_OTURUM_PROMPTU.md`. GUT 134.
 - **Ana menü:** ayrı sahne değil; oyun dünyasının başlangıç alanının üstünde (dünya canlı). "Oyna" ile kart kayar, HUD belirir. Oyun sonundan "Tekrar" doğrudan yeni oyuna (menüsüz). Radyo her ekranda erişilebilir.
 - **Rekorlar:** en iyi skor + en yüksek kat + en uzun kombo; her biri ayrı "yeni rekor" olabilir.
 - **Yazı tipi:** Godot varsayılanı kalıyor (kullanıcı kararı).
@@ -90,24 +116,6 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - Kullanıcı geri bildirimi (6a): "çok güzel olmuş, özellikle gece favorim".
 - **Kullanıcı kararı (2026-11-12, madde 4 sonrası): radyodaki "+" (Müzik ekle / dosya seçici) kaldırıldı** — oyunu bozuyordu (ağacı donduran native FileDialog). `MusicImport.open_dialog/_dialog/_resume`, `+` düğmesi ve `add` ikonu silindi; "Klasörü aç" (sol alta kaydı) ve pencereye sürükle-bırak kaldı (ağacı dondurmaz). Ayarlar ekranında da dosya seçici/"ekle" olmayacak, yalnız "Müzik klasörünü aç". `MusicImport._resume` düzeltmesi (madde 4) artık gereksiz, kalktı.
 - Madde 1 uygulama notu: arka duvar dikdörtgeni kamerayı takip eder ama desen shader'da dünya koordinatından (`MODEL_MATRIX * VERTEX`) hesaplanır → taşlar yerinde durur. Blok 128x64 (kat başına iki sıra), ayarlar `Tuning.INTERIOR_*`, renkler `WorldPalette`. Madde 5'te parallax için shader'a kaydırma çarpanı eklenecek; madde 6'da `WorldPalette` temalı hâle gelecek.
-
-## ▶ Yeni oturumda buradan devam
-1. CLAUDE.md bölüm 0'daki ortam kontrolünü yap ve tabloyla raporla.
-2. **Aşama 5 sürüyor** — yukarıdaki madde listesinde ilk işaretsiz maddeden devam et (kararlar "Aşama 5 kararları"nda). Eski not: Aşama 4 bitti (2026-11-12). **Aşama 5 — Oyun döngüsü ve arayüz**: ana menü, duraklatma (Esc; `pause` eylemi var ama bir şey yapmıyor), gerçek oyun sonu ekranı (şu an `GameOverLabel` geçici kart), yerel en yüksek skor kaydı (`GameState.high_score` sadece oturumluk), ayarlar (ses seviyeleri: Master/SFX/Music kanalları ve `AudioSettings` [audio] hazır; tam ekran: `WindowManager`). Önce maddeleri kullanıcıyla netleştir. Arayüz stili `UiStyle` (radyo ve HUD ile aynı dil). Radyo paneli zaten var; ayarlar menüsünde müzik klasörü/ekleme de gösterilebilir.
-3. Aşama 4 başlangıç notları (eski):
-   - **Kontrast (karar verildi, kullanıcı onayladı):** kule içi orta tonda olacak (siyah/beyazdan uzak, soğuk mavi-mor taş gibi); karakter siyah-beyaz-turuncu. Zemin değişince karakterin açık renkli outline/rim ayarını yeniden değerlendir (`Tuning.MODEL_OUTLINE_*`, `MODEL_RIM_*`).
-   - Dünya kodla/shader ile üretilecek (GAME_DESIGN "Görsel yön"); parallax, her 100 katta tema, duvar dışı dekor alanı `TOWER_WIDTH`'ten türetilir.
-   - Ses: internetten asset indirme yok; kaynakları kullanıcı seçer/indirir.
-   - Blender/Tripo gerekirse: Blender 5.3 + blender-mcp hazır (`get_addon_status` ile doğrula). Tripo API'de kredi yok; üretim Tripo web sitesinde, ücretsiz planda **H2.5** sürümüyle kullanıcı tarafından yapılır.
-4. Web doğrulaması ertelendi: export şablonları kurulu değil (`%APPDATA%\Godot\export_templates` boş) — Aşama 7'nin ön koşulu. Aşama 7'de özellikle kontrol et: SubViewport + şeffaf arka plan + MSAA + `next_pass` outline WebGL2'de çalışıyor mu. Masaüstünde `gl_compatibility` ile doğrulandı.
-
-### Çalışma yöntemi notları (Aşama 3'te işe yarayanlar)
-- Kullanıcı Aşama 3'ü 2026-11-12'de bitirip oturumu kapattı; Aşama 4'e **yeni oturumda** başlanacak. Aşama 4'e henüz "devam" denmedi sayılmaz: kullanıcı yeni oturumu Aşama 4 için açıyor, ama yine de önce maddeleri netleştir ve onay al.
-- Akış: her maddede kısa plan → uygula → doğrula → commit → `PROGRESS.md` → kullanıcıya test talimatı + ekran görüntüsü iste. Kullanıcı kısa cevap verir ("devam", "uygun"); görsel kararları çoğu zaman Claude'a bırakır ama sonucu oyunda görüp yorumlar.
-- Kullanıcı karar gerekçelerini merak eder (ör. "hitbox neden büyümedi?"): sessizce karar verme, kısa gerekçeyle bildir.
-- Görsel doğrulama: geçici bir `-s` script'i (scratchpad'de; repoya koyma) ana sahneyi pencereli açar, `Input.action_press` ile oynatır, `root.get_texture().get_image()` ile karakterin çevresini kırpıp PNG kaydeder; Claude görüntüyü okur. Script içinde `Tuning`/autoload kullanan sınıflara doğrudan başvurma (düğüm üzerinden eriş). Headless'ta render yok.
-- Araç tuzakları: Bash'te `python` var (`py` yok, PIL yok); `godot` sadece PowerShell'de. Çok satırlı dosya düzenlemelerini Bash heredoc yerine Write aracıyla yazılan küçük Python script'leriyle yap (tırnak hataları). Dosyalar LF ile yazılır; git CRLF uyarıları zararsız.
-- Blender: çalışma dosyası açık değilse kullanıcıdan `assets/models/source/eagle_hero.blend`'i açmasını iste. Model/animasyon değişince: `eagle_anims.py`'yi çalıştır → pozu sıfırla → kaydet → glb'yi aynı ayarlarla dışa aktar → `godot --headless --path . --import`.
 
 ## Aşama 3 kararları (2026-11-11)
 - Karakter: **kartal maskotu**, **chibi oranlar** (büyük kafa, kısa bacak, kalın uzuvlar), yumuşak/yuvarlak tüy tutamları. Beyaz kafa, turuncu gaga ve ayaklar, **düz koyu gri–siyah arası tişört** (çizgisiz, logo/yazı/reklam yok), koyu pantolon. İfade: kararlı ama sevimli.
@@ -187,8 +195,29 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - Aşama 2 — Juice / animasyon (2026-11-11)
 - Aşama 3 — Karakter (2026-11-12)
 - Aşama 4 — Dünya görselleri ve ses (2026-11-12)
+- Aşama 5 — Oyun döngüsü ve arayüz (2026-11-12)
 
-## Aşama 6 için fikirler (kullanıcı, 2026-11-12 — temel bitince; kapsam o aşamada netleşecek)
+## Aşama 6 hazırlığı
+**Kapsam henüz yok; kullanıcıyla netleştirilecek.** Önce şu soruları sor (öneri + kısa seçeneklerle):
+- Hangi güçlendirme/toplanabilir **önce** gelsin (para → kanat → kum saati → roket?) ve kaç madde? Güçlendirmelerin ortak altyapısı (toplanabilir nesne üretimi, toplama, süre/etki yönetimi, HUD göstergesi) ilk madde olabilir.
+- Para: sadece oyun içi sayaç mı, **kalıcı toplam** (kaydedilen) mı? Para ne işe yarar (şimdilik sadece skor/istatistik mi, ileride mağaza mı)?
+- Görünüm: kodla çizim mi (şimdiki dünya gibi), yoksa kanat/roket gibi karakter aksesuarı için Blender'da model mi? (Karakterde yeni animasyon/kemiğe takılan aksesuar gerekirse Blender + Tripo ön koşulları.)
+- Denge: ne sıklıkta çıksınlar, etkileri (süre/mesafe) ne olsun; zorluk eğrisiyle (platform genişliği, kamera hızı) etkileşimi.
+- Menü/ayar etkisi: toplanabilirler için ayarlar/oyun sonu satırı (ör. "Toplanan para") eklensin mi?
+
+### Entegrasyon noktaları (Aşama 5 sonrası hâliyle)
+- **Oynanış etkileri çalışma zamanı çarpanlarıyla** (`Tuning` sabit kalır; bkz. "Aşama 3 model notları" → Genişletilebilirlik). `Player` fiziği `player.gd`'de; tuşlar yalnız `GameFlow.state == PLAYING`'de çalışır (`_controls_enabled`). Kanat/roket için `Player`'a "dış hareket modu" eklemek gerekebilir (kamera `CameraRules.catchup_center_y`, `GameState.register_landing` zinciri ve kombo ile uyumu düşünülmeli).
+- **Kum saati** → `Engine.time_scale`: `HitStop` (`scripts/fx/hit_stop.gd`, `_restore_scale` kaydeder) ve F4 yavaş çekimle çakışmamalı; `GameState.run_time`/kombo süresi `delta` ile ilerler (time_scale'den etkilenir) — süreleri gerçek zamanla mı ölçeceğine karar ver. Duraklatmada etki süreleri donmalı (`get_tree().paused` kendiliğinden durdurur; zamanlayıcıları `process_always=false` kullan).
+- **Toplanabilir nesneler** platformlarla birlikte üretilir: `PlatformSpawner` (`scripts/world/platform_spawner.gd`) + saf kurallar `PlatformRules` / `ThemeRules` (yerleşim kuralları saf + GUT). Platform süsleri `PlatformDecor` (üretim `pick(tema, stil, rng)`, kendi rng'si var → kat başına tohumlu, aynı kat hep aynı görünür). Tema renkleri `WorldPalette` (altın/turuncu yalnız karakter, kombo, ödül; dünyada yok).
+- **HUD** `scripts/ui/hud.gd` (sol üst kart; kombo satırı açılır/kapanır) — para/güçlendirme göstergesi buraya ya da yanına; `UiStyle` dilinde.
+- **Skor/rekor**: `GameState` (skor, kombo), `SaveData` (`user://save.cfg` [records]; yeni kalıcı veri için aynı dosya/sınıf genişletilir: `KEYS`, `improved`, `merged`, testler), oyun sonu satırları `GameOverScreen._build_rows` (yeni `StatRow` eklemek kolay).
+- **Efekt/ses**: parçacıklar `ParticleBursts` / `SoftTextures`; sesler `tools/sfx/generate_sfx.py` (yeni ses SOUNDS sözlüğünün SONUNA eklenir, rastgelelik sırası bozulmaz) + `AudioManager.SOUNDS` + `Tuning.SFX_*_DB`; arayüz sesleri `ui_*`.
+- **Ayarlar** gerekirse `GameSettings.DEFAULTS` + `SettingsMenu` satırı (`_add_toggle` / `_add_slider`).
+
+### Aşama 4'ten kalan, onaylanmış ama yapılmamış fikir
+- 6c-2 "Ek objeler (devam)": platformlara yapışık süslerden sonra **bağımsız objeler** (kullanıcı isteği, "basitten karmaşığa"); Aşama 4 bu madde olmadan onaylandı. Toplanabilirlerle birleşebilir/benzer altyapı kullanabilir.
+
+### Kullanıcının Aşama 6 için fikirleri (2026-11-12 — kapsam o aşamada netleşecek)
 - **Para toplama.**
 - **Kanat:** alınınca karakter kanatlanır ve otomatik olarak (belli bir süre/mesafe) uçar.
 - **Kum saati:** alınınca zaman yavaşlar (`Engine.time_scale` → `HitStop` ve F4 yavaş çekimle uyumlu olmalı).
@@ -209,15 +238,26 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - Doğrulama yöntemi: headless'ta simüle girişle sayısal kontrol + kullanıcının elle testi. Otomatik ekran görüntüsü şimdilik istenmiyor.
 
 ### Mimari
+### Aşama 5 sonrası mimari özeti (hızlı harita)
+- **Autoload'lar** (`project.godot` sırası): `Events` (sinyal otobüsü; `flow_changed` dahil), `GameState` (skor, kat, kombo, `records`, `run_time`, `run_best_combo`, `new_records`, `abandon_run`, `reset_records`), `WindowManager` (tam ekran, kaydedilir), `AudioManager` (kanallar, `play(ses, perde, dB, kanal)`, `music`, seviyeler, sustur, müzik süzgeci), `GameFlow` (durum makinesi), `ScreenFade` (kararma geçişi).
+- **Akış:** `FlowRules` (saf: `State {MENU, PLAYING, PAUSED, GAME_OVER}`, `can_transition`, `freezes_world`, `accepts_player_input`) + `GameFlow.request(durum)`. Yalnız PAUSED ağacı dondurur (`get_tree().paused`'a başka yerden dokunma). Oyun MENU ile açılır. Ana menüden "Oyna" → `main._on_play_requested`; duraklatma `PauseController` (Esc, odak kaybı, 3-2-1 `ResumeCountdown`); ana menüye dönüş `main._on_main_menu_requested` (`abandon_run` → `ScreenFade.cover` → MENU → reset → sahneyi yenile).
+- **Ekranlar** (`scripts/ui/`): `UiScreen` taban (CanvasLayer; `open/close`, `link_child(alt, tetikleyici)`, `_on_cancel`, `first_focus`, `content`) → `MainMenu`, `PauseMenu`, `SettingsMenu` (+ `ControlsMenu`), `GameOverScreen`. Parçalar `scripts/ui/widgets/`: `UiButton` (primary/back/compact; fare hareket edince odak alır), `UiToggle`, `UiSlider` (MiniSlider'dan; `set_locked`), `BouncyTitle`. Yardımcılar: `UiStyle` (renk/stil/`row`/`spacer`/`key_cap`), `StatRow`, `CreatorBadge`/`CreatorLink`/`CreatorInfo` (yapımcı kartı; `ENABLED=false` kapatır), `ConfettiRain` (`scripts/fx/`). Katmanlar: HUD 1, UiScreen 40, geri sayım 41, konfeti 45, radyo 50, ScreenFade 95, debug 100.
+- **Kayıt dosyaları** (`%APPDATA%\Godot\app_userdata\Tower Climb\`): `save.cfg` → [records] `best_score`, `best_floor`, `best_combo` (`SaveData`); `settings.cfg` → [audio] `master_volume`, `sfx_volume`, `music_volume`, `last_track`, `sfx_enabled`, `muted` (`AudioSettings`), [game] `pause_on_focus_loss`, `screen_shake`, `fullscreen` (`GameSettings`, önbellekli `get_setting`). Müzik klasörü `user://music`.
+- **Saf mantık sınıfları (GUT testli):** `ComboCounter`, `SaveData`, `FlowRules`, `GameOverRules`, `PlatformRules`, `ThemeRules`, `WallDecorRules`, `CameraRules`, `CameraShake`, `SfxRules`, `Playlist`, `PopupRules`, `FlipRules`, `Spring`, `Smoothing`, `AnimationRules`, `AmbientParticles.kind_weights`, `PlatformDecor.pick`. Güncel toplam **134 test** (Aşama 5 sonu).
+- **Sesler** (`assets/audio/sfx/*.wav`, `tools/sfx/generate_sfx.py` sentezler): jump, land, wall, combo, combo_end, section, game_over, whoosh, ui_hover, ui_click, ui_back, record.
+- **Menüde oyun:** karakter menüde kendiliğinden küçük zıplar (`Player.hop`, `Tuning.MENU_HOP_*`), `GameAudio` oyun dışı oyuncu seslerini çalmaz, HUD gizli.
+- **Aşama 5'te kullanıcı kararları:** açılışta müzik kendiliğinden çalmaz; radyoda dosya seçici ("+") yok (klasörü aç + sürükle-bırak kaldı); yazı tipi Godot varsayılanı; yapımcı kartı "Taha Pek" + `github.com/tahapek5454` + `www.tahapek.com`; gamepad yok.
+
+### Mimari — ayrıntılı notlar (Aşama 1–4)
 - Dünya koordinatları: x=0 kule ortası, y=0 zeminin üstü, yukarı = -y. Oyuncunun orijini ayaklarında.
-- Giriş eylemleri (`project.godot`): `move_left`, `move_right`, `jump`, `pause`, `toggle_debug`, `toggle_fullscreen`, `restart`. `pause` henüz bir şey yapmıyor (Aşama 5).
+- Giriş eylemleri (`project.godot`): `move_left`, `move_right`, `jump`, `pause` (Esc), `toggle_debug` (F3), `toggle_fullscreen` (F11/Alt+Enter), `restart` (R), `debug_slow_motion` (F4), `toggle_mute` (M), `debug_skip_section` (F6).
 - `Player.event` olayları: `jumped {speed, run_speed}`, `jump_cut`, `landed {speed, floor}`, `wall_bounce {speed, normal_x, airborne}`. `state_changed` yayınlanıyor ama sadece `IDLE/RUN/JUMP/FALL` kullanılıyor; `LAND`, `WALL_BOUNCE`, `FLIP` durumlarına geçilmiyor (takla ve iniş efektleri olaylarla `Visual` tarafında). Aşama 3'te animasyon için gerekirse eklenebilir.
 - Duvarlar kamerayı dikeyde takip eder (`tower.gd`).
 - Platformlar: kurallar `scripts/world/platform_rules.gd` (saf), üretim `platform_spawner.gd`.
 - Kamera: `TowerCamera` (`scripts/world/tower_camera.gd`), kuralları `CameraRules`.
 - Skor/kombo: kurallar `scripts/game/combo_counter.gd` (saf), durum `GameState`. `main.gd` iniş olayını `GameState.register_landing(floor)`'a iletir.
-- Oyun sonu: oyuncu ekranın altından tamamen çıkınca `GameState.end_game()`. Geçici yazı `scripts/ui/game_over_label.gd` (Aşama 5'te gerçek ekranla değişecek). Yeniden başlatma: R veya Space (0,5 s gecikmeyle) → `GameState.reset()` + sahneyi yeniden yükleme.
-- UI: `scripts/ui/hud.gd` (sol üst), `scripts/ui/debug_overlay.gd` (sağ üst, F3).
+- Oyun sonu: oyuncu ekranın altından tamamen çıkınca `GameState.end_game()` → `Events.game_over` → `GameFlow` GAME_OVER + `GameOverScreen` (Aşama 5). Yeniden başlatma: Tekrar / R / Space (0,5 s gecikmeyle) → kısa `ScreenFade` + `GameFlow` PLAYING + `GameState.reset()` + sahneyi yeniden yükleme (`main._restart`).
+- UI: `scripts/ui/hud.gd` (sol üst), `scripts/ui/debug_overlay.gd` (sağ üst, F3); menüler/ekranlar için aşağıdaki özet.
 - Görsel katman: `Visual` (ayaklar) → `Spin` (gövde ortası, döner: takla) → `Squash` (gövde altı, ölçeklenir: dikken ayaklar yerde, takla sırasında gövde kendi boyu yönünde uzar) → gövde + göz. Aşama 3'te model `Squash`'ın içine takılacak. Juice ayar değerleri de `tuning.gd`'de. Yay: `scripts/fx/spring.gd`, takla kuralları: `scripts/fx/flip_rules.gd` (ikisi de saf, GUT testli).
 - İz: `scripts/fx/smooth_trail.gd` — gövde merkezinin yolundan geçen tek `Line2D` şerit (incelen + solan, yuvarlak uçlar, 2 tur Chaikin yumuşatma, `scripts/fx/smoothing.gd`). Hız çizgileri: `speed_lines.gd` (havuzlu `Line2D`, yuvarlak uç, kuyruğa doğru incelir). İkisi de `Visual`'ın ilk çocukları (gövdenin arkasında çizilir), `top_level` (dünyada kalır). Modelden bağımsız: Aşama 3'te değişiklik gerekmez.
 - Parçacıklar: `scripts/fx/particle_bursts.gd` — `CPUParticles2D` (Compatibility renderer'a uygun), tek seferlik, havuzlu (3'er), `top_level`. Doku kodla üretilen yumuşak daire (`GradientTexture2D` radyal), dış dosya yok. `land_dust(ayak, güç)`, `wall_sparks(temas, normal_x, güç)` başka efektlerde de kullanılabilir.
@@ -232,6 +272,7 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - Kullanıcı geri bildirimi: hızlı koşup zıplamadaki uzayıp ezilme "zıpladığımı hissettiriyor" — bu his korunmalı. Kısa zıplamalar için yay efekt gücüne göre yumuşuyor (`SQUASH_SPRING_STIFFNESS_SOFT`).
 
 ### Ölçümler ve testler
+- **Güncel GUT toplamı: 134 test** (Aşama 5 sonu); aşağıdaki sayılar Aşama 2 dönemine aittir.
 - Zıplama yükseklikleri: duran ~176 px (1,4 kat), tam hızda ~444 px (3,5 kat), kısa basış ~68 px. Coyote time platform kenarında doğrulandı.
 - GUT testleri: platform kuralları (7), kamera kuralları (7), kombo (11), skor (5), yay (4), takla (6), yumuşatma (3), sarsıntı (8), hit-stop (3), yazılar (5), hâle (3). Toplam 62.
 - İz: |hız| ≥ 650 (tam hızda koşu, büyük zıplama); koşuda ~140 px kuyruk, %22 saydamlık, en keskin kıvrım ~22°. Hız çizgileri: |hız| ≥ 1100 (büyük zıplama kalkışı ~0,3 s, hızlı düşüş), %30 saydamlık, aynı anda en çok ~4; koşuda çıkmaz.

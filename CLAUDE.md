@@ -93,7 +93,16 @@ Player (CharacterBody2D)      ← scripts/player/player.gd — hareket, çarpı�
 ### Autoload'lar
 - `Events` — global sinyal otobüsü (oyun bitti, skor değişti vb.)
 - `GameState` — skor, kat, kombo, en yüksek skor
-- `WindowManager` — pencere modu; tam ekran aç/kapat (`toggle_fullscreen`: F11, Alt+Enter)
+- `WindowManager` — pencere modu; tam ekran aç/kapat (`toggle_fullscreen`: F11, Alt+Enter); seçim kaydedilir
+- `AudioManager` — ses kanalları (Master/SFX/Music), efekt çalma (`play`), müzik çalar (`music`), seviyeler/sustur, duraklatınca müzik süzgeci
+- `GameFlow` — oyun akışı durumu: `MENU, PLAYING, PAUSED, GAME_OVER` (`request(durum)`; kurallar `FlowRules`). **`get_tree().paused`'a doğrudan dokunma**; duraklatmayı sadece `GameFlow` yönetir.
+- `ScreenFade` — ekran kararma/açılma geçişi (sahne yenilerken: `await cover()` → yenile → yeni sahne `reveal()`)
+
+### Arayüz (Aşama 5)
+- Tüm ekranlar (menü, duraklatma, ayarlar, oyun sonu) `UiScreen`'den türer; denetimler `UiButton` / `UiToggle` / `UiSlider`; renk ve stil sadece `UiStyle`'dan. Ekranlar arası geçiş `UiScreen.link_child`. Yeni ekranlarda aynı dili kullan (koyu arduvaz kart, turkuaz vurgu, altın = ödül).
+- Kullanıcıya görünen ayarlar `AudioSettings` / `GameSettings`'e, rekorlar `SaveData`'ya yazılır (`user://`). Testlerde bu sınıfların `path`'ini geçici dosyaya çevir.
+- Katmanlar: HUD 1, UiScreen 40, geri sayım 41, konfeti 45, radyo 50, ScreenFade 95, debug 100.
+- Debug tuşları: F3 overlay, F4 yavaş çekim, F6 sonraki bölüme ışınlan.
 
 ### Ekran ve pencere
 - Tasarım çözünürlüğü **1280 x 720** sabittir (`Tuning.VIEW_WIDTH/HEIGHT`, stretch `canvas_items`, aspect `keep`). Tüm yerleşim ve oynanış sayıları bu koordinatlara göredir; pencere büyüsün diye bu değerleri **değiştirme**.
