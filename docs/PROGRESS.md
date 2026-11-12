@@ -1,12 +1,12 @@
 # İlerleme
 
 **Aktif aşama:** 4 — Dünya görselleri ve ses
-**Durum:** Devam ediyor (1/10 madde). Madde 1 için kullanıcının ekran görüntüsü/onayı bekleniyor; sıradaki madde 2.
+**Durum:** Devam ediyor (2/10 madde). Madde 2 için kullanıcının onayı bekleniyor; sıradaki madde 3.
 
 ## Aşama 4 — Dünya görselleri ve ses
 Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - [x] 1. Palet kaynağı (`WorldPalette`) + kule içi taş deseni (`assets/shaders/tower_interior.gdshader`)
-- [ ] 2. Karakter okunurluğu: yeni zeminde outline/rim yeniden ayarı (`Tuning.MODEL_OUTLINE_*`, `MODEL_RIM_*`)
+- [x] 2. Karakter okunurluğu: yeni zeminde outline/rim yeniden ayarı (`Tuning.MODEL_OUTLINE_*`, `MODEL_RIM_*`)
 - [ ] 3. Yan duvarlar ve zemin (taş sütun görünümü, iç kenar gölgesi; `TOWER_WIDTH`'ten türetilir)
 - [ ] 4. Platformlar (yuvarlak köşe, üst vurgu, alt gölge; renk temadan; bölüm platformu altın sarısı kalır)
 - [ ] 5. Dış çevre + parallax (gökyüzü gradyanı, 2–3 bulut katmanı, uzak siluetler; kule içi arka duvar da hafif yavaş kayar)
@@ -25,6 +25,8 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - **Temalar (öneri, itiraz gelmedi):** Taş kule 0–99 (mavi-mor taş / koyu lacivert-gri duvar / soluk turkuaz platform) · Yosunlu 100–199 (adaçayı-teal / koyu çam / soluk kum) · Alacakaranlık 200–299 (mürdüm / koyu erik / soluk lila) · Buz 300–399 (soluk çelik mavisi / koyu petrol / buz mavisi) · Gece 400+ (lacivert-mor / koyu indigo / soluk mor); sonra döngü.
 - **Dış çevre (öneri, itiraz gelmedi):** gökyüzü + bulut + uzak siluetler.
 - Kullanıcı geri bildirimi (madde 1, ilk sürüm): doygun mor-mavi ton ve yumuşak (bulanık) derzler "gözü yordu". → Daha gri arduvaz tonu, ince ve net derzler (yumuşaklık 3 → 1 px), daha az blok/kenar kontrastı. Kullanıcı rengi henüz kesinleştirmedi; tüm tasarım bitince yeniden bakılacak (renkler `WorldPalette`, desen `Tuning.INTERIOR_*` — tek satırlık değişiklik). Genel ilke: arka plan sakin, net ve düşük doygunlukta olmalı; bulanık desenlerden kaçın.
+- Madde 2: orta tonlu zeminde açık outline + güçlü rim gövdede beyaz "karalama" çizgileri yapıyordu. → Outline koyu lacivert (`0.09, 0.10, 0.18`), rim gücü 0,55 → 0,28. Yakın plan görüntüyle karşılaştırıldı (idle/zıplama): beyaz kafa ve gaga öne çıkıyor, koyu gövde zeminden ayrışıyor. Tema koyu bir zemine geçerse (ör. Gece) outline yeniden değerlendirilmeli; gerekirse outline rengi temaya bağlanır (madde 6).
+- Doğrulama script tuzağı: `-s` script'inde `root.add_child(scene)` sonrası düğümler hemen hazır değil; oyuncuyu bulmadan önce bekle (`create_timer`), yoksa script hata verip pencere açık kalır (takılır).
 - Madde 1 uygulama notu: arka duvar dikdörtgeni kamerayı takip eder ama desen shader'da dünya koordinatından (`MODEL_MATRIX * VERTEX`) hesaplanır → taşlar yerinde durur. Blok 128x64 (kat başına iki sıra), ayarlar `Tuning.INTERIOR_*`, renkler `WorldPalette`. Madde 5'te parallax için shader'a kaydırma çarpanı eklenecek; madde 6'da `WorldPalette` temalı hâle gelecek.
 
 ## ▶ Yeni oturumda buradan devam

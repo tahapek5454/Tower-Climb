@@ -69,13 +69,14 @@ const MODEL_STAR_FLIP_CHANCE: float = 0.5
 ## Takla ekseninin ayaklardan yüksekliği (px): topak pozundaki modelin ortası.
 const MODEL_SPIN_PIVOT_HEIGHT: float = 42.0
 ## Toon görünüm (assets/shaders/toon_character.gdshader, toon_outline.gdshader).
-## Dış çizgi: siyah değil, açık renk — koyu gövde koyu zeminde okunsun.
-const MODEL_OUTLINE_COLOR: Color = Color(0.86, 0.90, 1.0)
+## Dış çizgi: koyu lacivert. Kule içi orta tonda olduğu için koyu çizgi hem beyaz kafayı hem
+## koyu gövdeyi zeminden ayırır (zemin koyuyken açık renkti; zemin yine koyulaşırsa açığa dön).
+const MODEL_OUTLINE_COLOR: Color = Color(0.09, 0.10, 0.18)
 ## Dış çizgi kalınlığı (model birimi; 0.013 ≈ 1,1 px).
 const MODEL_OUTLINE_WIDTH: float = 0.013
-## Kenar ışığının rengi ve gücü.
+## Kenar ışığının rengi ve gücü (zayıf: koyu kol ve bacakları birbirinden ayırmaya yeter).
 const MODEL_RIM_COLOR: Color = Color(0.75, 0.85, 1.0)
-const MODEL_RIM_STRENGTH: float = 0.55
+const MODEL_RIM_STRENGTH: float = 0.28
 ## Gölgede kalan yüzeyin renk çarpanı.
 const MODEL_SHADOW_TINT: Color = Color(0.62, 0.64, 0.80)
 
