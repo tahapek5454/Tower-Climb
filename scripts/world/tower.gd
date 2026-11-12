@@ -45,6 +45,8 @@ func _make_interior() -> Polygon2D:
 	material.set_shader_parameter(&"half_width", Tuning.TOWER_WIDTH * 0.5)
 	material.set_shader_parameter(&"edge_shade_width", Tuning.INTERIOR_EDGE_SHADE_WIDTH)
 	material.set_shader_parameter(&"edge_shade_strength", Tuning.INTERIOR_EDGE_SHADE_STRENGTH)
+	material.set_shader_parameter(&"parallax_factor", Tuning.INTERIOR_PARALLAX)
+	material.set_shader_parameter(&"rest_top", Tuning.GROUND_SCREEN_MARGIN - Tuning.VIEW_HEIGHT)
 
 	var interior_size := Vector2(Tuning.TOWER_WIDTH, Tuning.WALL_HEIGHT)
 	var interior: Polygon2D = make_rect_visual(interior_size, Color.WHITE)

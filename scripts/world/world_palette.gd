@@ -11,6 +11,14 @@ const INTERIOR_JOINT := Color(0.255, 0.28, 0.38)
 const WALL := Color(0.16, 0.18, 0.26)
 const WALL_JOINT := Color(0.12, 0.135, 0.20)
 const WALL_LIP := Color(0.27, 0.30, 0.42)
+## Kule dışı: gökyüzü (üst/alt), uzak ve yakın tepe siluetleri, bulut ve gölgeli alt kısmı.
+## Gökyüzü kule içinden açık: kule çerçeve gibi okunur. Tepeler uzaklaştıkça gökyüzüne karışır.
+const SKY_TOP := Color(0.36, 0.45, 0.62)
+const SKY_BOTTOM := Color(0.60, 0.66, 0.77)
+const HILL_FAR := Color(0.48, 0.55, 0.70)
+const HILL_NEAR := Color(0.36, 0.43, 0.58)
+const CLOUD := Color(0.80, 0.84, 0.90)
+const CLOUD_SHADE := Color(0.67, 0.72, 0.82)
 ## Platformlar: gövde rengi (üst şerit ve alt kenar bundan türetilir). Bölüm platformu (her 100 kat)
 ## altın sarısı: turuncu/altın ailesi dünyada sadece ödül anlamı taşır.
 const PLATFORM := Color(0.40, 0.66, 0.68)

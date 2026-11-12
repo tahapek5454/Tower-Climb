@@ -2,7 +2,7 @@ extends Node2D
 ## Ana sahne: kuleyi, oyuncuyu ve kamerayı kurar; oyun sonunu ve yeniden başlatmayı yönetir.
 
 const PLAYER_SCENE: PackedScene = preload("res://scenes/player/player.tscn")
-## Duvarların dışındaki dekor alanının rengi.
+## Oyun alanı dışında kalan şeritlerin rengi (16:9 olmayan ekranlarda).
 const BACKDROP_COLOR := Color(0.05, 0.05, 0.08)
 
 var _player: Player
@@ -11,6 +11,10 @@ var _camera: TowerCamera
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(BACKDROP_COLOR)
+
+	var backdrop := Backdrop.new()
+	backdrop.name = "Backdrop"
+	add_child(backdrop)
 
 	var tower := Tower.new()
 	tower.name = "Tower"

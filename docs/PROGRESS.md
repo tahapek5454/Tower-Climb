@@ -1,7 +1,7 @@
 # İlerleme
 
 **Aktif aşama:** 4 — Dünya görselleri ve ses
-**Durum:** Devam ediyor (4/10 madde). 4c (platform genişlik kuralları) yapıldı, kullanıcı testi bekleniyor; sıradaki madde 5.
+**Durum:** Devam ediyor (5/10 madde). Madde 5 (dış çevre + parallax) yapıldı, kullanıcı testi bekleniyor; sıradaki madde 6.
 
 ## Aşama 4 — Dünya görselleri ve ses
 Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
@@ -11,7 +11,7 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - [x] 4. Platformlar (yuvarlak köşe, üst vurgu, alt gölge; renk temadan; bölüm platformu altın sarısı kalır)
 - [x] 4b. Taş kule platformu detaylandırıldı (başlık taşları, tonlu bloklar, derzler, destek taşları)
 - [x] 4c. Platform genişlik kuralları: bölüme göre değişir + rastgele sapma (kimi katlarda dar/geniş); `PlatformRules` + GUT
-- [ ] 5. Dış çevre + parallax (gökyüzü gradyanı, 2–3 bulut katmanı, uzak siluetler; kule içi arka duvar da hafif yavaş kayar)
+- [x] 5. Dış çevre + parallax (gökyüzü gradyanı, 2–3 bulut katmanı, uzak siluetler; kule içi arka duvar da hafif yavaş kayar)
 - [ ] 6. Tema sistemi: her 100 katta yumuşak palet geçişi + **bölüme özel platform tasarımı** (kodla; görünen kalınlık/biçim de değişebilir) (`ThemeRules` saf + GUT; temaları hızlı görmek için debug tuşu)
 - [ ] 7. Işık: sahte ışık hâleleri (pencere/fener), `Light2D` yok
 - [ ] 8. Ses efektleri: `AudioManager` autoload, `Master/SFX/Music` bus'ları; zıplama, iniş, duvar sekmesi, kombo artışı/bitişi, bölüm platformu, oyun sonu
@@ -35,6 +35,10 @@ Maddeler ve kararlar kullanıcıyla 2026-11-12'de netleştirildi.
 - Madde 4b: `PlatformVisual._draw` — levha (`_draw_block`: alt kenar+gölge, üst şerit, gövde), uçlarda 24 px başlık taşları (5 px aşağı taşar, biraz açık), arada ~52 px'lik taşlar (ton farkı ±%11, kat numarasıyla tohumlanır → aynı kat hep aynı görünür), derzler, altta iki destek taşı. Her genişliğe uyar (taş sayısı genişlikten). Ayarlar `Tuning.PLATFORM_*`. Çarpışma aynı. İlk denemede ton farkı (%7) ve destekler (9 px, çok koyu) okunmuyordu → belirginleştirildi.
 - Kullanıcı geri bildirimi (4b): detaylı taş platform "hoşuma gitmedi, **çok düzenli** geldi"; ne istediği henüz net değil. Platform tasarımı **sonra** (madde 6'da, bölüme özel tasarımlarla) yeniden ele alınacak. Şimdilik 4b görünümü kalıyor. Yeniden ele alınırken: düzensizlik (eşit olmayan taş boyları, eğik/kırık kenarlar, organik biçimler) dene ve önce kullanıcıya birkaç seçeneği görsel olarak göster.
 - Madde 4c: `PlatformRules.base_width` (eğilim 360→140 px / 300 kat + her bölüm başında +80 px, bölüm boyunca erir), `surprise_narrow_chance` (%4→%15), `random_width` (tipik x 0,75–1,15; sürprizde x0,55; sınır 90 px..TOWER_WIDTH). Spawner `random_width` kullanır; ulaşılabilirlik kuralı aynı. Eski `width_for_floor` kaldırıldı. Örnek kule (tohum 7): bölüm 0 ort 326 px (160–486), bölüm 1 ort 264 (121–415), bölüm 2 ort 199 (90–311), bölüm 3+ ort ~158 (90–236); her bölümde ~10 sürpriz dar platform. Not: oyunun başı eskisinden geniş (kat 1 tipik 439 px, önce 360). GUT toplam 80.
+- Madde 5: `scripts/world/backdrop.gd` (`Backdrop`, main'de ilk eklenir → en arkada; ekranı kaplayan tek dikdörtgen kamerayı izler) + `assets/shaders/backdrop.gdshader`: gökyüzü gradyanı (ekrana göre), uzak/yakın bulut katmanı (ızgara, hücre başına rastgele bulut; daireler + yuvarlak kutu, düz toon gölgeli alt kısım; yavaş yatay sürüklenme), iki tepe silueti (sinüs toplamı; başta zemin hizasında, tırmandıkça batar: 0,09 oranla ~20 katta kaybolur). Kule içi arka duvar parallax 0,85 (`Tuning.INTERIOR_PARALLAX`). Oranlar `Tuning.BACKDROP_*`, renkler `WorldPalette.SKY_*/HILL_*/CLOUD*`.
+- Parallax tekniği: kamera konumu shader'da `inverse(CANVAS_MATRIX)`'ten okunur (görüntünün sol üst köşesinin dünya y'si) → pencere ölçeğinden bağımsız, düğüm takip gecikmesi yok, sarsıntı dahil. `rest_top` (başlangıçtaki üst kenar) ile başlangıçta katmanlar kaymasız.
+- Shader tuzağı: ızgara tabanlı desenlerde kenar yumuşatması için `fwidth` kullanma — hücre sınırında uzaklık sıçrar ve ince dikey çizgi bırakır. Sabit yumuşatma genişliği (`edge_softness`) kullan; şekiller hücreye sığmalı.
+- Madde 6 için not: yükseldikçe gökyüzü (ve bulut yoğunluğu) temaya göre değişmeli; şu an ekran gradyanı sabit. HUD yazıları sol üstte açık bulutların üstüne denk gelebiliyor (madde 10).
 - Madde 1 uygulama notu: arka duvar dikdörtgeni kamerayı takip eder ama desen shader'da dünya koordinatından (`MODEL_MATRIX * VERTEX`) hesaplanır → taşlar yerinde durur. Blok 128x64 (kat başına iki sıra), ayarlar `Tuning.INTERIOR_*`, renkler `WorldPalette`. Madde 5'te parallax için shader'a kaydırma çarpanı eklenecek; madde 6'da `WorldPalette` temalı hâle gelecek.
 
 ## ▶ Yeni oturumda buradan devam

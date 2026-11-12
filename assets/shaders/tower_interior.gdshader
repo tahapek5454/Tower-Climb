@@ -1,7 +1,8 @@
 shader_type canvas_item;
 // Kule içi arka duvar: yumuşak köşeli taş bloklar (şaşırtmalı örgü), silik derzler,
 // duvarlara doğru hafif kararma. Desen dünya koordinatına bağlıdır; dikdörtgen kamerayı
-// takip etse de taşlar yerinde durur.
+// takip etse de taşlar yerinde durur. Parallax: desen kameranın parallax_factor oranıyla kayar
+// (1 = platformlarla aynı; küçük = daha uzakta görünür).
 
 uniform vec4 stone_color : source_color = vec4(0.34, 0.37, 0.58, 1.0);
 uniform vec4 joint_color : source_color = vec4(0.26, 0.28, 0.46, 1.0);
@@ -19,8 +20,12 @@ uniform float bevel_strength = 0.08;
 uniform float half_width = 448.0;
 uniform float edge_shade_width = 150.0;
 uniform float edge_shade_strength = 0.28;
+uniform float parallax_factor = 1.0;
+// Başlangıçta ekranın üst kenarının dünya y'si (başlangıçta desen kaymasız).
+uniform float rest_top = -648.0;
 
 varying vec2 world_pos;
+varying float view_top;
 
 
 float hash(vec2 p) {
@@ -30,11 +35,13 @@ float hash(vec2 p) {
 
 void vertex() {
 	world_pos = (MODEL_MATRIX * vec4(VERTEX, 0.0, 1.0)).xy;
+	view_top = (inverse(CANVAS_MATRIX) * vec4(0.0, 0.0, 0.0, 1.0)).y;
 }
 
 
 void fragment() {
-	vec2 p = world_pos / block_size;
+	vec2 pattern_pos = vec2(world_pos.x, world_pos.y - (view_top - rest_top) * (1.0 - parallax_factor));
+	vec2 p = pattern_pos / block_size;
 	// Her ikinci sıra yarım blok kayar.
 	p.x += 0.5 * mod(floor(p.y), 2.0);
 	vec2 cell = floor(p);

@@ -29,6 +29,18 @@ const INTERIOR_BEVEL_STRENGTH: float = 0.04
 ## Duvar dibindeki yumuşak gölge: genişlik (px) ve en koyu noktadaki kararma oranı.
 const INTERIOR_EDGE_SHADE_WIDTH: float = 150.0
 const INTERIOR_EDGE_SHADE_STRENGTH: float = 0.18
+## Arka duvar deseninin kameraya göre kayma oranı (1 = platformlarla aynı; küçük = daha derinde).
+const INTERIOR_PARALLAX: float = 0.85
+
+# --- Kule dışı arka plan (görsel; assets/shaders/backdrop.gdshader) ---
+## Katmanların kameraya göre kayma oranı: 0 = ekrana sabit, 1 = platformlarla aynı.
+## Tepeler çok yavaş batar (uzakta), bulutlar daha hızlı geçer.
+const BACKDROP_HILL_FAR_PARALLAX: float = 0.04
+const BACKDROP_HILL_NEAR_PARALLAX: float = 0.09
+const BACKDROP_CLOUD_FAR_PARALLAX: float = 0.22
+const BACKDROP_CLOUD_NEAR_PARALLAX: float = 0.45
+## Bulutların yatay sürüklenme hızı (px/s; uzak bulutlar daha yavaş).
+const BACKDROP_CLOUD_DRIFT_SPEED: float = 6.0
 
 # --- Yan duvar ve zemin görünümü (görsel; assets/shaders/tower_wall.gdshader) ---
 ## Duvar sütununun parça yüksekliği (iki kat) ve parçalar arasındaki derzin kalınlığı (px).
