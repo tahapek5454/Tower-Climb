@@ -92,6 +92,11 @@ func _ready() -> void:
 	_hop_timer.timeout.connect(_on_hop_timer)
 	add_child(_hop_timer)
 
+	var pause_controller := PauseController.new()
+	pause_controller.name = "PauseController"
+	pause_controller.main_menu_requested.connect(_on_main_menu_requested)
+	add_child(pause_controller)
+
 	var game_over_label := GameOverLabel.new()
 	game_over_label.name = "GameOverLabel"
 	game_over_label.restart_requested.connect(_restart)
@@ -101,6 +106,7 @@ func _ready() -> void:
 	if GameFlow.state == FlowRules.State.MENU:
 		_menu.open()
 		_schedule_hop()
+	ScreenFade.reveal()
 
 
 func _physics_process(_delta: float) -> void:
@@ -130,6 +136,15 @@ func _debug_skip_section() -> void:
 func _on_play_requested() -> void:
 	_menu.close()
 	GameFlow.request(FlowRules.State.PLAYING)
+
+
+## Duraklatma menüsünden ana menüye: oyun bırakılır (rekorlar kaydedilir), ekran kararır, sahne yenilenir.
+func _on_main_menu_requested() -> void:
+	GameState.abandon_run()
+	await ScreenFade.cover()
+	GameFlow.request(FlowRules.State.MENU)
+	GameState.reset()
+	get_tree().reload_current_scene()
 
 
 func _schedule_hop() -> void:

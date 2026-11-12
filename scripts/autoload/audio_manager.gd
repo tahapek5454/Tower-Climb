@@ -18,6 +18,9 @@ signal muted_changed(muted: bool)
 
 ## Oyuncunun müzikleri (radyo paneli bunu kullanır).
 var music: MusicPlayer
+## Müzik kanalındaki alçak geçiren süzgeç (duraklatınca müzik boğuklaşır).
+var _muffle: AudioEffectLowPassFilter
+var _muffle_tween: Tween
 var _streams: Dictionary = {}
 var _players: Array[AudioStreamPlayer] = []
 var _next: int = 0
@@ -43,12 +46,30 @@ func _ready() -> void:
 	music = MusicPlayer.new()
 	music.name = "Music"
 	add_child(music)
+	_setup_muffle()
+	Events.flow_changed.connect(_on_flow_changed)
 
 
 func _unhandled_input(input_event: InputEvent) -> void:
 	if input_event.is_action_pressed(&"toggle_mute"):
 		set_muted(not is_muted())
 		get_viewport().set_input_as_handled()
+
+
+## Müziği boğuklaştırır / açar (kesim frekansı yumuşakça kayar).
+func set_music_muffled(muffled: bool) -> void:
+	var bus: int = AudioServer.get_bus_index(MUSIC_BUS)
+	if bus == -1 or _muffle == null:
+		return
+	if _muffle_tween != null:
+		_muffle_tween.kill()
+	_muffle_tween = create_tween()
+	if muffled:
+		AudioServer.set_bus_effect_enabled(bus, 0, true)
+		_muffle_tween.tween_property(_muffle, ^"cutoff_hz", Tuning.MUFFLE_CUTOFF_HZ, Tuning.MUFFLE_TIME)
+	else:
+		_muffle_tween.tween_property(_muffle, ^"cutoff_hz", Tuning.MUFFLE_CUTOFF_OPEN_HZ, Tuning.MUFFLE_TIME)
+		_muffle_tween.tween_callback(AudioServer.set_bus_effect_enabled.bind(bus, 0, false))
 
 
 ## Efekt sesleri açık mı?
@@ -97,6 +118,19 @@ func _free_player() -> AudioStreamPlayer:
 	var oldest: AudioStreamPlayer = _players[_next]
 	_next = (_next + 1) % POOL_SIZE
 	return oldest
+
+
+## Müzik kanalına süzgeç ekler (kapalı başlar; efekt sırası 0).
+func _setup_muffle() -> void:
+	var bus: int = AudioServer.get_bus_index(MUSIC_BUS)
+	_muffle = AudioEffectLowPassFilter.new()
+	_muffle.cutoff_hz = Tuning.MUFFLE_CUTOFF_OPEN_HZ
+	AudioServer.add_bus_effect(bus, _muffle, 0)
+	AudioServer.set_bus_effect_enabled(bus, 0, false)
+
+
+func _on_flow_changed(new_state: int, _old_state: int) -> void:
+	set_music_muffled(new_state == FlowRules.State.PAUSED)
 
 
 ## Ses kanalı yoksa oluşturur ve Master'a bağlar.

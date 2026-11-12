@@ -58,6 +58,14 @@ static func button_style(fill: Color, border: Color = Color(0.0, 0.0, 0.0, 0.0),
 	return style
 
 
+## Boş dikey aralık (fareyi engellemez).
+static func spacer(height: float) -> Control:
+	var result := Control.new()
+	result.custom_minimum_size.y = height
+	result.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return result
+
+
 ## Ayar satırı: solda başlık, sağda denetim (anahtar, kaydırıcı...). Denetim genişliği min_width.
 static func row(caption: String, control: Control, min_width: float = 0.0) -> HBoxContainer:
 	var result := HBoxContainer.new()

@@ -109,6 +109,16 @@ func end_game() -> void:
 	Events.game_over.emit(score, floor_number)
 
 
+## Oyunu sonuç ekranı göstermeden bırakır (duraklatma menüsünden ana menüye): puan ve rekorlar
+## yine sayılır ama game_over sinyali yayınlanmaz.
+func abandon_run() -> void:
+	if is_game_over:
+		return
+	_combo.finish()
+	is_game_over = true
+	_save_records()
+
+
 ## Kırılan rekorları bulur ve kaydeder (rekor yoksa dosyaya yazmaz).
 func _save_records() -> void:
 	var run: Dictionary = {

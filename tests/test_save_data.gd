@@ -90,6 +90,19 @@ func test_reset_clears_run_values() -> void:
 	assert_eq(state.run_best_combo, 0)
 
 
+func test_abandon_run_saves_records_without_game_over_signal() -> void:
+	var state: Node = _new_state()
+	var fired: Array = []
+	var listener: Callable = func(_score: int, _floor: int) -> void: fired.append(true)
+	Events.game_over.connect(listener)
+	state.register_landing(5)
+	state.abandon_run()
+	Events.game_over.disconnect(listener)
+	assert_true(fired.is_empty(), "game_over yayınlanmaz")
+	assert_true(state.is_game_over)
+	assert_eq(SaveData.load_records()[SaveData.BEST_FLOOR], 5, "bırakılan oyunun rekoru yine kaydedilir")
+
+
 func _new_state() -> Node:
 	var state: Node = GameStateScript.new()
 	state.set_physics_process(false)

@@ -49,8 +49,9 @@ func _on_files_selected(paths: PackedStringArray) -> void:
 	_import(paths)
 
 
+## Dosya seçici kapandı: ağaç, akış durumunun gerektirdiği hâle döner (duraklatma menüsü açıksa donuk kalır).
 func _resume() -> void:
-	get_tree().paused = false
+	get_tree().paused = FlowRules.freezes_world(GameFlow.state)
 
 
 func _import(paths: PackedStringArray) -> void:

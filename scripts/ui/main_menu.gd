@@ -54,7 +54,7 @@ func _build_menu() -> void:
 	_title = BouncyTitle.new("TOWER CLIMB", TITLE_FONT_SIZE, 6)
 	content.add_child(_title)
 	content.add_child(_build_records())
-	content.add_child(_spacer(6.0))
+	content.add_child(UiStyle.spacer(6.0))
 
 	var play := UiButton.new("Oyna", true)
 	play.pressed.connect(func() -> void: play_requested.emit())
@@ -69,9 +69,9 @@ func _build_menu() -> void:
 		quit.pressed.connect(_quit)
 		content.add_child(quit)
 
-	content.add_child(_spacer(4.0))
+	content.add_child(UiStyle.spacer(4.0))
 	var hint: Label = UiStyle.label(HINT_FONT_SIZE, UiStyle.TEXT_DIM, HORIZONTAL_ALIGNMENT_CENTER)
-	hint.text = "←  →   koş        Space   zıpla"
+	hint.text = "←  →  koş      Space  zıpla      Esc  duraklat"
 	content.add_child(hint)
 
 
@@ -110,13 +110,6 @@ func _refresh_records() -> void:
 		any = any or value > 0
 	_records.visible = any
 	_no_records.visible = not any
-
-
-func _spacer(height: float) -> Control:
-	var spacer := Control.new()
-	spacer.custom_minimum_size.y = height
-	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return spacer
 
 
 func _quit() -> void:

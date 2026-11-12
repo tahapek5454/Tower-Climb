@@ -457,6 +457,15 @@ const MENU_HOP_SPEED: float = JUMP_BASE * 0.42
 const MENU_HOP_INTERVAL_MIN: float = 2.8
 const MENU_HOP_INTERVAL_MAX: float = 6.0
 
+# --- Duraklatma (Aşama 5) ---
+## "Devam"dan sonra oyun başlamadan önce sayılan adım sayısı ve her adımın süresi (s).
+const PAUSE_COUNTDOWN_STEPS: int = 3
+const PAUSE_COUNTDOWN_STEP_TIME: float = 0.65
+## Duraklatınca müziğin boğuklaşması: süzgeç kesim frekansları (Hz) ve geçiş süresi (s).
+const MUFFLE_CUTOFF_OPEN_HZ: float = 20500.0
+const MUFFLE_CUTOFF_HZ: float = 800.0
+const MUFFLE_TIME: float = 0.25
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25
