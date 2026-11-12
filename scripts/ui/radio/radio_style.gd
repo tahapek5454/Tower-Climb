@@ -14,7 +14,7 @@ const DISABLED := Color(0.45, 0.48, 0.56, 0.6)
 
 
 ## İkon çizer (merkez, boyut px). kind: prev, next, play, pause, volume, volume_off, note, folder, add,
-## sfx, sfx_off.
+## sfx, sfx_off, master, master_off (kulaklık = tüm ses).
 static func icon(canvas: CanvasItem, kind: StringName, center: Vector2, size: float, color: Color) -> void:
 	var s: float = size * 0.5
 	match kind:
@@ -42,6 +42,16 @@ static func icon(canvas: CanvasItem, kind: StringName, center: Vector2, size: fl
 					center + Vector2(-s * 0.2, -s * 0.55), center + Vector2(0.0, -s * 0.35),
 					center + Vector2(s * 0.8, -s * 0.35), center + Vector2(s * 0.8, s * 0.6),
 					center + Vector2(-s * 0.8, s * 0.6)]), color)
+		&"master", &"master_off":
+			canvas.draw_arc(center + Vector2(0.0, s * 0.1), s * 0.62, PI, TAU, 10, color, s * 0.16, true)
+			for side: float in [-1.0, 1.0]:
+				canvas.draw_rect(Rect2(center + Vector2(side * s * 0.62 - s * 0.2, s * 0.05),
+						Vector2(s * 0.4, s * 0.6)), color)
+			if kind == &"master_off":
+				var a: Vector2 = center + Vector2(-s * 0.85, -s * 0.75)
+				var b: Vector2 = center + Vector2(s * 0.85, s * 0.85)
+				canvas.draw_line(a, b, PANEL, s * 0.38, true)
+				canvas.draw_line(a, b, color, s * 0.16, true)
 		&"add":
 			canvas.draw_line(center + Vector2(-s * 0.7, 0.0), center + Vector2(s * 0.7, 0.0), color, s * 0.25, true)
 			canvas.draw_line(center + Vector2(0.0, -s * 0.7), center + Vector2(0.0, s * 0.7), color, s * 0.25, true)

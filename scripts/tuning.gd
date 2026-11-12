@@ -434,12 +434,14 @@ const SFX_PITCH_JITTER: float = 0.04
 
 # --- Radyo paneli (arayüz; scripts/ui/radio/) ---
 ## Panel yüksekliği, kule dışındaki alanın kenarlarından boşluk ve ekranın altından yüksekliği (px).
-const RADIO_HEIGHT: float = 58.0
+const RADIO_HEIGHT: float = 76.0
 const RADIO_SIDE_PADDING: float = 8.0
 const RADIO_BOTTOM_OFFSET: float = 120.0
 ## Fare üstünde değilken saydamlık ve fareye tepki hızı (büyük = daha ani).
 const RADIO_IDLE_ALPHA: float = 0.35
 const RADIO_FADE_SPEED: float = 8.0
+## Ekleme sonucu mesajının başlıkta kalma süresi (s).
+const RADIO_MESSAGE_TIME: float = 2.5
 
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).

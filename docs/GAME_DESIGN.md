@@ -15,6 +15,7 @@ Ruh hali: hızlı, akışkan, abartılı ve eğlenceli animasyonlar (takla, sekm
 | Debug yavaş çekim (x0,25) | F4 |
 | Debug: sonraki bölüme ışınlan | F6 |
 | Tam ekran aç/kapat | F11 veya Alt+Enter |
+| Tüm sesi kapat/aç | M |
 | Yeniden başla (oyun bitince) | R veya Space |
 
 Zıplamayı oyuncu yapar (otomatik zıplama yok). Gamepad desteği sonra eklenebilir.

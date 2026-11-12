@@ -12,6 +12,10 @@ const MUSIC_BUS: StringName = &"Music"
 ## Aynı anda çalabilecek en fazla efekt sayısı.
 const POOL_SIZE: int = 10
 
+## Efekt sesleri açıldı/kapandı, tüm ses susturuldu/açıldı (panel ikonları güncellenir).
+signal sfx_enabled_changed(enabled: bool)
+signal muted_changed(muted: bool)
+
 ## Oyuncunun müzikleri (radyo paneli bunu kullanır).
 var music: MusicPlayer
 var _streams: Dictionary = {}
@@ -41,6 +45,12 @@ func _ready() -> void:
 	add_child(music)
 
 
+func _unhandled_input(input_event: InputEvent) -> void:
+	if input_event.is_action_pressed(&"toggle_mute"):
+		set_muted(not is_muted())
+		get_viewport().set_input_as_handled()
+
+
 ## Efekt sesleri açık mı?
 func is_sfx_enabled() -> bool:
 	return not AudioServer.is_bus_mute(AudioServer.get_bus_index(SFX_BUS))
@@ -50,6 +60,7 @@ func set_sfx_enabled(enabled: bool, save: bool = true) -> void:
 	AudioServer.set_bus_mute(AudioServer.get_bus_index(SFX_BUS), not enabled)
 	if save:
 		AudioSettings.save_value("sfx_enabled", enabled)
+	sfx_enabled_changed.emit(enabled)
 
 
 ## Tüm ses kapalı mı? (Master kanalı.)
@@ -61,6 +72,7 @@ func set_muted(muted: bool, save: bool = true) -> void:
 	AudioServer.set_bus_mute(0, muted)
 	if save:
 		AudioSettings.save_value("muted", muted)
+	muted_changed.emit(muted)
 
 
 ## Efekt çalar. pitch: perde çarpanı (1 = normal), volume_db: ses yüksekliği.
