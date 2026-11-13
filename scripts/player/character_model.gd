@@ -23,6 +23,8 @@ var _requested: StringName = &""
 var _facing: float = 1.0
 var _front_view: bool = false
 var _view_angle_degrees: float = Tuning.MODEL_VIEW_ANGLE_DEGREES
+## Önizleme (mağaza): açı dışarıdan verilir, yön görünümü yok sayılır.
+var _preview_yaw_enabled: bool = false
 
 
 ## Model dosyası projede var mı? Yoksa PlayerVisual kutu gövdeye döner.
@@ -71,7 +73,24 @@ func set_jetpack_equipped(equipped: bool) -> void:
 		_jetpack.set_equipped(equipped)
 
 
+## Kuşanılan kozmetiği uygular (slot: ShopCatalog.HAT / SHIRT / PANTS; item_id: ShopCatalog kimliği).
+## Mağaza önizlemesi de bunu çağırır (satın almadan deneme).
+func set_cosmetic(_slot: StringName, _item_id: StringName) -> void:
+	pass
+
+
+## Önizleme için modeli verilen açıya çevirir (radyan, Pivot'un Y dönüşü: -PI/2 = tam kameraya dönük,
+## 0 = sağa profil). Bir kez çağrılınca set_facing / set_front_view açıyı artık değiştirmez.
+func set_preview_yaw(yaw: float, instant: bool = true) -> void:
+	_preview_yaw_enabled = true
+	_target_yaw = yaw
+	if instant:
+		_pivot.rotation.y = yaw
+
+
 func _update_target_yaw() -> void:
+	if _preview_yaw_enabled:
+		return
 	# Model +Z'ye bakar; kamera -X tarafında. Sola dönüş kameranın önünden geçer.
 	var view_angle: float = deg_to_rad(_view_angle_degrees)
 	if _front_view:

@@ -2,8 +2,8 @@ class_name AchievementRules
 extends RefCounted
 ## Başarımlar: sabit tanım tablosu ve saf kurallar. Tüm sayılar (hedef, ödül) bu tabloda, tek yerde.
 ## Her tanım: id, title (kısa ad), desc (kısa açıklama), reward (elmas), stat (izlenen değer), target.
-## Değer türleri (stat): FLOOR ulaşılan kat, COMBO_FLOORS tek komboda kazanılan kat, DIAMONDS kayıtlı
-## elmas toplamı, HEARTS bir turda aynı anda taşınan kalp, olay sayaçları (ilk roket vb.) için 1.
+## Değer türleri (stat): FLOOR ulaşılan kat, COMBO_FLOORS tek komboda kazanılan kat, DIAMONDS bugüne
+## dek kazanılan elmas toplamı (harcama düşürmez), HEARTS bir turda aynı anda taşınan kalp, olay sayaçları (ilk roket vb.) için 1.
 
 const FLOOR: StringName = &"floor"
 const COMBO_FLOORS: StringName = &"combo_floors"

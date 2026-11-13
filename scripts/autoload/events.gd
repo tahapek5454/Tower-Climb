@@ -36,7 +36,7 @@ signal flow_changed(new_state: int, old_state: int)
 @warning_ignore("unused_signal")
 signal pickup_collected(kind: StringName, world_position: Vector2)
 
-## Biriken elmas sayısı değişti (total: kayıtlı toplam).
+## Eldeki elmas sayısı değişti (total: harcanabilir bakiye; kazanınca da harcayınca da yayınlanır).
 @warning_ignore("unused_signal")
 signal diamonds_changed(total: int)
 
@@ -66,6 +66,14 @@ signal record_line_crossed(floor_number: int)
 ## Büyük kombo elmas kazandırdı (count: elmas sayısı; GameState ödülü verdikten sonra yayınlar).
 @warning_ignore("unused_signal")
 signal combo_diamonds_earned(count: int)
+
+## Mağazadan bir ürün alındı (id: ShopCatalog kimliği). Ses/efekt dinler.
+@warning_ignore("unused_signal")
+signal shop_purchased(id: StringName)
+
+## Bir yuvada kuşanılan kozmetik değişti (slot: ShopCatalog.HAT vb.; id: yeni ürün). Görünüm dinler.
+@warning_ignore("unused_signal")
+signal shop_equipped(slot: StringName, id: StringName)
 
 ## Ekran sarsıntısı iste (0..1 eklenir; kamera dinler).
 @warning_ignore("unused_signal")

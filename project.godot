@@ -23,6 +23,7 @@ WindowManager="*res://scripts/autoload/window_manager.gd"
 AudioManager="*res://scripts/autoload/audio_manager.gd"
 GameFlow="*res://scripts/autoload/game_flow.gd"
 ScreenFade="*res://scripts/autoload/screen_fade.gd"
+Shop="*res://scripts/autoload/shop.gd"
 
 [display]
 

@@ -13,7 +13,9 @@ func _ready() -> void:
 	_unlocked = SaveData.load_achievements()
 	Events.floor_changed.connect(func(floor_number: int) -> void: report(AchievementRules.FLOOR, floor_number))
 	Events.combo_ended.connect(_on_combo_ended)
-	Events.diamonds_changed.connect(func(total: int) -> void: report(AchievementRules.DIAMONDS, total))
+	# Harcama toplamı düşürmesin diye eldeki sayı değil, bugüne dek kazanılan toplam bildirilir.
+	Events.diamonds_changed.connect(
+			func(_total: int) -> void: report(AchievementRules.DIAMONDS, GameState.lifetime_diamonds))
 	Events.pickup_collected.connect(_on_pickup_collected)
 	Events.hearts_changed.connect(_on_hearts_changed)
 

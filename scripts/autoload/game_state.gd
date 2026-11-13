@@ -69,6 +69,8 @@ var new_records: Array[String] = []
 ## Biriken elmaslar (para; kalıcı, her alışta kaydedilir) ve bu oyunda toplananlar.
 var diamonds: int = 0
 var run_diamonds: int = 0
+## Bugüne dek kazanılan toplam elmas (harcama düşürmez; başarımlar buna bakar).
+var lifetime_diamonds: int = 0
 
 var _combo := ComboCounter.new()
 ## Oyuncunun en son indiği kat (zıplanan kat); kazanılan katı hesaplamak için.
@@ -83,6 +85,7 @@ func _ready() -> void:
 	records = SaveData.load_records()
 	high_score = records[SaveData.BEST_SCORE]
 	diamonds = SaveData.load_diamonds()
+	lifetime_diamonds = SaveData.load_lifetime_diamonds()
 	_combo.changed.connect(_on_combo_changed)
 	_combo.ended.connect(_on_combo_ended)
 
@@ -150,18 +153,30 @@ func add_diamond() -> void:
 func add_diamonds(count: int) -> void:
 	if is_game_over or count <= 0:
 		return
-	diamonds += count
 	run_diamonds += count
-	SaveData.save_diamonds(diamonds)
-	Events.diamonds_changed.emit(diamonds)
+	_earn_diamonds(count)
 
 
 ## Ödül elmasları (başarım vb.): toplama sayılmaz, bu turun sayacına eklenmez; oyun bitmiş olsa da verilir.
 func grant_reward_diamonds(count: int) -> void:
-	if count <= 0:
-		return
-	diamonds += count
+	if count > 0:
+		_earn_diamonds(count)
+
+
+## Elmas harcar (mağaza, devam et). Yetmiyorsa ya da tutar geçersizse hiçbir şey olmaz ve false döner.
+func spend_diamonds(count: int) -> bool:
+	if count < 0 or count > diamonds:
+		return false
+	diamonds -= count
 	SaveData.save_diamonds(diamonds)
+	Events.diamonds_changed.emit(diamonds)
+	return true
+
+
+func _earn_diamonds(count: int) -> void:
+	diamonds += count
+	lifetime_diamonds += count
+	SaveData.save_wallet(diamonds, lifetime_diamonds)
 	Events.diamonds_changed.emit(diamonds)
 
 

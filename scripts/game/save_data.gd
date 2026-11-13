@@ -12,6 +12,11 @@ const BEST_COMBO: String = "best_combo"
 const KEYS: Array[String] = [BEST_SCORE, BEST_FLOOR, BEST_COMBO]
 const WALLET_SECTION: String = "wallet"
 const DIAMONDS: String = "diamonds"
+## Bugüne dek kazanılan toplam elmas (harcama düşürmez; "toplam elmas" başarımları buna bakar).
+const LIFETIME_DIAMONDS: String = "lifetime"
+## Mağaza ([shop] bölümü: owned, equipped, levels, stock sözlükleri); rekor sıfırlama dokunmaz.
+const SHOP_SECTION: String = "shop"
+const SHOP_KEYS: Array[String] = ["owned", "equipped", "levels", "stock"]
 ## Açılmış başarımlar ([achievements] bölümü, id = true); rekor sıfırlama bunlara dokunmaz.
 const ACHIEVEMENTS_SECTION: String = "achievements"
 
@@ -77,6 +82,44 @@ static func save_diamonds(count: int) -> void:
 	var config := ConfigFile.new()
 	config.load(path)
 	config.set_value(WALLET_SECTION, DIAMONDS, maxi(count, 0))
+	config.save(path)
+
+
+## Bugüne dek kazanılan toplam elmas. Eski kayıtlarda yoksa eldeki elmas sayısı kabul edilir.
+static func load_lifetime_diamonds() -> int:
+	var config := ConfigFile.new()
+	config.load(path)
+	var value: Variant = config.get_value(WALLET_SECTION, LIFETIME_DIAMONDS, -1)
+	return int(value) if (value is int or value is float) and value >= 0 else load_diamonds()
+
+
+## Kazanılan elmas: eldeki sayı ve ömür boyu toplam tek yazışta kaydedilir.
+static func save_wallet(count: int, lifetime: int) -> void:
+	var config := ConfigFile.new()
+	config.load(path)
+	config.set_value(WALLET_SECTION, DIAMONDS, maxi(count, 0))
+	config.set_value(WALLET_SECTION, LIFETIME_DIAMONDS, maxi(lifetime, 0))
+	config.save(path)
+
+
+## Mağaza durumu (ham; anlam denetimi ShopRules.sanitized). Sözlük olmayan değerler boş sayılır.
+static func load_shop() -> Dictionary:
+	var config := ConfigFile.new()
+	config.load(path)
+	var result: Dictionary = {}
+	for key: String in SHOP_KEYS:
+		var value: Variant = config.get_value(SHOP_SECTION, key, {})
+		result[key] = value if value is Dictionary else {}
+	return result
+
+
+## Mağaza durumunu kaydeder (dosyadaki diğer bölümlere dokunmaz).
+static func save_shop(state: Dictionary) -> void:
+	var config := ConfigFile.new()
+	config.load(path)
+	for key: String in SHOP_KEYS:
+		var value: Variant = state.get(key, {})
+		config.set_value(SHOP_SECTION, key, value if value is Dictionary else {})
 	config.save(path)
 
 

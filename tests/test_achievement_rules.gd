@@ -6,6 +6,7 @@ const TEMP_SAVE: String = "user://test_achievements_save.cfg"
 var _saved_path: String
 var _saved_flow: FlowRules.State
 var _saved_diamonds: int
+var _saved_lifetime: int
 
 
 func before_each() -> void:
@@ -14,11 +15,16 @@ func before_each() -> void:
 	_remove_temp()
 	_saved_flow = GameFlow.state
 	_saved_diamonds = GameState.diamonds
+	_saved_lifetime = GameState.lifetime_diamonds
+	# Gerçek cüzdan testi etkilemesin (toplam elmas başarımları kendiliğinden açılmasın).
+	GameState.diamonds = 0
+	GameState.lifetime_diamonds = 0
 
 
 func after_each() -> void:
 	GameFlow.state = _saved_flow
 	GameState.diamonds = _saved_diamonds
+	GameState.lifetime_diamonds = _saved_lifetime
 	_remove_temp()
 	SaveData.path = _saved_path
 

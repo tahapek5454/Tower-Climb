@@ -40,6 +40,9 @@ func _ready() -> void:
 	_build()
 	_apply_facing()
 	_player.event.connect(_on_player_event)
+	Events.shop_equipped.connect(_on_cosmetic_changed)
+	for slot: StringName in ShopCatalog.SLOTS:
+		_on_cosmetic_changed(slot, Shop.equipped(slot))
 
 
 func _process(delta: float) -> void:
@@ -287,6 +290,12 @@ func _on_wall_bounce(data: Dictionary) -> void:
 	if data["airborne"]:
 		# Sekme sonrası gidilen yön = duvarın normali.
 		_start_flip(-_player.velocity.y, signf(data["normal_x"]), true)
+
+
+## Kuşanılan kozmetik değişti (ya da açılışta uygulanıyor): model yuvaları CharacterModel'e gider.
+func _on_cosmetic_changed(slot: StringName, id: StringName) -> void:
+	if _model != null and ShopCatalog.MODEL_SLOTS.has(slot):
+		_model.set_cosmetic(slot, id)
 
 
 func _make_rect(center: Vector2, size: Vector2, color: Color) -> Polygon2D:

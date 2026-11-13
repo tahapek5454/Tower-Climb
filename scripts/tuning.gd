@@ -716,3 +716,9 @@ const MAGNET_SFX_CHAIN_MAX: int = 7
 const MAGNET_SFX_MIN_INTERVAL: float = 0.06
 const SFX_MAGNET_DB: float = -7.0
 const SFX_MAGNET_END_DB: float = -10.0
+
+# --- Elmas mağazası (ürünler ve fiyatlar scripts/game/shop/shop_catalog.gd; kurallar shop_rules.gd) ---
+## false ise mağaza düğmesi kurulmaz; kozmetikler, yükseltmeler ve takviyeler hiç uygulanmaz.
+const SHOP_ENABLED: bool = true
+## Bir takviyeden en çok bu kadar stoklanır (her tur başında bir tanesi kendiliğinden kullanılır).
+const SHOP_BOOST_MAX_STOCK: int = 3
