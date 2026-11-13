@@ -53,16 +53,26 @@ static func center_limit(width: float) -> float:
 
 ## Önceki platformdan ulaşılabilir merkez aralığı: Vector2(en_az, en_çok).
 ## Kenarlar arası boşluk PLATFORM_MAX_EDGE_GAP'i geçmez; aralık asla boş değildir.
-static func reachable_center_range(prev_center: float, prev_width: float, width: float) -> Vector2:
-	var reach: float = (prev_width + width) * 0.5 + Tuning.PLATFORM_MAX_EDGE_GAP
-	var limit: float = center_limit(width)
-	return Vector2(maxf(prev_center - reach, -limit), minf(prev_center + reach, limit))
+## prev_travel / travel: kayan platformun salınım genliği (px, merkezden bir yana; sabitte 0). Aralık,
+## iki platform hareket aralıklarının hangi ucunda olursa olsun ulaşılabilirlik korunacak kadar daralır
+## ve kayan platform uçlarında da duvarların içinde kalır (genlik PlatformTypeRules.safe_travel ile).
+static func reachable_center_range(prev_center: float, prev_width: float, width: float,
+		prev_travel: float = 0.0, travel: float = 0.0) -> Vector2:
+	var reach: float = (prev_width + width) * 0.5 + Tuning.PLATFORM_MAX_EDGE_GAP - prev_travel - travel
+	var limit: float = maxf(center_limit(width) - travel, 0.0)
+	var low: float = maxf(prev_center - reach, -limit)
+	var high: float = minf(prev_center + reach, limit)
+	if low > high:
+		# Güvenli olmayan genlikte bile geçerli bir nokta döndür.
+		var middle: float = clampf(prev_center, -limit, limit)
+		return Vector2(middle, middle)
+	return Vector2(low, high)
 
 
 ## Yeni platformun merkezi: bölüm platformu ortada, diğerleri ulaşılabilir aralıkta rastgele.
 static func next_center(floor_number: int, prev_center: float, prev_width: float,
-		width: float, rng: RandomNumberGenerator) -> float:
+		width: float, rng: RandomNumberGenerator, prev_travel: float = 0.0, travel: float = 0.0) -> float:
 	if is_section_floor(floor_number):
 		return 0.0
-	var range_x: Vector2 = reachable_center_range(prev_center, prev_width, width)
+	var range_x: Vector2 = reachable_center_range(prev_center, prev_width, width, prev_travel, travel)
 	return rng.randf_range(range_x.x, range_x.y)

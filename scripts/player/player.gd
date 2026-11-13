@@ -24,6 +24,8 @@ var _jump_buffer_timer: float = 0.0
 var _can_cut_jump: bool = false
 ## Süren roket uçuşu (yoksa null). Uçarken normal hareket (yerçekimi, zıplama, duvar sekmesi) kapalı.
 var _flight: JetpackFlight
+## Üstünde durulan platform (buz sürtünmesi, çatlayan platform için); havadayken / zeminde null.
+var _ground: Platform
 
 
 func _physics_process(delta: float) -> void:
@@ -42,10 +44,13 @@ func _physics_process(delta: float) -> void:
 	var impact_vx: float = velocity.x
 	move_and_slide()
 	_try_wall_bounce(impact_vx)
+	_update_ground()
 
 	if is_on_floor() and not was_on_floor:
 		_can_cut_jump = false
-		event.emit(&"landed", {"speed": fall_speed, "floor": _floor_number_below()})
+		event.emit(&"landed", {"speed": fall_speed, "floor": _ground.floor_number if _ground != null else 0})
+		if _ground != null:
+			_ground.notify_landed()
 	_update_state()
 
 
@@ -58,12 +63,18 @@ func _apply_horizontal(input_dir: float, delta: float) -> void:
 
 
 func _ground_velocity(vx: float, input_dir: float, delta: float) -> float:
+	# Buzda ivme ve sürtünme azalır (çarpanlar platform türünden; normal platformda 1).
+	var friction: float = Tuning.GROUND_FRICTION
+	var accel: float = Tuning.GROUND_ACCEL
+	if _ground != null:
+		friction *= _ground.ground_friction_factor()
+		accel *= _ground.ground_accel_factor()
 	if input_dir == 0.0:
-		return move_toward(vx, 0.0, Tuning.GROUND_FRICTION * delta)
-	var rate: float = Tuning.GROUND_ACCEL
+		return move_toward(vx, 0.0, friction * delta)
+	var rate: float = accel
 	# Ters yöne basılınca sürtünme de yardım eder: daha keskin dönüş.
 	if signf(vx) == -signf(input_dir):
-		rate += Tuning.GROUND_FRICTION
+		rate += friction
 	return move_toward(vx, input_dir * Tuning.MAX_RUN_SPEED, rate * delta)
 
 
@@ -111,6 +122,7 @@ func hop(speed: float) -> void:
 ## Roketi takar ve uçuşu başlatır (uçarken yeniden alınırsa süre baştan başlar).
 func start_jetpack(duration: float = Tuning.JETPACK_FLIGHT_TIME) -> void:
 	_flight = JetpackFlight.new(duration)
+	_ground = null
 	_can_cut_jump = false
 	_jump_buffer_timer = 0.0
 	_coyote_timer = 0.0
@@ -166,14 +178,19 @@ func _try_cut_jump() -> void:
 		event.emit(&"jump_cut", {})
 
 
-## Üstünde durulan katın numarası; platform değilse (zemin) 0.
-func _floor_number_below() -> int:
+## Üstünde durulan platformu günceller. Dururken çarpışma bildirilmeyebilir (zemine yapışma):
+## o zaman önceki platform korunur; havada null.
+func _update_ground() -> void:
+	if not is_instance_valid(_ground):
+		_ground = null
+	if not is_on_floor():
+		_ground = null
+		return
 	for i in get_slide_collision_count():
 		var collision: KinematicCollision2D = get_slide_collision(i)
-		var platform := collision.get_collider() as Platform
-		if platform != null and collision.get_normal().y < 0.0:
-			return platform.floor_number
-	return 0
+		if collision.get_normal().y < 0.0:
+			_ground = collision.get_collider() as Platform
+			return
 
 
 ## Duvara yeterince hızlı çarpıldıysa yatay hızı ters çevirir; havadaysa yukarı iter.
