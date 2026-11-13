@@ -361,6 +361,37 @@ def magnet_end():
     return mix(out, bell(0.25, 880.0, 0.06), start_seconds=0.3, gain=0.25)
 
 
+def shop_buy():
+    # Mağazada satın alma: yumuşak "pop" + hızlı yükselen dört notalı parlak çan (Sol-Do-Mi-Sol) ve
+    # elmas gibi ince parıltılar; "achievement"tan biraz daha hareketli, "record"dan çok daha küçük.
+    out = silence(1.1)
+    mix(out, sweep_tone(0.14, 380, 620, 0.06, 0.002, 0.04, ((1, 1.0), (2, 0.18))), gain=0.55)
+    for i, freq in enumerate((784.0, 1046.5, 1318.5, 1568.0)):
+        mix(out, bell(0.55, freq, 0.18, ((1.0, 1.0), (2.76, 0.18), (5.4, 0.05))), start_seconds=0.04 + i * 0.07, gain=0.7)
+    mix(out, bell(0.8, 2093.0, 0.3), start_seconds=0.3, gain=0.28)
+    for i in range(5):
+        mix(out, bell(0.2, rng.uniform(3600, 5400), 0.04), start_seconds=0.3 + i * 0.07, gain=0.13)
+    return out
+
+
+def shop_equip():
+    # Kuşanma: küçük kumaş "tık" + tek yumuşak, parlak çan.
+    out = silence(0.45)
+    mix(out, noise_burst(0.05, 3200, 1400, 0.001, 0.012, highpass=600), gain=0.35)
+    mix(out, sweep_tone(0.1, 700, 900, 0.04, 0.002, 0.03, ((1, 1.0), (2, 0.15))), gain=0.45)
+    mix(out, bell(0.4, 1318.5, 0.13, ((1.0, 1.0), (2.76, 0.18), (5.4, 0.05))), start_seconds=0.035, gain=0.6)
+    return out
+
+
+def shop_deny():
+    # Yetmiyor: alçak, boğuk, aşağı inen iki kısa "tık-tık" (üçgen dalga); kınayan değil, nazik.
+    out = silence(0.4)
+    mix(out, sweep_tone(0.12, 330, 300, 0.08, 0.004, 0.035, ((1, 1.0), (2, 0.1)), triangle=True), gain=0.7)
+    mix(out, sweep_tone(0.16, 262, 230, 0.1, 0.004, 0.05, ((1, 1.0), (2, 0.1)), triangle=True),
+        start_seconds=0.11, gain=0.6)
+    return out
+
+
 # Yeni sesler sözlüğün SONUNA eklenir: rastgelelik sırası değişmez, eski sesler aynı üretilir.
 SOUNDS = {
     "jump": jump, "land": land, "wall": wall, "combo": combo, "combo_end": combo_end,
@@ -373,6 +404,7 @@ SOUNDS = {
     "record_line": record_line,
     "crumble_crack": crumble_crack, "crumble": crumble,
     "magnet": magnet, "magnet_end": magnet_end,
+    "shop_buy": shop_buy, "shop_equip": shop_equip, "shop_deny": shop_deny,
 }
 
 

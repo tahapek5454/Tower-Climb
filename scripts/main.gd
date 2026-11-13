@@ -136,6 +136,8 @@ func _ready() -> void:
 
 	if Tuning.ACHIEVEMENTS_ENABLED:
 		_add_achievements()
+	if Tuning.SHOP_ENABLED:
+		_add_shop()
 
 	var game_over_screen := GameOverScreen.new()
 	game_over_screen.name = "GameOverScreen"
@@ -164,6 +166,14 @@ func _add_achievements() -> void:
 	achievements_menu.name = "AchievementsMenu"
 	add_child(achievements_menu)
 	_menu.link_child(achievements_menu, _menu.achievements_requested)
+
+
+## Elmas mağazası: yalnız ana menüden açılır (Tuning.SHOP_ENABLED ile kapanır).
+func _add_shop() -> void:
+	var shop_menu := ShopMenu.new()
+	shop_menu.name = "ShopMenu"
+	add_child(shop_menu)
+	_menu.link_child(shop_menu, _menu.shop_requested)
 
 
 ## Rekor çizgisi: tur başındaki kayıtlı en yüksek kata konur (rekor küçükse ya da kapalıysa yok).

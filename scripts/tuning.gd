@@ -722,3 +722,9 @@ const SFX_MAGNET_END_DB: float = -10.0
 const SHOP_ENABLED: bool = true
 ## Bir takviyeden en çok bu kadar stoklanır (her tur başında bir tanesi kendiliğinden kullanılır).
 const SHOP_BOOST_MAX_STOCK: int = 3
+
+# --- Mağaza ekranı (scripts/ui/shop/) ---
+## Satın alma (parlak arpej + parıltı), kuşanma (küçük tık + çan), yetmiyor (yumuşak, alçak "tık-tık").
+const SFX_SHOP_BUY_DB: float = -6.0
+const SFX_SHOP_EQUIP_DB: float = -9.0
+const SFX_SHOP_DENY_DB: float = -11.0

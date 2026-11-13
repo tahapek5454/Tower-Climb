@@ -1,12 +1,13 @@
 class_name MainMenu
 extends UiScreen
 ## Ana menü: oyun dünyasının (başlangıç alanı) üstünde, hafif karartmayla. Zıplayan başlık, rekorlar, elmaslar,
-## Oyna / Ayarlar / Çıkış (web'de Çıkış yok), tuş ipuçları; sağ altta yapımcı kartı (CreatorInfo).
+## Oyna / Mağaza / Başarımlar / Ayarlar / Çıkış (web'de Çıkış yok), tuş ipuçları; sağ altta yapımcı kartı (CreatorInfo).
 ## Ayarlar düğmesi ayarlar ekranı gelene kadar (madde 5) pasif.
 
 signal play_requested
 signal settings_requested
 signal achievements_requested
+signal shop_requested
 
 const CARD_WIDTH: float = 330.0
 const TITLE_FONT_SIZE: int = 44
@@ -64,6 +65,10 @@ func _build_menu() -> void:
 	play.pressed.connect(func() -> void: play_requested.emit())
 	content.add_child(play)
 	first_focus = play
+	if Tuning.SHOP_ENABLED:
+		var shop := UiButton.new("Mağaza")
+		shop.pressed.connect(func() -> void: shop_requested.emit())
+		content.add_child(shop)
 	if Tuning.ACHIEVEMENTS_ENABLED:
 		var achievements := UiButton.new("Başarımlar")
 		achievements.pressed.connect(func() -> void: achievements_requested.emit())
