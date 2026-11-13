@@ -53,6 +53,7 @@ func _ready() -> void:
 	_camera.name = "Camera"
 	_camera.position = Vector2(0.0, Tuning.GROUND_SCREEN_MARGIN - Tuning.VIEW_HEIGHT * 0.5)
 	_camera.target = _player
+	_camera.slow_ended.connect(func() -> void: Events.powerup_ended.emit(Pickup.HOURGLASS))
 	add_child(_camera)
 
 	var game_audio := GameAudio.new()
@@ -68,6 +69,10 @@ func _ready() -> void:
 	var hit_stop := HitStop.new()
 	hit_stop.name = "HitStop"
 	add_child(hit_stop)
+
+	var slow_time_fx := SlowTimeFx.new()
+	slow_time_fx.name = "SlowTimeFx"
+	add_child(slow_time_fx)
 
 	var hud := Hud.new()
 	hud.name = "Hud"
@@ -158,6 +163,9 @@ func _unhandled_input(input_event: InputEvent) -> void:
 	elif input_event.is_action_pressed(&"debug_spawn_heart"):
 		_spawner.debug_spawn(Pickup.HEART, _player.global_position.y - Tuning.FLOOR_SPACING * 0.5)
 		get_viewport().set_input_as_handled()
+	elif input_event.is_action_pressed(&"debug_spawn_hourglass"):
+		_spawner.debug_spawn(Pickup.HOURGLASS, _player.global_position.y - Tuning.FLOOR_SPACING * 0.5)
+		get_viewport().set_input_as_handled()
 
 
 ## Debug (F6): oyuncuyu bir sonraki bölüm platformuna (tam genişlik, ortada) ışınlar; kamera
@@ -218,6 +226,9 @@ func _on_pickup_collected(kind: StringName, _world_position: Vector2) -> void:
 			GameState.add_diamond()
 		Pickup.HEART:
 			GameState.add_hearts(1)
+		Pickup.HOURGLASS:
+			_camera.slow_down()
+			Events.powerup_started.emit(Pickup.HOURGLASS, _camera.slow_time_left())
 
 
 func _on_game_over(_final_score: int, _final_floor: int) -> void:

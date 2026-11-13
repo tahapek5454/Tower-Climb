@@ -285,6 +285,23 @@ def rescue():
     return out
 
 
+def hourglass():
+    # Zaman yavaşlıyor: tatlı bir zil, ardından yavaşça aşağı süzülen yumuşak "vuuum" (bant yavaşlaması
+    # gibi) ve uzayan, hafif titreşimli tını.
+    out = silence(1.4)
+    mix(out, bell(0.8, 1174.7, 0.3), gain=0.55)
+    mix(out, sweep_tone(1.3, 660, 220, 1.0, 0.03, 0.45, ((1, 1.0), (2, 0.15)), vibrato=0.02,
+                        vibrato_rate=5.0, triangle=True), start_seconds=0.05, gain=0.6)
+    mix(out, noise_burst(0.9, 1800, 300, 0.05, 0.3), start_seconds=0.05, gain=0.25)
+    return out
+
+
+def hourglass_end():
+    # Zaman normale dönüyor: kısa, yukarı kayan yumuşak "vuup" + küçük tık.
+    out = sweep_tone(0.45, 260, 620, 0.3, 0.02, 0.14, ((1, 1.0), (2, 0.15)), triangle=True)
+    return mix(out, bell(0.3, 1568.0, 0.08), start_seconds=0.26, gain=0.35)
+
+
 # Yeni sesler sözlüğün SONUNA eklenir: rastgelelik sırası değişmez, eski sesler aynı üretilir.
 SOUNDS = {
     "jump": jump, "land": land, "wall": wall, "combo": combo, "combo_end": combo_end,
@@ -292,6 +309,7 @@ SOUNDS = {
     "ui_hover": ui_hover, "ui_click": ui_click, "ui_back": ui_back, "record": record,
     "pickup": pickup, "jetpack": jetpack, "jetpack_end": jetpack_end,
     "diamond": diamond, "heart": heart, "rescue": rescue,
+    "hourglass": hourglass, "hourglass_end": hourglass_end,
 }
 
 

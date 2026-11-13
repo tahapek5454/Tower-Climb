@@ -68,6 +68,8 @@ func _on_pickup_collected(kind: StringName, _world_position: Vector2) -> void:
 	match kind:
 		Pickup.DIAMOND:
 			_play(&"diamond", 1.0, Tuning.SFX_DIAMOND_DB)
+		Pickup.HOURGLASS:
+			pass  # yavaşlama sesi powerup_started'da çalar
 		Pickup.HEART:
 			# Kalp sesi kalp sayısı artınca çalar (_on_hearts_changed); kalpler doluysa sayı artmaz.
 			if GameState.hearts >= Tuning.HEART_MAX:
@@ -82,13 +84,21 @@ func _on_hearts_changed(_hearts: int, change: int) -> void:
 
 
 func _on_powerup_started(kind: StringName, _duration: float) -> void:
-	if kind == Pickup.JETPACK:
-		AudioManager.play(&"jetpack", 1.0, Tuning.SFX_JETPACK_DB)
+	match kind:
+		Pickup.JETPACK:
+			AudioManager.play(&"jetpack", 1.0, Tuning.SFX_JETPACK_DB)
+		Pickup.HOURGLASS:
+			AudioManager.play(&"hourglass", 1.0, Tuning.SFX_HOURGLASS_DB)
 
 
 func _on_powerup_ended(kind: StringName) -> void:
-	if kind == Pickup.JETPACK:
-		AudioManager.play(&"jetpack_end", 1.0, Tuning.SFX_JETPACK_END_DB)
+	if not GameFlow.is_playing():
+		return
+	match kind:
+		Pickup.JETPACK:
+			AudioManager.play(&"jetpack_end", 1.0, Tuning.SFX_JETPACK_END_DB)
+		Pickup.HOURGLASS:
+			AudioManager.play(&"hourglass_end", 1.0, Tuning.SFX_HOURGLASS_END_DB)
 
 
 ## Sık çalan sesler için küçük rastgele perde sapmasıyla çalar.

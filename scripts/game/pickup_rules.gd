@@ -1,6 +1,6 @@
 class_name PickupRules
 extends RefCounted
-## Toplanabilirlerin (elmas vb.) çıkma ve yerleşme kuralları. Saf mantık: sahneye dokunmaz, test edilebilir.
+## Toplanabilirlerin (elmas, kalp, kum saati) çıkma ve yerleşme kuralları; kalp ve kum saati etkileri. Saf mantık: sahneye dokunmaz, test edilebilir.
 ## Roketin kendi kuralları JetpackRules'ta.
 
 
@@ -35,6 +35,28 @@ static func sections_crossed(old_floor: int, new_floor: int) -> int:
 ## Kalp ekler; HEART_MAX'ı geçmez.
 static func add_hearts(current: int, amount: int) -> int:
 	return clampi(current + amount, 0, Tuning.HEART_MAX)
+
+
+## Bu katta kum saati çıkabilir mi? (Olasılıktan bağımsız ön koşullar.)
+static func can_spawn_hourglass(floor_number: int, last_spawn_floor: int) -> bool:
+	if not Tuning.HOURGLASS_ENABLED or floor_number < Tuning.HOURGLASS_MIN_FLOOR:
+		return false
+	return floor_number - last_spawn_floor >= Tuning.HOURGLASS_MIN_FLOOR_GAP
+
+
+## roll: 0..1. Nadirlik Tuning.HOURGLASS_SPAWN_CHANCE ile yönetilir.
+static func should_spawn_hourglass(floor_number: int, last_spawn_floor: int, roll: float) -> bool:
+	return can_spawn_hourglass(floor_number, last_spawn_floor) and roll < Tuning.HOURGLASS_SPAWN_CHANCE
+
+
+## Kum saati etkisinde kamera hızı çarpanı. elapsed: etki başlayalı geçen süre (s). Başta RAMP_TIME içinde
+## 1'den SCROLL_FACTOR'a iner, sonda RAMP_TIME içinde 1'e döner; etki dışında 1.
+static func hourglass_multiplier(elapsed: float, duration: float = Tuning.HOURGLASS_DURATION) -> float:
+	if elapsed < 0.0 or elapsed >= duration:
+		return 1.0
+	var ramp: float = maxf(Tuning.HOURGLASS_RAMP_TIME, 0.001)
+	var depth: float = clampf(minf(elapsed, duration - elapsed) / ramp, 0.0, 1.0)
+	return lerpf(1.0, Tuning.HOURGLASS_SCROLL_FACTOR, smoothstep(0.0, 1.0, depth))
 
 
 ## Toplanabilir havada mı duracak (yoksa platformun üstünde mi)? roll: 0..1.

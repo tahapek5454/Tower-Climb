@@ -560,6 +560,24 @@ const HEART_RESCUE_FLIGHT_TIME: float = 1.6
 const SFX_HEART_DB: float = -6.0
 const SFX_RESCUE_DB: float = -5.0
 
+# --- Kum saati (zaman yavaşlatma; scripts/game/pickup_rules.gd, tower_camera.gd) ---
+## Kum saati oyunun asıl baskısını, kameranın kaymasını yavaşlatır (karakter normal hızında kalır);
+## bu sürede kameranın zamanla hızlanması da yavaşlar.
+const HOURGLASS_ENABLED: bool = true
+## NADİRLİK: uygun her katta kum saati çıkma olasılığı (0..1).
+const HOURGLASS_SPAWN_CHANCE: float = 0.025
+## Bu kattan önce çıkmaz (kamera henüz yavaş); iki kum saati arası en az bu kadar kat.
+const HOURGLASS_MIN_FLOOR: int = 30
+const HOURGLASS_MIN_FLOOR_GAP: int = 40
+## Etkinin süresi (s), kamera hızının çarpanı ve yavaşlama/geri hızlanma geçiş süresi (s).
+const HOURGLASS_DURATION: float = 8.0
+const HOURGLASS_SCROLL_FACTOR: float = 0.35
+const HOURGLASS_RAMP_TIME: float = 0.6
+## Etki sürerken ekran kenarlarındaki mavi-mor gölgenin saydamlığı.
+const HOURGLASS_VIGNETTE_ALPHA: float = 0.6
+const SFX_HOURGLASS_DB: float = -6.0
+const SFX_HOURGLASS_END_DB: float = -9.0
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25

@@ -16,6 +16,7 @@ Ruh hali: hızlı, akışkan, abartılı ve eğlenceli animasyonlar (takla, sekm
 | Debug: sonraki bölüme ışınlan | F6 |
 | Debug: üstteki platforma roket koy | F7 |
 | Debug: üstteki platforma kalp koy | F8 |
+| Debug: üstteki platforma kum saati koy | F9 |
 | Tam ekran aç/kapat | F11 veya Alt+Enter |
 | Tüm sesi kapat/aç | M |
 | Yeniden başla (oyun bitince) | R veya Space |
@@ -127,7 +128,12 @@ Toplanabilir nesneler platformların üstünde hafifçe süzülür (`Pickup`); o
 - **Oyun turu bazlı:** her oyun `HEART_START` (0) kalple başlar, oyunlar arası birikmez; en fazla `HEART_MAX` (5).
 - **Kazanma:** nadir toplanabilir (`HEART_SPAWN_CHANCE` %2, `HEART_MIN_FLOOR` 10'dan sonra, iki kalp arası en az `HEART_MIN_FLOOR_GAP` 35 kat; havada ya da platformda) ve her bölüm geçişinde (her 100 kat) `HEART_SECTION_BONUS` (+1).
 - **Ölüm:** kalp varken ekranın altına düşülürse 1 kalp harcanır; oyuncu ekranın altında belirir, sırtına roket takılır ve `HEART_RESCUE_FLIGHT_TIME` (1,6 s) uçup roketteki gibi bir platforma bırakılır. Kalp yoksa oyun biter.
-- **HUD:** "CAN" satırında kalpler; kazanınca başın üstünde kalp yükselir, kurtarılınca kalp ikiye kırılır.
+- **HUD (kalp):** "CAN" satırında kalpler; kazanınca başın üstünde kalp yükselir, kurtarılınca kalp ikiye kırılır.
+
+### Kum saati (yavaş zaman)
+- **Çıkış:** nadir (`HOURGLASS_SPAWN_CHANCE` %2,5), `HOURGLASS_MIN_FLOOR` (30) kattan sonra, iki kum saati arası en az 40 kat; havada ya da platformda.
+- **Etki:** `HOURGLASS_DURATION` (8 s) boyunca kameranın kayması `HOURGLASS_SCROLL_FACTOR` (×0,35) hızına yumuşakça iner, sonra yumuşakça döner; bu sürede kameranın zamanla hızlanması da yavaşlar. Karakter normal hızında kalır. Sürerken yeniden alınırsa süre yenilenir.
+- **Görsel/ses:** ekran kenarlarında yumuşak mor-mavi gölge, HUD'da "YAVAŞ ZAMAN" çubuğu, yavaşlama ve normale dönme sesleri.
 
 ## Juice listesi (Aşama 2)
 - Squash & stretch: zıplarken dikey uzama, inişte yatay ezilme (hıza orantılı).

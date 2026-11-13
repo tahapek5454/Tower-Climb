@@ -7,6 +7,9 @@ extends Area2D
 const JETPACK: StringName = &"jetpack"
 const DIAMOND: StringName = &"diamond"
 const HEART: StringName = &"heart"
+const HOURGLASS: StringName = &"hourglass"
+## Bekleyen kum saatinde kumun üstten alta akma süresi (s; sonra baştan).
+const HOURGLASS_SAND_CYCLE: float = 5.0
 ## Çevresinde dönen küçük parıltıların sayısı, yörünge yarıçapı ve boyutu (px).
 const SPARKLE_COUNT: int = 3
 const SPARKLE_ORBIT := Vector2(27.0, 30.0)
@@ -73,6 +76,8 @@ static func glow_color(pickup_kind: StringName) -> Color:
 			return DiamondArt.GLOW
 		HEART:
 			return HeartArt.GLOW
+		HOURGLASS:
+			return HourglassArt.GLOW
 	return JetpackArt.CAP
 
 
@@ -82,6 +87,8 @@ static func sparkle_color(pickup_kind: StringName) -> Color:
 			return DiamondArt.LIGHT
 		HEART:
 			return HeartArt.SHINE
+		HOURGLASS:
+			return HourglassArt.SPARKLE
 	return JetpackArt.BAND
 
 
@@ -101,6 +108,8 @@ func _draw_art() -> void:
 			var beat: float = fmod(_time, HEARTBEAT_TIME) / HEARTBEAT_TIME
 			var pulse: float = maxf(sin(beat * TAU * 4.0), 0.0) if beat < 0.5 else 0.0
 			HeartArt.draw(_art, Vector2.ZERO, 1.0 + HEARTBEAT_SCALE * pulse)
+		HOURGLASS:
+			HourglassArt.draw(_art, 1.0 - fmod(_time / HOURGLASS_SAND_CYCLE, 1.0))
 	_draw_sparkles()
 
 
