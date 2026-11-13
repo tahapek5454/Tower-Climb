@@ -325,12 +325,12 @@ const HITSTOP_DURATION_MAX: float = 0.14
 const HITSTOP_FULL_FLOORS: int = 20
 
 # --- Juice: kombo yazıları ve skor sayacı (görsel) ---
-## Kombo yazısı bu zıplayış sayısından itibaren gösterilir ("COMBO x2!").
+## Kombo yazısı bu zıplayış sayısından itibaren gösterilir ("x2"; sadece çarpan, kısa olduğu için biraz büyük).
 const COMBO_POPUP_MIN_JUMPS: int = 2
 ## Yazı boyutu: MIN_JUMPS'ta FONT_MIN, FONT_FULL_JUMPS ve üstünde FONT_MAX.
 ## (Kullanıcı tercihi: minimal. Asset aşamasında görünüm yeniden ele alınacak.)
-const COMBO_POPUP_FONT_MIN: int = 18
-const COMBO_POPUP_FONT_MAX: int = 26
+const COMBO_POPUP_FONT_MIN: int = 22
+const COMBO_POPUP_FONT_MAX: int = 30
 const COMBO_POPUP_FONT_FULL_JUMPS: int = 10
 ## Bonus yazısı ("+144"): 0 kat → FONT_MIN, BONUS_FONT_FULL_FLOORS kat → FONT_MAX.
 const BONUS_POPUP_FONT_MIN: int = 22

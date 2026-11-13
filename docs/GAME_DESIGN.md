@@ -141,7 +141,7 @@ Toplanabilir nesneler platformların üstünde hafifçe süzülür (`Pickup`); o
 - İniş ve duvar sekmesinde toz/kıvılcım parçacıkları.
 - Ekran sarsıntısı (büyük iniş, duvar sekmesi, kombo bitişi).
 - Hit-stop: kombo bitişinde ~60 ms zaman yavaşlaması.
-- Kombo yazısı: büyüyerek beliren, sallanan "COMBO x7!" etiketleri; skor sayacı tween ile.
+- Kombo yazısı: büyüyerek beliren, sallanan "x7" etiketleri (sadece çarpan; 2026-11-13 kullanıcı isteğiyle "COMBO" kelimesi kaldırıldı); skor sayacı tween ile.
 - Glow ve renk vurguları. (Uygulama: WorldEnvironment yerine toplamalı ışık hâleleri — Compatibility renderer/web uyumu için; bkz. PROGRESS.md.)
 
 ## Görsel yön (Aşama 4'te yapıldı)

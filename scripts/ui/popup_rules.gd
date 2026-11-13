@@ -7,8 +7,9 @@ static func shows_combo(jumps: int) -> bool:
 	return jumps >= Tuning.COMBO_POPUP_MIN_JUMPS
 
 
+## Minimal: sadece çarpan ("x3"); "COMBO" kelimesi yok (kullanıcı isteği).
 static func combo_text(jumps: int) -> String:
-	return "COMBO x%d" % jumps
+	return "x%d" % jumps
 
 
 static func combo_font_size(jumps: int) -> int:

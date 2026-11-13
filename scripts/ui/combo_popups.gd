@@ -1,7 +1,7 @@
 class_name ComboPopups
 extends CanvasLayer
 ## Kombo yazıları: oyuncunun üstünde hafifçe büyüyerek beliren, yükselip solan
-## "COMBO x3" ve kombo bitişinde "+144". Ekran koordinatında çizilir. Minimal tutulur.
+## "x3" (sadece çarpan) ve kombo bitişinde "+144". Ekran koordinatında çizilir. Minimal tutulur.
 ## Yeni kombo yazısı öncekinin yerini alır (ekran dolmasın); bonus yazısı ayrıdır.
 
 ## Kombo altın (HUD kombo satırıyla aynı), bonus sıcak turuncu; dış çizgi karakter/platformlarla aynı lacivert.
