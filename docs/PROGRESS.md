@@ -1,19 +1,25 @@
 # İlerleme
 
-**Aktif aşama:** **Aşama 6 — Ek özellikler** (madde 1–5 onaylı; madde 6–10 — rekor çizgisi, kombo elması, mıknatıs, platform türleri, başarımlar — yapıldı, kullanıcının oyunda denemesi/onayı bekleniyor; kalan tek madde elmas mağazası)
-
-> **2026-11-13 güncellemesi:** aşağıdaki "Yeni oturumda buradan devam" bölümünün 0. maddesi eskidi: adayların hepsi yapıldı (bkz. "Aşama 6 kararları (madde 6–10)"). Sıradaki: kullanıcı geri bildirimi → ince ayar → elmas mağazası → Aşama 6 bildirimi. GUT **212** test.
-**Durum:** Aşama 1–5 tamam ve onaylı. Aşama 6 2026-11-13'te başladı; kapsam madde madde kullanıcıyla belirleniyor (aşağıda "Aşama 6").
+**Aktif aşama:** **Aşama 6 — Ek özellikler** (madde 1–10 yapıldı ve onaylı; **kalan tek madde: elmas mağazası** — büyük geliştirme, kullanıcı temiz oturumda başlayacak)
+**Durum:** Aşama 1–5 tamam ve onaylı. Aşama 6'da roket, elmas, kalp, kum saati, seviyeyle hızlanma, rekor çizgisi, kombo elması, mıknatıs, platform türleri, başarımlar tamam ve onaylı (kullanıcı 2026-11-13: "her şey düzgün çalışıyor"). GUT **212** test.
 
 ## ▶ Yeni oturumda buradan devam
-**Durum (2026-11-13 oturum sonu):** Aşama 1–5 tamam. **Aşama 6 sürüyor**: roket, elmas, kalp, kum saati, seviyeyle hızlanma yapıldı ve kullanıcı onayladı ("çok iyi"); kombo yazısı "x3" oldu. Kullanıcı kalan adımları yeni oturuma bıraktı. Altın kural: kullanıcı onaylamadan kod yazma, aşamayı kendiliğinden bitirip bir sonrakine geçme.
+**Durum (2026-11-13 oturum sonu):** Aşama 6'nın madde 1–10'u onaylı. Sıradaki iş **elmas mağazası** (Aşama 6'nın son maddesi; kullanıcı kararıyla en sona bırakılmıştı, "büyük bir geliştirme"). Mağaza bitince CLAUDE.md'deki aşama bildirimi formatı → Aşama 7 (Paylaşım). Altın kural: kullanıcı onaylamadan kod yazma; aşamayı kendiliğinden bitirip sonrakine geçme.
 
-0. **Aşama 6 sürüyor:** önce aşağıdaki "Aşama 6" bölümünü oku. Sıradaki madde **seçilmedi**; kullanıcıya şu adayları sun ve seçmesini bekle: **mıknatıs** (birkaç saniye yakındaki elmasları çeker), **yeni platform türleri** (çatlayıp düşen / yana kayan / kaygan buz), **kombo elması** (büyük kombo küçük elmas bonusu verir), **başarımlar** ("100. kata ulaş" vb., ödül elmas), **rekor çizgisi** (kulede en iyi kat hizasında ince çizgi, geçince kutlama). **Elmas mağazası EN SONA** (kullanıcı kararı; kostüm/renk için modelleme gerekecek). Kanat iptal. Aşama 6 bitince CLAUDE.md'deki aşama bildirimi formatı → Aşama 7 (Paylaşım).
-1. CLAUDE.md bölüm 0 ortam kontrolünü yap, tabloyla raporla (godot 4.7.2 — mono değil, git, node, `claude mcp list` → godot ✔ / blender ✔ (rea ve playwright bu projede kapalı olabilir), `godot --headless --path . --quit`). Ayrıca GUT testlerini çalıştır: **170 test geçmeli** (`godot --headless --path . -s res://addons/gut/gut_cmdln.gd`).
-2. Oku: bu dosyadaki **"Aşama 6 hazırlığı"** ve **"Aşama 5 sonrası mimari özeti"** bölümleri, `docs/GAME_DESIGN.md` ("Başlangıç ayar değerleri"), ayrıca bu dosyadaki "Aşama 3 model notları" altındaki **"Genişletilebilirlik"** notu (yeni animasyon / kemiğe takılan aksesuar nasıl eklenir).
-3. Kullanıcıya tek cümleyle durumu söyle; ardından **Aşama 6'nın maddelerini ve yaklaşımını kullanıcıyla netleştir** ("Aşama 6 hazırlığı"ndaki sorular). Onay almadan kod yazma. Tek seferde tek madde: bitir → doğrula (GUT + ekran görüntüsü) → commit → bu dosyayı güncelle → kullanıcıya nasıl test edeceğini söyle.
-4. Araç ön koşulları (CLAUDE.md bölüm 2): Aşama 6 için kullanıcının kurması gereken bir şey kapsama göre belirlenir. Yeni 3D model/animasyon gerekirse Blender 5.3 + blender-mcp hazır (`get_addon_status` ile doğrula); Tripo API'de kredi yok, üretim Tripo web sitesinde (ücretsiz plan, **H2.5**) kullanıcı tarafından yapılır. İnternetten asset indirme, ücretli servis ve hesap açma yasak (kullanıcıya bırak).
-5. Web doğrulaması ertelendi: export şablonları kurulu değil (`%APPDATA%\Godot\export_templates` boş) — Aşama 7'nin ön koşulu. Aşama 7'de özellikle kontrol et: SubViewport + şeffaf arka plan + MSAA + `next_pass` outline WebGL2'de çalışıyor mu; web'de `MusicLibrary.is_available()` false (radyo yok), Çıkış düğmesi gizli (`OS.has_feature("web")`).
+0. **Mağaza kapsamını kod yazmadan önce kullanıcıyla netleştir** (aşağıdaki "Elmas mağazası hazırlığı" sorularını kısa seçenekler + önerinle sor). Büyük iş olduğu için alt maddelere böl (ör. 1. kayıt/ekonomi altyapısı + saf kurallar, 2. mağaza ekranı, 3. ilk ucuz ürün türü (kodla: renk/iz/efekt), 4. modelleme gerektiren ürünler (kostüm/aksesuar), 5. denge). Her alt madde: bitir → doğrula (GUT + ekran görüntüsü) → commit → bu dosyayı güncelle → test talimatı. Kullanıcı isterse bağımsız alt maddeler paralel alt ajanlarla (worktree) yapılabilir — bkz. "Aşama 6 kararları (madde 6–10)" içindeki yöntem ve tuzaklar.
+1. CLAUDE.md bölüm 0 ortam kontrolünü yap, tabloyla raporla (godot 4.7.2 — mono değil, git, node, `claude mcp list` → godot ✔ / blender ✔, `godot --headless --path . --quit`). GUT: **212 test geçmeli** (`godot --headless --path . -s res://addons/gut/gut_cmdln.gd`).
+2. Oku: bu dosyada **"Elmas mağazası hazırlığı"**, **"Aşama 6 kararları"** (madde 1–5 ve 6–10), **"Aşama 5 sonrası mimari özeti"**, "Aşama 3 model notları" → **"Genişletilebilirlik"** (kemiğe takılan aksesuar, yeni animasyon); `docs/GAME_DESIGN.md`.
+3. Araç ön koşulları: kostüm/aksesuar modellemesi gerekirse Blender 5.3 + blender-mcp hazır (`get_addon_status` ile doğrula); kullanıcıdan `assets/models/source/eagle_hero.blend`'i açmasını iste. Tripo API'de kredi yok; yeni model gerekirse kullanıcı Tripo web sitesinde (ücretsiz plan, **H2.5**) üretir. İnternetten asset indirme, ücretli servis ve hesap açma yasak (kullanıcıya bırak).
+4. Web doğrulaması ertelendi: export şablonları kurulu değil (`%APPDATA%\Godot\export_templates` boş) — Aşama 7'nin ön koşulu. Aşama 7'de kontrol et: SubViewport + şeffaf arka plan + MSAA + `next_pass` outline WebGL2'de çalışıyor mu; web'de `MusicLibrary.is_available()` false (radyo yok), Çıkış düğmesi gizli (`OS.has_feature("web")`).
+
+### Elmas mağazası hazırlığı (2026-11-13)
+Kullanıcının bilinen istekleri: elmas biriksin, harcama mağazada olsun; ürünler **kostüm/renk** gibi görünüm şeyleri ("modelleme gerekecek"). Kapsam henüz netleşmedi. Sorulacaklar:
+- **Ne satılsın?** Öneri katmanları: (a) kodla yapılabilen ucuzlar — tişört/renk paleti (doku tonlama ya da shader uniform), iz (`SmoothTrail`) rengi/biçimi, zıplama/iniş parçacığı, aura rengi; (b) aksesuarlar — şapka, gözlük, pelerin, atkı: ayrı model + `BoneAttachment3D` (`head`/`chest` kemiği; roketteki `JetpackModel` deseni); (c) tam kostüm/yeni karakter — Tripo + Blender, en pahalı iş. Hangi katmanlar ve kaç ürün?
+- **Fiyat / ekonomi:** gelir kaynakları — doğal elmas (~17 katta 1), mıknatıs (~8/etki), kombo elması (1–3), başarımlar (toplam ~47). Hedef: ilk ürüne kaç turda ulaşılsın? Gerekirse `MAGNET_DIAMOND_CHANCE` vb. dengele.
+- **Kayıt:** `SaveData` [wallet] `diamonds` (harcama düşer) + yeni [shop] (sahip olunanlar, kuşanılan). Rekor sıfırlama dokunmamalı. Saf kurallar (`ShopRules`: satın alınabilir mi, fiyat, kuşanma) + GUT.
+- **Arayüz:** `UiScreen` dilinde `ShopMenu` (ana menüden düğme; `link_child`), karakter önizlemesi (canlı `CharacterModel` / SubViewport, dönen kartal), kategori sekmeleri, fiyat + elmas simgesi (`DiamondArt`), "Al" / "Kuşan" / "Kuşanıldı", yetersiz elmasta nazik geri bildirim, satın almada parıltı + ses. Klavye + fare gezinmesi.
+- **Görünüm uygulaması:** kuşanılan ürün oyunda `Visual` katmanında uygulanır (`player.gd`'ye dokunulmaz); `CharacterModel`'e renk/aksesuar API'si. Kutu yedek gövdeyle de çalışmalı ya da yok sayılmalı.
+- **Kapatma:** `Tuning.SHOP_ENABLED` (kullanıcı beğenmezse kolay kaldırma).
 
 ### Kullanıcı ve çalışma tarzı
 - Kullanıcı kısa yanıt verir ("devam", "uygun"). Görsel kararları çoğu zaman Claude'a bırakır ama sonucu oyunda görüp yorumlar; karar gerekçelerini merak eder → sessizce karar verme, kısa gerekçe ver. Görsel doğrulamada ekran görüntüsü iste/al; görmediğini "güzel oldu" diye raporlama.
@@ -39,13 +45,13 @@ Kapsam madde madde kullanıcıyla belirleniyor (fikir listesi: "Aşama 6 hazırl
 - [x] 4. Kum saati: kameranın kaymasını yavaşlatır (şimdi 5 s, ×0,3, yumuşak geçiş), ekran kenarında mor-mavi gölge, HUD "YAVAŞ ZAMAN" — ilk sürüm (8 s, ×0,35) ilk katlarda hissedilmedi → madde 5 ile düzeltildi; onaylandı
 - [x] 5. Seviye atladıkça hızlanma: her bölüm geçişinde kamera +30 px/s (yumuşak), üst sınır 320 — onaylandı ("çok iyi"). "HIZLANIYOR!" yazısı kullanıcı isteğiyle kaldırıldı ("oyuncu hisseder zaten"); `Events.speed_increased` olayı ileride ses/efekt için duruyor.
 - Kombo yazısı yalnız çarpan ("x3"), "COMBO" kelimesi kaldırıldı (kullanıcı isteği; 22–30 punto).
-- [x] 6. Rekor çizgisi — kullanıcı onayı bekleniyor
-- [x] 7. Kombo elması — kullanıcı onayı bekleniyor
-- [x] 8. Mıknatıs (elmas avı) — kullanıcı onayı bekleniyor
-- [x] 9. Yeni platform türleri (çatlayan / kayan / kaygan buz) — kullanıcı onayı bekleniyor
-- [x] 10. Başarımlar — kullanıcı onayı bekleniyor
+- [x] 6. Rekor çizgisi — onaylandı
+- [x] 7. Kombo elması — onaylandı
+- [x] 8. Mıknatıs (elmas avı) — onaylandı
+- [x] 9. Yeni platform türleri (çatlayan / kayan / kaygan buz) — onaylandı
+- [x] 10. Başarımlar — onaylandı (kullanıcı 2026-11-13: "her şey düzgün çalışıyor"; açık sorulardaki varsayılanlar olduğu gibi kaldı)
 - 6–10 kullanıcının "hepsini yap" isteğiyle (2026-11-13) dört paralel alt ajanla ayrı dallarda yapıldı, `main`'e birleştirildi (GUT 212). Ayrıntı: "Aşama 6 kararları (madde 6–10)".
-- [ ] Son madde: elmas mağazası (kostüm/renk; modelleme gerekecek).
+- [ ] 11. Son madde: elmas mağazası (kostüm/renk; modelleme gerekecek) — yeni oturumda, bkz. "Elmas mağazası hazırlığı".
 - Kanat iptal (kullanıcı: "roket yeterli"). Para harcama (mağaza vb.) sonra; şimdilik sadece birikim.
 
 ### Aşama 6 kararları (2026-11-13)
