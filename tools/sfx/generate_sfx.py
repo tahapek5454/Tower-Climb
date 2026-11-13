@@ -215,11 +215,52 @@ def record():
     return out
 
 
+def pickup():
+    # Güçlendirme alma: hızlı yükselen üç notalı parlak zil + küçük parıltı.
+    out = silence(0.7)
+    for i, freq in enumerate((784.0, 1046.5, 1568.0)):
+        mix(out, bell(0.5, freq, 0.16), start_seconds=i * 0.055, gain=0.8)
+    for i in range(4):
+        mix(out, bell(0.2, rng.uniform(3000, 4400), 0.05), start_seconds=0.16 + i * 0.06, gain=0.15)
+    return out
+
+
+def jetpack():
+    # Roket uçuşu (~3,4 s; uçuş 3 s): kalkışta kısa "fooş" patlaması, ardından boğuk, hafif dalgalanan
+    # gürleme (iki kat süzgeçli gürültü + alçak uğultu), sonda yumuşak sönme. Yumuşak üslup: tiz hışırtı yok.
+    length = 3.4
+    samples = []
+    low = 0.0
+    low2 = 0.0
+    phase = 0.0
+    for i in range(int(RATE * length)):
+        t = i / RATE
+        launch = math.exp(-t / 0.18)
+        wobble = 1.0 + 0.12 * math.sin(2 * math.pi * 7.0 * t) + 0.08 * math.sin(2 * math.pi * 11.3 * t)
+        cutoff = (520 + 900 * launch) * wobble
+        a = 1.0 - math.exp(-2 * math.pi * cutoff / RATE)
+        low += a * (rng.uniform(-1.0, 1.0) - low)
+        low2 += a * (low - low2)
+        phase += 2 * math.pi * (62 + 30 * launch) / RATE
+        hum = 0.22 * math.sin(phase) + 0.08 * math.sin(2 * phase)
+        fade_in = min(t / 0.03, 1.0)
+        fade_out = min(max((length - t) / 0.5, 0.0), 1.0) ** 1.5
+        samples.append((low2 * (2.2 + 1.6 * launch) + hum) * fade_in * fade_out)
+    return samples
+
+
+def jetpack_end():
+    # Roket sönmesi: aşağı kayan kısa "pfff" + küçük tok "pop".
+    out = noise_burst(0.32, 1400, 260, 0.01, 0.09)
+    return mix(out, sweep_tone(0.2, 300, 140, 0.1, 0.004, 0.06, ((1, 1.0), (2, 0.2))), gain=0.8)
+
+
 # Yeni sesler sözlüğün SONUNA eklenir: rastgelelik sırası değişmez, eski sesler aynı üretilir.
 SOUNDS = {
     "jump": jump, "land": land, "wall": wall, "combo": combo, "combo_end": combo_end,
     "section": section, "game_over": game_over, "whoosh": whoosh,
     "ui_hover": ui_hover, "ui_click": ui_click, "ui_back": ui_back, "record": record,
+    "pickup": pickup, "jetpack": jetpack, "jetpack_end": jetpack_end,
 }
 
 

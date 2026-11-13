@@ -32,6 +32,16 @@ signal high_score_changed(high_score: int)
 @warning_ignore("unused_signal")
 signal flow_changed(new_state: int, old_state: int)
 
+## Oyuncu bir toplanabiliri aldı (kind: Pickup.JETPACK vb.; world_position: nesnenin dünya konumu).
+@warning_ignore("unused_signal")
+signal pickup_collected(kind: StringName, world_position: Vector2)
+
+## Süreli bir güçlendirme başladı / bitti (kind: Pickup türü; duration: saniye). HUD ve ses dinler.
+@warning_ignore("unused_signal")
+signal powerup_started(kind: StringName, duration: float)
+@warning_ignore("unused_signal")
+signal powerup_ended(kind: StringName)
+
 ## Ekran sarsıntısı iste (0..1 eklenir; kamera dinler).
 @warning_ignore("unused_signal")
 signal screen_shake(trauma: float)

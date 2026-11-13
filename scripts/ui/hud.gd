@@ -30,10 +30,18 @@ var _combo_bar: Control
 var _shown_score: float = 0.0
 var _target_score: int = 0
 var _score_pulse: Tween
+## Roket satırı: uçuş sürerken açılır; çubuk kalan yakıtı gösterir.
+var _jetpack_box: VBoxContainer
+var _jetpack_bar: Control
+var _jetpack_duration: float = 1.0
+var _jetpack_left: float = 0.0
 
 
 func _ready() -> void:
 	_build()
+	Events.powerup_started.connect(_on_powerup_started)
+	Events.powerup_ended.connect(_on_powerup_ended)
+	Events.game_started.connect(_on_powerup_ended.bind(Pickup.JETPACK))
 	Events.floor_changed.connect(_on_floor_changed)
 	Events.score_changed.connect(_on_score_changed)
 	Events.high_score_changed.connect(_on_high_score_changed)
@@ -52,6 +60,9 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if _combo_box.visible:
 		_combo_bar.queue_redraw()
+	if _jetpack_box.visible:
+		_jetpack_left = maxf(_jetpack_left - delta, 0.0)
+		_jetpack_bar.queue_redraw()
 	if _shown_score != _target_score:
 		_shown_score = PopupRules.count_toward(_shown_score, _target_score, delta)
 		_update_score_text()
@@ -128,6 +139,47 @@ func _build() -> void:
 	_combo_bar.draw.connect(_draw_combo_bar)
 	_combo_box.add_child(_combo_bar)
 	column.add_child(_combo_box)
+	_build_jetpack_row(column)
+
+
+## Roket satırı: ayırıcı + "ROKET" başlığı + yakıt çubuğu (uçuş dışında gizli).
+func _build_jetpack_row(column: VBoxContainer) -> void:
+	_jetpack_box = VBoxContainer.new()
+	_jetpack_box.add_theme_constant_override(&"separation", 3)
+	var separator := HSeparator.new()
+	separator.add_theme_color_override(&"separator", UiStyle.TRACK)
+	_jetpack_box.add_child(separator)
+	var caption: Label = UiStyle.label(COMBO_FONT_SIZE, JetpackArt.CAP)
+	caption.text = "ROKET"
+	_jetpack_box.add_child(caption)
+	_jetpack_bar = Control.new()
+	_jetpack_bar.custom_minimum_size.y = COMBO_BAR_HEIGHT + 2.0
+	_jetpack_bar.draw.connect(_draw_jetpack_bar)
+	_jetpack_box.add_child(_jetpack_bar)
+	_jetpack_box.visible = false
+	column.add_child(_jetpack_box)
+
+
+func _draw_jetpack_bar() -> void:
+	var y: float = _jetpack_bar.size.y * 0.5
+	var width: float = _jetpack_bar.size.x
+	var ratio: float = clampf(_jetpack_left / _jetpack_duration, 0.0, 1.0)
+	_jetpack_bar.draw_line(Vector2(0.0, y), Vector2(width, y), UiStyle.TRACK, COMBO_BAR_HEIGHT, true)
+	_jetpack_bar.draw_line(Vector2(0.0, y), Vector2(width * ratio, y), JetpackArt.BODY,
+			COMBO_BAR_HEIGHT, true)
+
+
+func _on_powerup_started(kind: StringName, duration: float) -> void:
+	if kind != Pickup.JETPACK:
+		return
+	_jetpack_duration = maxf(duration, 0.01)
+	_jetpack_left = duration
+	_jetpack_box.visible = true
+
+
+func _on_powerup_ended(kind: StringName) -> void:
+	if kind == Pickup.JETPACK:
+		_jetpack_box.visible = false
 
 
 ## Başlık (solda, soluk) + değer (sağda) satırı; değer etiketini döndürür.

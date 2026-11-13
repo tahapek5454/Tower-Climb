@@ -32,14 +32,16 @@ func on_landed(fall_speed: float) -> void:
 		_land_time_left = _model.animation_length(AnimationRules.LAND)
 
 
-func update(delta: float, on_floor: bool, velocity: Vector2, flipping: bool) -> void:
+## flying: roketle uçuyor mu (diğer her şeyin önüne geçer).
+func update(delta: float, on_floor: bool, velocity: Vector2, flipping: bool, flying: bool = false) -> void:
 	_land_time_left = maxf(_land_time_left - delta, 0.0)
 	_flap_time_left = maxf(_flap_time_left - delta, 0.0)
 	var animation: StringName = AnimationRules.pick(on_floor, velocity, flipping,
-			_land_time_left > 0.0, _flap_time_left > 0.0, _flip_animation)
+			_land_time_left > 0.0, _flap_time_left > 0.0, _flip_animation, flying)
 	var speed: float = 1.0
 	if animation == AnimationRules.RUN:
 		speed = AnimationRules.run_speed_scale(velocity.x)
 	_model.play(animation, AnimationRules.blend_time(animation))
 	_model.set_speed(speed)
 	_model.set_front_view(AnimationRules.faces_camera(animation))
+	_model.set_view_angle(AnimationRules.view_angle_degrees(animation))

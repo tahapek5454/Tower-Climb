@@ -133,6 +133,37 @@ for _s in (".L", ".R"):
     STAR_POSE["foot" + _s] = dict(rx=20.0)
 
 
+def pose_fly(t: float) -> dict:
+    """Roketle uçuş (süpermen): kollar yukarı dik, gövde gergin, bacaklar bitişik; hafif titreşim döngüsü."""
+    p = 2.0 * math.pi * t
+    sn = math.sin(p)
+    pose = {
+        "spine": dict(rx=-5.0 + 1.5 * sn),
+        "chest": dict(rx=-6.0),
+        "head": dict(rx=-16.0 + 2.0 * math.sin(p + 0.8)),
+        "tail": dict(rx=-18.0 + 10.0 * math.sin(2 * p), rz=10.0 * sn),
+        "tail_tip": dict(rx=-10.0 + 12.0 * math.sin(2 * p - 0.9), rz=8.0 * math.sin(p - 0.8)),
+        "_arm_stretch": FLY_ARM_STRETCH,
+    }
+    for s, ph in ((".L", 0.0), (".R", math.pi)):
+        kick = math.sin(2 * p + ph)
+        pose["upper_arm" + s] = dict(side=FLY_ARM_SIDE + 2.5 * math.sin(p + ph), rx=FLY_ARM_RX)
+        pose["forearm" + s] = dict(side=FLY_FOREARM_SIDE)
+        pose["thigh" + s] = dict(rx=8.0 + 5.0 * kick)
+        pose["shin" + s] = dict(rx=10.0 + 6.0 * kick)
+        pose["foot" + s] = dict(rx=38.0)
+    return pose
+
+
+# Uçuş pozunda kol açıları. Kollar dinlenmede ~32° dışa sarkar: side=122 ≈ başın iki yanında "V".
+# rx > 0 kalkık kolu geriye iter (yandan bakışta yüzü kapatmasın). Kollar kısa olduğu için üst kol
+# bu pozda boyuna uzatılır (çizgi film esnemesi) → eller başın hizasına çıkar.
+FLY_ARM_SIDE = 122.0
+FLY_ARM_RX = 14.0
+FLY_FOREARM_SIDE = 22.0
+FLY_ARM_STRETCH = 1.3
+
+
 def pose_fall(t: float) -> dict:
     p = 2.0 * math.pi * t
     sn, cs = math.sin(p), math.cos(p)
@@ -220,6 +251,12 @@ def _apply(pose: dict, frame: int) -> None:
         _last_q[name] = q.copy()
         pb.rotation_quaternion = q
         pb.keyframe_insert("rotation_quaternion", frame=frame)
+    # Üst kol boyuna esnemesi (yalnız uçuşta 1'den farklı); her animasyonda anahtarlanır ki
+    # başka animasyona geçince kol eski boyuna dönsün.
+    for name in ("upper_arm.L", "upper_arm.R"):
+        pb = rig.pose.bones[name]
+        pb.scale = (1.0, pose.get("_arm_stretch", 1.0), 1.0)
+        pb.keyframe_insert("scale", frame=frame)
     hips = rig.pose.bones["hips"]
     hips.location = hips_rest.inverted() @ Vector((0.0, 0.0, pose.get("_hips_dz", 0.0)))
     hips.keyframe_insert("location", frame=frame)
@@ -257,10 +294,11 @@ def build() -> None:
     _make("tuck", [0, 10], lambda f: TUCK_POSE)
     _make("flap", list(range(0, 17)), lambda f: pose_flap(f / 16.0))
     _make("star", [0, 10], lambda f: STAR_POSE)
+    _make("fly", list(range(0, 13)), lambda f: pose_fly(f / 12.0))
 
     # Dışa aktarım için her action bir NLA şeridine konur.
     rig.animation_data.action = None
-    for name in ("idle", "run", "jump", "fall", "land", "tuck", "flap", "star"):
+    for name in ("idle", "run", "jump", "fall", "land", "tuck", "flap", "star", "fly"):
         act = bpy.data.actions[name]
         track = rig.animation_data.nla_tracks.new()
         track.name = name

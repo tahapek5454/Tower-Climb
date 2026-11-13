@@ -45,6 +45,7 @@ func _ready() -> void:
 	_player = PLAYER_SCENE.instantiate() as Player
 	_player.position = Vector2.ZERO
 	_player.event.connect(_on_player_event)
+	_player.platforms_above = _spawner.platforms_above
 	add_child(_player)
 
 	# Kamera oyuncudan sonra eklenir: oyuncu hareket ettikten sonra güncellenir.
@@ -115,6 +116,7 @@ func _ready() -> void:
 	add_child(game_over_screen)
 
 	Events.game_over.connect(_on_game_over)
+	Events.pickup_collected.connect(_on_pickup_collected)
 	if GameFlow.state == FlowRules.State.MENU:
 		_menu.open()
 		_schedule_hop()
@@ -122,13 +124,22 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
+	if _player.is_flying():
+		# Roketle geçilen katlar da puan kazandırır.
+		GameState.register_flight_floor(JetpackRules.floor_passed(_player.global_position.y))
 	if not GameState.is_game_over and _camera.is_below_screen(_player.global_position.y):
 		GameState.end_game()
 
 
 func _unhandled_input(input_event: InputEvent) -> void:
-	if input_event.is_action_pressed(&"debug_skip_section") and GameFlow.is_playing():
+	if not GameFlow.is_playing():
+		return
+	if input_event.is_action_pressed(&"debug_skip_section"):
 		_debug_skip_section()
+		get_viewport().set_input_as_handled()
+	elif input_event.is_action_pressed(&"debug_spawn_jetpack"):
+		# Debug (F7): roketi denemek için oyuncunun üstündeki ilk platforma bir tane koyar.
+		_spawner.debug_spawn_jetpack(_player.global_position.y - Tuning.FLOOR_SPACING * 0.5)
 		get_viewport().set_input_as_handled()
 
 
@@ -171,8 +182,20 @@ func _on_hop_timer() -> void:
 
 
 func _on_player_event(event_name: StringName, data: Dictionary) -> void:
-	if event_name == &"landed":
-		GameState.register_landing(data["floor"])
+	match event_name:
+		&"landed":
+			GameState.register_landing(data["floor"])
+		&"jetpack_started":
+			GameState.begin_flight()
+			Events.powerup_started.emit(Pickup.JETPACK, data["duration"])
+		&"jetpack_ended":
+			GameState.end_flight()
+			Events.powerup_ended.emit(Pickup.JETPACK)
+
+
+func _on_pickup_collected(kind: StringName, _world_position: Vector2) -> void:
+	if kind == Pickup.JETPACK:
+		_player.start_jetpack()
 
 
 func _on_game_over(_final_score: int, _final_floor: int) -> void:

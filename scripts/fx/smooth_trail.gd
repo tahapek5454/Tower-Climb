@@ -52,7 +52,9 @@ func point_count() -> int:
 
 func _should_emit() -> bool:
 	# Oyun bitince oyuncu donar ama hızı kalır; iz bırakmasın.
-	return player.is_physics_processing() and player.velocity.length() >= Tuning.TRAIL_MIN_SPEED
+	# Roketle uçarken iz yok: roketin kendi ateş/duman izi var.
+	return player.is_physics_processing() and not player.is_flying() \
+			and player.velocity.length() >= Tuning.TRAIL_MIN_SPEED
 
 
 func _body_center() -> Vector2:

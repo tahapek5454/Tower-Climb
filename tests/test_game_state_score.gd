@@ -63,6 +63,34 @@ func test_active_combo_counts_at_game_over() -> void:
 	assert_eq(state.score, top * Tuning.SCORE_PER_FLOOR + top * top)
 
 
+func test_flight_floors_score_without_combo_bonus() -> void:
+	state.register_landing(1)
+	state.begin_flight()
+	state.register_flight_floor(30)
+	state.register_flight_floor(12)
+	assert_eq(state.floor_number, 30, "uçarken geçilen en yüksek kat sayılır")
+	assert_eq(state.score, 30 * Tuning.SCORE_PER_FLOOR)
+	state.end_flight()
+	state.register_landing(31)
+	assert_eq(state.combo_jumps, 0, "roketin bıraktığı iniş kombo başlatmaz")
+	assert_eq(state.score, 31 * Tuning.SCORE_PER_FLOOR, "uçuş kombo bonusu vermez")
+
+
+func test_flight_freezes_and_keeps_combo() -> void:
+	var step: int = Tuning.COMBO_MIN_FLOORS
+	state.register_landing(step)
+	state.register_landing(step * 2)
+	state.begin_flight()
+	state.advance(Tuning.COMBO_TIMEOUT + 1.0)
+	assert_eq(state.combo_jumps, 2, "uçarken kombo süresi durur")
+	state.register_flight_floor(40)
+	state.end_flight()
+	state.register_landing(41)
+	assert_eq(state.combo_jumps, 2, "roket inişi komboyu bozmaz")
+	state.register_landing(41 + step)
+	assert_eq(state.combo_jumps, 3, "sonraki büyük zıplama komboyu sürdürür")
+
+
 func test_reset_clears_score_but_keeps_high_score() -> void:
 	state.register_landing(5)
 	var best: int = state.score

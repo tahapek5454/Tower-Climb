@@ -58,6 +58,10 @@ var new_records: Array[String] = []
 var _combo := ComboCounter.new()
 ## Oyuncunun en son indiği kat (zıplanan kat); kazanılan katı hesaplamak için.
 var _current_floor: int = 0
+## Roketle uçuluyor: kombo süresi durur (uçuş komboyu ne bozar ne uzatır).
+var _flying: bool = false
+## Uçuştan sonraki ilk iniş kombo için sayılmaz (roketin bıraktığı platform).
+var _skip_combo_landing: bool = false
 
 
 func _ready() -> void:
@@ -81,7 +85,7 @@ func add_run_time(delta: float) -> void:
 
 ## Kombo süresini ilerletir (testlerde elle çağrılabilir).
 func advance(delta: float) -> void:
-	if not is_game_over:
+	if not is_game_over and not _flying:
 		_combo.advance(delta)
 
 
@@ -91,9 +95,34 @@ func register_landing(landed_floor: int) -> void:
 		return
 	var floors_gained: int = landed_floor - _current_floor
 	_current_floor = landed_floor
-	_combo.register_landing(floors_gained)
+	if _skip_combo_landing:
+		_skip_combo_landing = false
+	else:
+		_combo.register_landing(floors_gained)
 	floor_number = maxi(floor_number, landed_floor)
 	_update_score()
+
+
+## Roket uçuşu başladı: kombo süresi durur.
+func begin_flight() -> void:
+	_flying = true
+
+
+## Uçarken geçilen kat: kat puanı kazandırır (kombo bonusu değil).
+func register_flight_floor(passed_floor: int) -> void:
+	if is_game_over or passed_floor <= floor_number:
+		return
+	_current_floor = passed_floor
+	floor_number = passed_floor
+	_update_score()
+
+
+## Roket uçuşu bitti: kombo süresi yeniden işler; roketin bıraktığı platforma iniş komboyu etkilemez.
+func end_flight() -> void:
+	if not _flying:
+		return
+	_flying = false
+	_skip_combo_landing = true
 
 
 ## Yeni oyun için her şeyi sıfırlar (en yüksek skor hariç).
@@ -101,6 +130,8 @@ func reset() -> void:
 	is_game_over = false
 	_combo.clear()
 	_current_floor = 0
+	_flying = false
+	_skip_combo_landing = false
 	bonus_score = 0
 	run_best_combo = 0
 	run_time = 0.0

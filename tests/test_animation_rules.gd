@@ -70,3 +70,10 @@ func test_only_star_faces_camera() -> void:
 	assert_true(AnimationRules.faces_camera(AnimationRules.STAR))
 	assert_false(AnimationRules.faces_camera(AnimationRules.TUCK))
 	assert_false(AnimationRules.faces_camera(AnimationRules.RUN))
+
+
+func test_fly_overrides_everything_while_jetpack_is_on() -> void:
+	assert_eq(AnimationRules.pick(false, RISING, true, false, true, AnimationRules.STAR, true), AnimationRules.FLY)
+	assert_eq(AnimationRules.pick(true, RUNNING, false, true, false, AnimationRules.TUCK, true), AnimationRules.FLY)
+	assert_eq(AnimationRules.view_angle_degrees(AnimationRules.FLY), Tuning.JETPACK_VIEW_ANGLE_DEGREES)
+	assert_eq(AnimationRules.view_angle_degrees(AnimationRules.RUN), Tuning.MODEL_VIEW_ANGLE_DEGREES)

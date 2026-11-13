@@ -14,6 +14,7 @@ Ruh hali: hızlı, akışkan, abartılı ve eğlenceli animasyonlar (takla, sekm
 | Debug overlay | F3 |
 | Debug yavaş çekim (x0,25) | F4 |
 | Debug: sonraki bölüme ışınlan | F6 |
+| Debug: üstteki platforma roket koy | F7 |
 | Tam ekran aç/kapat | F11 veya Alt+Enter |
 | Tüm sesi kapat/aç | M |
 | Yeniden başla (oyun bitince) | R veya Space |
@@ -104,6 +105,17 @@ Değerler `const` olarak kalır (oyun içi canlı ayar paneli şimdilik yok). İ
 | `COMBO_MIN_FLOORS` | 2 | |
 | `COMBO_TIMEOUT` | 3.0 s | |
 | `FLIP_VELOCITY_THRESHOLD` | 1200 px/s | dikey hız |
+
+## Güçlendirmeler (Aşama 6)
+
+Toplanabilir nesneler platformların üstünde hafifçe süzülür (`Pickup`); oyuncu dokununca alınır.
+
+### Roket (jetpack)
+- **Çıkış:** nadir. Uygun her platformda `JETPACK_SPAWN_CHANCE` (%3) olasılık; `JETPACK_MIN_FLOOR` (15) kattan önce ve bölüm platformunda çıkmaz; bir roketten sonra `JETPACK_MIN_FLOOR_GAP` (40) kat boyunca yenisi çıkmaz. Ortalama ~70 katta bir. `JETPACK_ENABLED = false` özelliği kapatır.
+- **Uçuş:** `JETPACK_FLIGHT_TIME` (3 s) boyunca `JETPACK_SPEED` (1100 px/s) ile yukarı (~26 kat). Oyuncu sağa/sola kayabilir; yerçekimi, zıplama ve duvar sekmesi kapalı. Karakter süpermen pozunda (kollar yukarıda), sırtında roket, memeden alev + duman izi.
+- **Puan:** uçarken geçilen her kat normal kat puanını kazandırır (kombo bonusu vermez). Aktif kombo uçuş boyunca donar; roketin bıraktığı platforma iniş komboyu ne bozar ne uzatır.
+- **Güvenli bırakma:** süre dolunca roket oyuncuyu üstteki platformlardan birinin (yatayda en yakını) üstüne taşır, yüzeyin biraz üstünde küçük bir sıçrayışla bırakır; boş roket arkaya düşüp kaybolur. Uçarken ekranın altında kalmak mümkün değil (kamera oyuncuyu izler).
+- **HUD:** uçuş sürerken "ROKET" satırı ve yakıt çubuğu.
 
 ## Juice listesi (Aşama 2)
 - Squash & stretch: zıplarken dikey uzama, inişte yatay ezilme (hıza orantılı).

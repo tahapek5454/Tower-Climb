@@ -21,7 +21,7 @@ Dünya görselleri (kule, platformlar, süsler, gökyüzü, parçacıklar) kodla
 
 | Ne | Kaynak | Lisans | Nerede |
 |---|---|---|---|
-| Ses efektleri (zıplama, iniş, duvar, kombo, bölüm, oyun sonu, vuuş, arayüz tıkları, yeni rekor fanfarı) | Proje içinde kodla sentezlendi: `tools/sfx/generate_sfx.py` (dış kaynak yok) | MIT (proje kodu) | `assets/audio/sfx/` |
+| Ses efektleri (zıplama, iniş, duvar, kombo, bölüm, oyun sonu, vuuş, arayüz tıkları, yeni rekor fanfarı, güçlendirme alma, roket) | Proje içinde kodla sentezlendi: `tools/sfx/generate_sfx.py` (dış kaynak yok) | MIT (proje kodu) | `assets/audio/sfx/` |
 
 Oyuna müzik dahil değildir: oyuncu kendi müziklerini (mp3/ogg/wav) masaüstünde radyo paneline ekler (`user://music`); web'de müzik yoktur. Projede dış kaynaklı ses dosyası yoktur.
 

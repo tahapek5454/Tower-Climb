@@ -31,6 +31,7 @@ var _spring_stiffness: float = Tuning.SQUASH_SPRING_STIFFNESS
 var _spring_damping: float = Tuning.SQUASH_SPRING_DAMPING
 var _flip_tween: Tween
 var _bursts: ParticleBursts
+var _jetpack_fx: JetpackFx
 
 @onready var _player: Player = get_parent() as Player
 
@@ -45,8 +46,10 @@ func _process(delta: float) -> void:
 	_update_facing()
 	_update_wall_clearance()
 	if _animator != null:
-		_animator.update(delta, _player.is_on_floor(), _player.velocity, is_flipping())
+		_animator.update(delta, _player.is_on_floor(), _player.velocity, is_flipping(), _player.is_flying())
 	_update_squash(delta)
+	_jetpack_fx.facing = _facing
+	_jetpack_fx.body_offset_x = _spin.position.x
 
 
 func is_flipping() -> bool:
@@ -87,7 +90,7 @@ func _build_box(half_height: float) -> void:
 
 
 ## Efektler gövdeden (Spin) önceye yerleştirilir: ağaç sırasıyla gövdenin arkasında çizilir.
-## Sıra (arkadan öne): hâle, iz, hız çizgileri, parçacıklar, gövde.
+## Sıra (arkadan öne): hâle, iz, hız çizgileri, parçacıklar, roket alevi, gövde.
 func _build_effects() -> void:
 	var aura := PlayerAura.new()
 	aura.name = "Aura"
@@ -105,7 +108,11 @@ func _build_effects() -> void:
 	_bursts = ParticleBursts.new()
 	_bursts.name = "Bursts"
 
-	var effects: Array[Node] = [aura, trail, speed_lines, _bursts]
+	_jetpack_fx = JetpackFx.new()
+	_jetpack_fx.name = "JetpackFx"
+	_jetpack_fx.player = _player
+
+	var effects: Array[Node] = [aura, trail, speed_lines, _bursts, _jetpack_fx]
 	for i in effects.size():
 		add_child(effects[i])
 		move_child(effects[i], i)
@@ -139,7 +146,9 @@ func _apply_facing() -> void:
 ## Yay, havadayken dikey hıza göre hafif bir uzamaya, yerdeyken 0'a doğru çeker.
 func _update_squash(delta: float) -> void:
 	var target: float = 0.0
-	if not _player.is_on_floor() and not is_flipping():
+	if _player.is_flying():
+		target = Tuning.JETPACK_STRETCH
+	elif not _player.is_on_floor() and not is_flipping():
 		target = absf(_player.velocity.y) / Tuning.MAX_FALL_SPEED * Tuning.AIR_STRETCH_MAX
 	var result: Vector2 = Spring.step(_stretch, _stretch_velocity, target,
 			_spring_stiffness, _spring_damping, delta)
@@ -221,6 +230,24 @@ func _on_player_event(event_name: StringName, data: Dictionary) -> void:
 			_on_landed(data["speed"])
 		&"wall_bounce":
 			_on_wall_bounce(data)
+		&"jetpack_started":
+			_on_jetpack_started()
+		&"jetpack_ended":
+			_set_jetpack_equipped(false)
+
+
+## Roket takıldı: takla biter (dik uçulur), gövde kalkışla uzar, toz ve sarsıntı. Alev ve iz JetpackFx'te.
+func _on_jetpack_started() -> void:
+	_reset_flip_on_landing()
+	_set_jetpack_equipped(true)
+	_kick(Tuning.JUMP_STRETCH_MAX, 1.0)
+	_bursts.land_dust(_player.global_position, 1.0)
+	Events.screen_shake.emit(Tuning.JETPACK_LAUNCH_TRAUMA)
+
+
+func _set_jetpack_equipped(equipped: bool) -> void:
+	if _model != null:
+		_model.set_jetpack_equipped(equipped)
 
 
 func _on_jumped(jump_speed: float) -> void:

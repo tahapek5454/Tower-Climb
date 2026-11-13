@@ -5,12 +5,15 @@ extends CharacterBody2D
 
 signal state_changed(new_state: State, old_state: State)
 ## Olaylar: &"jumped" {speed, run_speed}, &"jump_cut" {}, &"landed" {speed, floor},
-## &"wall_bounce" {speed, normal_x, airborne}.
+## &"wall_bounce" {speed, normal_x, airborne}, &"jetpack_started" {duration}, &"jetpack_ended" {}.
 signal event(name: StringName, data: Dictionary)
 
 enum State { IDLE, RUN, JUMP, FALL, LAND, WALL_BOUNCE, FLIP }
 
 var state: State = State.IDLE
+## Roket süresi dolunca inilecek platformu bulmak için: Callable(y: float) -> Array[Vector3]
+## (JetpackRules biçimi). Ana sahne bağlar; oyuncu platform üreticisini tanımaz.
+var platforms_above: Callable
 
 ## Yerden ayrıldıktan sonra hâlâ zıplanabilecek kalan süre.
 var _coyote_timer: float = 0.0
@@ -18,9 +21,14 @@ var _coyote_timer: float = 0.0
 var _jump_buffer_timer: float = 0.0
 ## Yükselirken tuş bırakılırsa hız bir kez kesilebilir.
 var _can_cut_jump: bool = false
+## Süren roket uçuşu (yoksa null). Uçarken normal hareket (yerçekimi, zıplama, duvar sekmesi) kapalı.
+var _flight: JetpackFlight
 
 
 func _physics_process(delta: float) -> void:
+	if _flight != null:
+		_fly(delta)
+		return
 	var was_on_floor: bool = is_on_floor()
 	_update_jump_timers(delta)
 	var input_dir: float = Input.get_axis(&"move_left", &"move_right") if _controls_enabled() else 0.0
@@ -95,6 +103,43 @@ func hop(speed: float) -> void:
 		return
 	velocity.y = -speed
 	event.emit(&"jumped", {"speed": speed, "run_speed": 0.0})
+
+
+# --- Roket ---
+
+## Roketi takar ve uçuşu başlatır (uçarken yeniden alınırsa süre baştan başlar).
+func start_jetpack() -> void:
+	_flight = JetpackFlight.new()
+	_can_cut_jump = false
+	_jump_buffer_timer = 0.0
+	_coyote_timer = 0.0
+	event.emit(&"jetpack_started", {"duration": Tuning.JETPACK_FLIGHT_TIME})
+
+
+func is_flying() -> bool:
+	return _flight != null
+
+
+## Roketin kalan yakıt oranı (0..1); uçmuyorsa 0.
+func jetpack_fuel_ratio() -> float:
+	return _flight.fuel_ratio() if _flight != null else 0.0
+
+
+## Roket itişi tükendi mi (platforma taşınma evresi)? Görüntü alevi kısar.
+func is_jetpack_landing() -> bool:
+	return _flight != null and _flight.phase == JetpackFlight.Phase.APPROACH
+
+
+## Uçuş adımı: hızı JetpackFlight belirler; bitince oyuncu platformun üstünde küçük bir sıçrayışla bırakılır.
+func _fly(delta: float) -> void:
+	var input_dir: float = Input.get_axis(&"move_left", &"move_right") if _controls_enabled() else 0.0
+	velocity = _flight.step(global_position, velocity, input_dir, delta, platforms_above)
+	move_and_slide()
+	if _flight.is_done():
+		_flight = null
+		velocity = Vector2(0.0, -Tuning.JETPACK_RELEASE_HOP_SPEED)
+		event.emit(&"jetpack_ended", {})
+	_update_state()
 
 
 ## Oyuncu tuşları sadece oyun sürerken çalışır (menüde, duraklatmada kapalı).

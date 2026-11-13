@@ -10,6 +10,8 @@ var _prev_center: float = 0.0
 var _prev_width: float = Tuning.TOWER_WIDTH
 ## Aşağıdan yukarıya sıralı (eski olan başta).
 var _platforms: Array[Platform] = []
+## En son roket çıkan kat (başta: ilk uygun katta çıkabilsin diye yeterince geride).
+var _last_jetpack_floor: int = -Tuning.JETPACK_MIN_FLOOR_GAP
 
 
 func _ready() -> void:
@@ -37,6 +39,23 @@ func spawn_through_floor(floor_number: int) -> void:
 		_next_floor += 1
 
 
+## Verilen y'nin üstündeki platformlar, aşağıdan yukarıya (JetpackRules biçimi: merkez x, üst y, genişlik).
+func platforms_above(world_y: float) -> Array[Vector3]:
+	var result: Array[Vector3] = []
+	for platform: Platform in _platforms:
+		if platform.position.y < world_y:
+			result.append(Vector3(platform.position.x, platform.position.y, platform.width))
+	return result
+
+
+## Debug (F7): oyuncunun üstündeki ilk platforma roket koyar.
+func debug_spawn_jetpack(above_y: float) -> void:
+	for platform: Platform in _platforms:
+		if platform.position.y < above_y and not PlatformRules.is_section_floor(platform.floor_number):
+			_add_pickup(platform, Pickup.JETPACK)
+			return
+
+
 func _spawn_up_to(top_y: float) -> void:
 	while PlatformRules.floor_y(_next_floor) > top_y:
 		_spawn(_next_floor)
@@ -54,6 +73,18 @@ func _spawn(floor_number: int) -> void:
 	_platforms.append(platform)
 	_prev_center = center
 	_prev_width = width
+	if JetpackRules.should_spawn(floor_number, _last_jetpack_floor, _rng.randf()):
+		_last_jetpack_floor = floor_number
+		_add_pickup(platform, Pickup.JETPACK)
+
+
+## Toplanabiliri platformun çocuğu olarak, yüzeyin üstüne koyar (platformla birlikte silinir).
+func _add_pickup(platform: Platform, kind: StringName) -> void:
+	var pickup := Pickup.new()
+	pickup.setup(kind)
+	pickup.position = Vector2(JetpackRules.pickup_offset_x(platform.width, _rng.randf()),
+			-Tuning.PICKUP_HOVER_HEIGHT)
+	platform.add_child(pickup)
 
 
 func _despawn_below(bottom_y: float) -> void:

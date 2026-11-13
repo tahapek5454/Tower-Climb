@@ -15,6 +15,9 @@ func _ready() -> void:
 	Events.combo_ended.connect(_on_combo_ended)
 	Events.floor_changed.connect(_on_floor_changed)
 	Events.game_over.connect(_on_game_over)
+	Events.pickup_collected.connect(_on_pickup_collected)
+	Events.powerup_started.connect(_on_powerup_started)
+	Events.powerup_ended.connect(_on_powerup_ended)
 
 
 func _on_player_event(event_name: StringName, data: Dictionary) -> void:
@@ -56,6 +59,20 @@ func _on_game_over(_score: int, _floor: int) -> void:
 		AudioManager.play(&"game_over", 1.0, Tuning.SFX_GAME_OVER_DB)
 	else:
 		AudioManager.play(&"record", 1.0, Tuning.SFX_RECORD_DB)
+
+
+func _on_pickup_collected(_kind: StringName, _world_position: Vector2) -> void:
+	AudioManager.play(&"pickup", 1.0, Tuning.SFX_PICKUP_DB)
+
+
+func _on_powerup_started(kind: StringName, _duration: float) -> void:
+	if kind == Pickup.JETPACK:
+		AudioManager.play(&"jetpack", 1.0, Tuning.SFX_JETPACK_DB)
+
+
+func _on_powerup_ended(kind: StringName) -> void:
+	if kind == Pickup.JETPACK:
+		AudioManager.play(&"jetpack_end", 1.0, Tuning.SFX_JETPACK_END_DB)
 
 
 ## Sık çalan sesler için küçük rastgele perde sapmasıyla çalar.

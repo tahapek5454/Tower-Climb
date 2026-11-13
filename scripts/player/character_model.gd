@@ -8,16 +8,21 @@ const MODEL_PATH: String = "res://assets/models/eagle_hero.glb"
 const TOON_SHADER: Shader = preload("res://assets/shaders/toon_character.gdshader")
 const OUTLINE_SHADER: Shader = preload("res://assets/shaders/toon_outline.gdshader")
 ## Döngülü oynaması gereken animasyonlar (glb döngü bilgisini taşımıyor).
-const LOOPING: Array[StringName] = [&"idle", &"run", &"fall"]
+const LOOPING: Array[StringName] = [&"idle", &"run", &"fall", &"fly"]
 ## Kamera modelin yanında, bu uzaklıkta durur (ortografik: uzaklık görüntüyü değiştirmez).
 const CAMERA_DISTANCE: float = 5.0
+## Sırt roketinin bağlandığı kemik ve dinlenme pozunda model uzayındaki yeri (+Y yukarı, +Z ön).
+const JETPACK_BONE: StringName = &"chest"
+const JETPACK_POSITION := Vector3(0.0, 0.50, -0.23)
 
 var _pivot: Node3D
 var _animation_player: AnimationPlayer
+var _jetpack: JetpackModel
 var _target_yaw: float = 0.0
 var _requested: StringName = &""
 var _facing: float = 1.0
 var _front_view: bool = false
+var _view_angle_degrees: float = Tuning.MODEL_VIEW_ANGLE_DEGREES
 
 
 ## Model dosyası projede var mı? Yoksa PlayerVisual kutu gövdeye döner.
@@ -52,9 +57,23 @@ func set_front_view(enabled: bool) -> void:
 	_update_target_yaw()
 
 
+## Modelin profilden kameraya dönüklüğü (derece); yön görünümünde kullanılır.
+func set_view_angle(degrees: float) -> void:
+	if is_equal_approx(degrees, _view_angle_degrees):
+		return
+	_view_angle_degrees = degrees
+	_update_target_yaw()
+
+
+## Sırt roketini takar / çıkarır (iskelette kemik yoksa yok sayılır).
+func set_jetpack_equipped(equipped: bool) -> void:
+	if _jetpack != null:
+		_jetpack.set_equipped(equipped)
+
+
 func _update_target_yaw() -> void:
 	# Model +Z'ye bakar; kamera -X tarafında. Sola dönüş kameranın önünden geçer.
-	var view_angle: float = deg_to_rad(Tuning.MODEL_VIEW_ANGLE_DEGREES)
+	var view_angle: float = deg_to_rad(_view_angle_degrees)
 	if _front_view:
 		_target_yaw = -PI * 0.5
 	else:
@@ -104,6 +123,7 @@ func _build() -> void:
 	_animation_player = _find_animation_player(model)
 	_setup_loops()
 	_apply_toon_materials(model)
+	_attach_jetpack(_find_skeleton(model))
 
 	_build_camera(viewport)
 
@@ -150,6 +170,35 @@ func _apply_toon_materials(node: Node) -> void:
 			mesh_instance.set_surface_override_material(surface, toon)
 	for child in node.get_children():
 		_apply_toon_materials(child)
+
+
+## Roketi göğüs kemiğine bağlar (gizli başlar). Konum model uzayında verilir; kemiğin dinlenme
+## dönüşümünün tersiyle kemik uzayına çevrilir → kemik nasıl yönlenmiş olursa olsun roket dik durur.
+func _attach_jetpack(skeleton: Skeleton3D) -> void:
+	if skeleton == null:
+		return
+	var bone: int = skeleton.find_bone(JETPACK_BONE)
+	if bone == -1:
+		return
+	var attachment := BoneAttachment3D.new()
+	attachment.name = "JetpackAttachment"
+	attachment.bone_name = JETPACK_BONE
+	skeleton.add_child(attachment)
+	_jetpack = JetpackModel.new()
+	_jetpack.name = "Jetpack"
+	_jetpack.transform = skeleton.get_bone_global_rest(bone).affine_inverse() \
+			* Transform3D(Basis.IDENTITY, JETPACK_POSITION)
+	attachment.add_child(_jetpack)
+
+
+func _find_skeleton(node: Node) -> Skeleton3D:
+	if node is Skeleton3D:
+		return node as Skeleton3D
+	for child in node.get_children():
+		var found: Skeleton3D = _find_skeleton(child)
+		if found != null:
+			return found
+	return null
 
 
 func _setup_loops() -> void:

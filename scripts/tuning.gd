@@ -468,6 +468,65 @@ const MUFFLE_CUTOFF_OPEN_HZ: float = 20500.0
 const MUFFLE_CUTOFF_HZ: float = 800.0
 const MUFFLE_TIME: float = 0.25
 
+# --- Toplanabilirler (Aşama 6; scripts/world/pickup.gd) ---
+## Toplanabilirin platform yüzeyinden yüksekliği ve toplama yarıçapı (px).
+const PICKUP_HOVER_HEIGHT: float = 46.0
+const PICKUP_RADIUS: float = 24.0
+## Havada süzülme: yukarı-aşağı genlik (px) ve bir turun süresi (s).
+const PICKUP_BOB_HEIGHT: float = 5.0
+const PICKUP_BOB_TIME: float = 1.7
+## Platform kenarına en az bu kadar uzakta durur (px).
+const PICKUP_EDGE_MARGIN: float = 32.0
+## Arkasındaki ışık hâlesinin çapı (px) ve saydamlığı.
+const PICKUP_GLOW_SIZE: float = 120.0
+const PICKUP_GLOW_ALPHA: float = 0.30
+## Toplanınca büyüyüp kaybolma süresi (s).
+const PICKUP_COLLECT_TIME: float = 0.18
+
+# --- Roket / jetpack (Aşama 6; scripts/game/jetpack_rules.gd, scripts/player/jetpack_flight.gd) ---
+## false: roket hiç çıkmaz (özelliği tek satırla kapatır).
+const JETPACK_ENABLED: bool = true
+## NADİRLİK: uygun her platformda roket çıkma olasılığı (0..1). Büyüt = daha sık.
+const JETPACK_SPAWN_CHANCE: float = 0.03
+## Bu kattan önce roket çıkmaz; bir roketten sonra en az bu kadar kat boyunca yenisi çıkmaz
+## (uçuşta geçilen kat sayısından büyük olmalı: uçarken ikinci rokete denk gelinmesin).
+const JETPACK_MIN_FLOOR: int = 15
+const JETPACK_MIN_FLOOR_GAP: int = 40
+## Uçuş süresi (s), tırmanma hızı (px/s) ve o hıza çıkış ivmesi (px/s²).
+const JETPACK_FLIGHT_TIME: float = 3.0
+const JETPACK_SPEED: float = 1100.0
+const JETPACK_ACCEL: float = 4500.0
+## Uçarken oyuncunun sağa/sola kayma hızı ve ivmesi.
+const JETPACK_STEER_SPEED: float = 380.0
+const JETPACK_STEER_ACCEL: float = 2600.0
+## Güvenli bırakma: süre dolunca roket oyuncuyu bir platformun üstüne taşır ve orada bırakır.
+## Hedef platform oyuncudan en az MIN_RISE px yukarıda olmalı; en yakın CANDIDATES platform arasından
+## yatayda en yakını seçilir; oyuncu platform kenarından EDGE_MARGIN içeride, yüzeyden RELEASE_HEIGHT
+## yukarıda bırakılır.
+const JETPACK_LANDING_MIN_RISE: float = 110.0
+const JETPACK_LANDING_CANDIDATES: int = 3
+const JETPACK_LANDING_EDGE_MARGIN: float = 34.0
+const JETPACK_RELEASE_HEIGHT: float = 44.0
+## Yaklaşma: en yüksek dikey/yatay hız (px/s) ve hedefe yaklaşırken yavaşlama katsayısı (1/s).
+const JETPACK_APPROACH_SPEED: float = 620.0
+const JETPACK_ALIGN_SPEED: float = 760.0
+const JETPACK_APPROACH_GAIN: float = 9.0
+## Hedefe bu kadar yaklaşınca (px) bırakır; yaklaşma en çok bu kadar sürer (s, güvenlik).
+const JETPACK_RELEASE_TOLERANCE: float = 6.0
+const JETPACK_APPROACH_TIMEOUT: float = 2.5
+## Bırakılırken verilen küçük yukarı hız (px/s): yumuşak bir kavisle platforma konar.
+const JETPACK_RELEASE_HOP_SPEED: float = 260.0
+## Kalkışta ekran sarsıntısı (0..1).
+const JETPACK_LAUNCH_TRAUMA: float = 0.45
+## Uçuş sırasında model profilden bu kadar kameraya döner (derece): kollar yüzü kapatmasın, roket görünsün.
+const JETPACK_VIEW_ANGLE_DEGREES: float = 52.0
+## Uçarken gövdenin boyuna uzaması (hız yüksek olduğu için normal hava uzaması fazla kaçar).
+const JETPACK_STRETCH: float = 0.10
+## Roket sesleri (dB).
+const SFX_PICKUP_DB: float = -6.0
+const SFX_JETPACK_DB: float = -8.0
+const SFX_JETPACK_END_DB: float = -10.0
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25
