@@ -7,6 +7,9 @@ const IDLE_COLOR := Color(1.0, 0.55, 0.2)
 const COMBO_COLOR := Color(1.0, 0.85, 0.35)
 
 var player: Player
+## Kozmetik boyası: varsayılanda tint_amount 0 → renkler değişmez.
+var tint_color: Color = IDLE_COLOR
+var tint_amount: float = 0.0
 
 ## 0 = turuncu, 1 = kombo rengi.
 var _combo_mix: float = 0.0
@@ -43,4 +46,6 @@ func current_alpha() -> float:
 
 
 func _apply() -> void:
-	modulate = Color(IDLE_COLOR.lerp(COMBO_COLOR, _combo_mix), _alpha)
+	var idle: Color = IDLE_COLOR.lerp(tint_color, tint_amount)
+	var combo: Color = COMBO_COLOR.lerp(tint_color, tint_amount * 0.5)
+	modulate = Color(idle.lerp(combo, _combo_mix), _alpha)

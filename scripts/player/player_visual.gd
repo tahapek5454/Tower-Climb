@@ -32,6 +32,10 @@ var _spring_damping: float = Tuning.SQUASH_SPRING_DAMPING
 var _flip_tween: Tween
 var _bursts: ParticleBursts
 var _jetpack_fx: JetpackFx
+var _aura: PlayerAura
+var _trail: SmoothTrail
+var _sparkles: TrailSparkles
+var _trail_rainbow: bool = false
 
 @onready var _player: Player = get_parent() as Player
 
@@ -53,6 +57,8 @@ func _process(delta: float) -> void:
 	_update_squash(delta)
 	_jetpack_fx.facing = _facing
 	_jetpack_fx.body_offset_x = _spin.position.x
+	if _trail_rainbow:
+		_aura.tint_color = _trail.head_color()
 
 
 func is_flipping() -> bool:
@@ -95,14 +101,18 @@ func _build_box(half_height: float) -> void:
 ## Efektler gövdeden (Spin) önceye yerleştirilir: ağaç sırasıyla gövdenin arkasında çizilir.
 ## Sıra (arkadan öne): hâle, iz, hız çizgileri, parçacıklar, roket alevi, gövde.
 func _build_effects() -> void:
-	var aura := PlayerAura.new()
-	aura.name = "Aura"
-	aura.player = _player
+	_aura = PlayerAura.new()
+	_aura.name = "Aura"
+	_aura.player = _player
 
-	var trail := SmoothTrail.new()
-	trail.name = "Trail"
-	trail.trail_color = BODY_COLOR
-	trail.player = _player
+	_trail = SmoothTrail.new()
+	_trail.name = "Trail"
+	_trail.trail_color = BODY_COLOR
+	_trail.player = _player
+
+	_sparkles = TrailSparkles.new()
+	_sparkles.name = "Sparkles"
+	_sparkles.player = _player
 
 	var speed_lines := SpeedLines.new()
 	speed_lines.name = "SpeedLines"
@@ -115,7 +125,7 @@ func _build_effects() -> void:
 	_jetpack_fx.name = "JetpackFx"
 	_jetpack_fx.player = _player
 
-	var effects: Array[Node] = [aura, trail, speed_lines, _bursts, _jetpack_fx]
+	var effects: Array[Node] = [_aura, _trail, _sparkles, speed_lines, _bursts, _jetpack_fx]
 	for i in effects.size():
 		add_child(effects[i])
 		move_child(effects[i], i)
@@ -296,6 +306,29 @@ func _on_wall_bounce(data: Dictionary) -> void:
 func _on_cosmetic_changed(slot: StringName, id: StringName) -> void:
 	if _model != null and ShopCatalog.MODEL_SLOTS.has(slot):
 		_model.set_cosmetic(slot, id)
+	if slot == ShopCatalog.TRAIL:
+		_apply_trail_cosmetic(id)
+
+
+## Efekt ürününü iz, ışıltı, hâle, toz ve kıvılcıma uygular. Varsayılan ürün = özgün görünüm.
+func _apply_trail_cosmetic(id: StringName) -> void:
+	var item: Dictionary = TrailCosmetic.resolve(id)
+	var is_default: bool = item["id"] == ShopCatalog.default_of(ShopCatalog.TRAIL)
+	var style: StringName = TrailCosmetic.style_of(item)
+	var color: Color = item["color"]
+	var color2: Color = item["color2"]
+	_trail_rainbow = style == ShopCatalog.STYLE_RAINBOW
+	if _trail_rainbow:
+		_trail.set_rainbow(true)
+	else:
+		_trail.set_trail_color(color)
+	_sparkles.visible = style == ShopCatalog.STYLE_SPARKLE
+	_sparkles.set_sparkle_color(color2)
+	_aura.tint_color = color
+	_aura.tint_amount = 0.0 if is_default else Tuning.TRAIL_FX_AURA_TINT
+	var dust: float = 0.0 if is_default else Tuning.TRAIL_FX_DUST_TINT
+	var spark: float = 0.0 if is_default else Tuning.TRAIL_FX_SPARK_TINT
+	_bursts.set_tint(color2, dust, spark)
 
 
 func _make_rect(center: Vector2, size: Vector2, color: Color) -> Polygon2D:

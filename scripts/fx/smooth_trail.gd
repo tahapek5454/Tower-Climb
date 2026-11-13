@@ -7,6 +7,8 @@ extends Line2D
 ## Şeridin rengi (saydamlık TRAIL_ALPHA'dan gelir).
 var trail_color: Color = Color.WHITE
 var player: Player
+## Gökkuşağı modu: ton zamanla döner ve iz boyunca kayar (kuyruk daha eski ton).
+var rainbow: bool = false
 
 ## Ham noktalar (dünya koordinatı) ve eklendikleri an.
 var _raw: PackedVector2Array = []
@@ -26,10 +28,7 @@ func _ready() -> void:
 	material = SoftTextures.additive()
 
 	# Nokta 0 = en eski (kuyruk), son nokta = gövde.
-	var fade := Gradient.new()
-	fade.set_color(0, Color(trail_color, 0.0))
-	fade.set_color(1, Color(trail_color, Tuning.TRAIL_ALPHA))
-	gradient = fade
+	_apply_color()
 	var taper := Curve.new()
 	taper.add_point(Vector2(0.0, 0.0))
 	taper.add_point(Vector2(1.0, 1.0))
@@ -38,12 +37,59 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_clock += delta
+	if rainbow:
+		_apply_rainbow()
 	var emitting: bool = _should_emit()
 	var head: Vector2 = _body_center()
 	if emitting:
 		_add_point(head)
 	_drop_old_points()
 	_render(head, emitting)
+
+
+## Düz renk: kuyrukta saydam, gövdede TRAIL_ALPHA.
+func set_trail_color(color: Color) -> void:
+	trail_color = color
+	rainbow = false
+	_apply_color()
+
+
+func set_rainbow(enabled: bool) -> void:
+	rainbow = enabled
+	if enabled:
+		_apply_rainbow()
+	else:
+		_apply_color()
+
+
+## Gövdedeki ucun şu anki rengi (hâle gibi diğer efektler izleyebilsin).
+func head_color() -> Color:
+	return TrailCosmetic.rainbow_color(_clock) if rainbow else trail_color
+
+
+func _apply_color() -> void:
+	var fade := Gradient.new()
+	fade.set_color(0, Color(trail_color, 0.0))
+	fade.set_color(1, Color(trail_color, Tuning.TRAIL_ALPHA))
+	gradient = fade
+
+
+func _apply_rainbow() -> void:
+	var fade := Gradient.new()
+	var stops: int = 4
+	fade.offsets = PackedFloat32Array([0.0, 0.0])
+	fade.colors = PackedColorArray([Color.WHITE, Color.WHITE])
+	for i in stops:
+		var at: float = float(i) / float(stops - 1)
+		# Kuyruk (at=0) daha eski ton, uç (at=1) şimdiki ton.
+		var color: Color = TrailCosmetic.rainbow_color(_clock, -Tuning.TRAIL_RAINBOW_SPREAD * (1.0 - at))
+		var stop := Color(color, Tuning.TRAIL_ALPHA * at)
+		if i < 2:
+			fade.offsets[i] = at
+			fade.colors[i] = stop
+		else:
+			fade.add_point(at, stop)
+	gradient = fade
 
 
 func point_count() -> int:

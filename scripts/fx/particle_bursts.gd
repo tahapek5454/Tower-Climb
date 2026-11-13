@@ -24,6 +24,10 @@ const SPARK_DAMPING: float = 120.0
 ## Kıvılcımlar duvardan hafif yukarı doğru saçılır.
 const SPARK_UP_TILT: float = -0.35
 
+## Kozmetik boyası (varsayılanda amount 0 → renkler değişmez). Sonraki patlamalardan itibaren geçerli.
+var _dust_tint := DUST_COLOR
+var _spark_tint := SPARK_COLOR
+
 var _dust_pool: Array[CPUParticles2D] = []
 var _spark_pool: Array[CPUParticles2D] = []
 var _next_dust: int = 0
@@ -37,6 +41,16 @@ func _ready() -> void:
 	for i in POOL_SIZE:
 		_dust_pool.append(_make_dust_emitter(dot))
 		_spark_pool.append(_make_spark_emitter(dot))
+
+
+## Toz ve kıvılcım renklerini `color`'a verilen oranlarda boyar (0 → özgün renk).
+func set_tint(color: Color, dust_amount: float, spark_amount: float) -> void:
+	_dust_tint = DUST_COLOR.lerp(color, dust_amount)
+	_spark_tint = SPARK_COLOR.lerp(color, spark_amount)
+	for emitter in _dust_pool:
+		emitter.color_ramp = _fade_ramp(_dust_tint, Tuning.LAND_DUST_ALPHA)
+	for emitter in _spark_pool:
+		emitter.color_ramp = _fade_ramp(_spark_tint, Tuning.WALL_SPARK_ALPHA)
 
 
 ## Ayakların iki yanından toz. strength: 0 (hafif) .. 1 (sert iniş).

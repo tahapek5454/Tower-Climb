@@ -722,3 +722,21 @@ const SFX_MAGNET_END_DB: float = -10.0
 const SHOP_ENABLED: bool = true
 ## Bir takviyeden en çok bu kadar stoklanır (her tur başında bir tanesi kendiliğinden kullanılır).
 const SHOP_BOOST_MAX_STOCK: int = 3
+
+# --- Efekt kozmetikleri (iz / toz / hâle; ürünler shop_catalog.gd, yardımcı scripts/fx/trail_cosmetic.gd) ---
+## Gökkuşağı izi: tam ton turu süresi (s), pastel doygunluk/parlaklık, iz boyunca ton kayması (0..1 tur).
+const TRAIL_RAINBOW_PERIOD: float = 6.0
+const TRAIL_RAINBOW_SATURATION: float = 0.8
+const TRAIL_RAINBOW_VALUE: float = 0.95
+const TRAIL_RAINBOW_SPREAD: float = 0.12
+## Varsayılan dışı efekt seçilince iniş tozu, duvar kıvılcımı ve hâlenin seçilen renge boyanma oranı (0..1).
+const TRAIL_FX_DUST_TINT: float = 0.45
+const TRAIL_FX_SPARK_TINT: float = 0.7
+const TRAIL_FX_AURA_TINT: float = 0.8
+## Işıltı: aynı anda en çok bu kadar nokta, ömrü (s), boyu (64 px dokuya oranla), saçılma yarıçapı (px), saydamlık.
+const TRAIL_SPARKLE_COUNT: int = 5
+const TRAIL_SPARKLE_LIFETIME: float = 0.7
+const TRAIL_SPARKLE_SCALE_MIN: float = 0.07
+const TRAIL_SPARKLE_SCALE_MAX: float = 0.16
+const TRAIL_SPARKLE_RADIUS: float = 16.0
+const TRAIL_SPARKLE_ALPHA: float = 0.7
