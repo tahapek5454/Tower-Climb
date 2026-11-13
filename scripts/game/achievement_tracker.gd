@@ -63,6 +63,7 @@ func _on_hearts_changed(hearts: int, change: int) -> void:
 		report(AchievementRules.HEARTS, hearts)
 
 
-func _on_player_event(event_name: StringName, _data: Dictionary) -> void:
-	if event_name == &"rescued":
+## Kalple kurtulma başarımı yalnız kalp harcanınca; elmasla devam (&"revive") sayılmaz.
+func _on_player_event(event_name: StringName, data: Dictionary) -> void:
+	if event_name == &"rescued" and data.get("source", &"heart") == &"heart":
 		report(AchievementRules.RESCUE, 1)

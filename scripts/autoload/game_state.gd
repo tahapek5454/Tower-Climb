@@ -71,6 +71,8 @@ var diamonds: int = 0
 var run_diamonds: int = 0
 ## Bugüne dek kazanılan toplam elmas (harcama düşürmez; başarımlar buna bakar).
 var lifetime_diamonds: int = 0
+## Bu turda elmasla kaç kez devam edildi (fiyat ve hak ReviveRules'ta).
+var revives_used: int = 0
 
 var _combo := ComboCounter.new()
 ## Oyuncunun en son indiği kat (zıplanan kat); kazanılan katı hesaplamak için.
@@ -194,10 +196,21 @@ func use_heart() -> bool:
 	return true
 
 
+## Elmasla devam: sıradaki fiyat harcanır ve hak sayılır. Hak yoksa ya da elmas yetmiyorsa false.
+func use_revive() -> bool:
+	if is_game_over or not ReviveRules.can_offer(revives_used, diamonds):
+		return false
+	if not spend_diamonds(ReviveRules.price(revives_used)):
+		return false
+	revives_used += 1
+	return true
+
+
 ## Yeni oyun için her şeyi sıfırlar (en yüksek skor ve elmaslar hariç).
 func reset() -> void:
 	is_game_over = false
 	run_diamonds = 0
+	revives_used = 0
 	hearts = Tuning.HEART_START
 	_combo.clear()
 	_current_floor = 0

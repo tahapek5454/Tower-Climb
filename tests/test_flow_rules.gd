@@ -18,6 +18,9 @@ func test_allowed_transitions() -> void:
 	assert_true(FlowRules.can_transition(S.PLAYING, S.GAME_OVER))
 	assert_true(FlowRules.can_transition(S.GAME_OVER, S.PLAYING))
 	assert_true(FlowRules.can_transition(S.GAME_OVER, S.MENU))
+	assert_true(FlowRules.can_transition(S.PLAYING, S.REVIVE), "düşünce devam kartı")
+	assert_true(FlowRules.can_transition(S.REVIVE, S.PLAYING), "kabul: oyun sürer")
+	assert_true(FlowRules.can_transition(S.REVIVE, S.GAME_OVER), "ret / süre doldu")
 
 
 func test_forbidden_transitions() -> void:
@@ -26,19 +29,25 @@ func test_forbidden_transitions() -> void:
 	assert_false(FlowRules.can_transition(S.PAUSED, S.GAME_OVER), "duraklatılmışken oyun bitmez")
 	assert_false(FlowRules.can_transition(S.GAME_OVER, S.PAUSED))
 	assert_false(FlowRules.can_transition(S.PLAYING, S.MENU), "oyundan önce duraklatılır")
+	assert_false(FlowRules.can_transition(S.REVIVE, S.PAUSED), "devam kartında duraklatma yok")
+	assert_false(FlowRules.can_transition(S.REVIVE, S.MENU))
+	assert_false(FlowRules.can_transition(S.PAUSED, S.REVIVE))
+	assert_false(FlowRules.can_transition(S.MENU, S.REVIVE))
+	assert_false(FlowRules.can_transition(S.GAME_OVER, S.REVIVE))
 	for state: int in S.values():
 		assert_false(FlowRules.can_transition(state, state), "aynı duruma geçiş yok")
 
 
-func test_only_pause_freezes_world() -> void:
+func test_pause_and_revive_freeze_world() -> void:
 	assert_true(FlowRules.freezes_world(S.PAUSED))
+	assert_true(FlowRules.freezes_world(S.REVIVE), "devam kartı beklerken dünya donar")
 	for state: int in [S.MENU, S.PLAYING, S.GAME_OVER]:
 		assert_false(FlowRules.freezes_world(state))
 
 
 func test_only_playing_accepts_player_input() -> void:
 	assert_true(FlowRules.accepts_player_input(S.PLAYING))
-	for state: int in [S.MENU, S.PAUSED, S.GAME_OVER]:
+	for state: int in [S.MENU, S.PAUSED, S.GAME_OVER, S.REVIVE]:
 		assert_false(FlowRules.accepts_player_input(state))
 
 

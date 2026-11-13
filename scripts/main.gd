@@ -12,6 +12,8 @@ var _camera: TowerCamera
 var _spawner: PlatformSpawner
 var _menu: MainMenu
 var _magnet: MagnetField
+## Elmasla devam kartı (kapalıysa null).
+var _revive: ReviveCard
 ## Menüde kartalın arada bir kendiliğinden zıplaması.
 var _hop_timer: Timer
 
@@ -139,6 +141,13 @@ func _ready() -> void:
 	if Tuning.SHOP_ENABLED:
 		_add_shop()
 
+	if ReviveRules.is_enabled():
+		_revive = ReviveCard.new()
+		_revive.name = "ReviveCard"
+		_revive.accepted.connect(_rescue_player.bind(&"revive"))
+		_revive.declined.connect(GameState.end_game)
+		add_child(_revive)
+
 	var game_over_screen := GameOverScreen.new()
 	game_over_screen.name = "GameOverScreen"
 	game_over_screen.restart_requested.connect(_restart)
@@ -196,12 +205,17 @@ func _physics_process(_delta: float) -> void:
 
 
 ## Oyuncu ekranın altından düştü: kalp varsa biri harcanır ve roket onu ekranın altından yukarı taşır;
-## yoksa oyun biter.
+## yoksa (koşullar uygunsa) elmasla devam kartı çıkar; o da yoksa oyun biter.
 func _on_player_fell() -> void:
 	if GameState.use_heart():
-		_player.rescue(_camera.global_position.y + Tuning.VIEW_HEIGHT * 0.5 - Tuning.HEART_RESCUE_RISE)
-	else:
+		_rescue_player(&"heart")
+	elif _revive == null or not _revive.offer():
 		GameState.end_game()
+
+
+## Kalp ya da elmasla kurtarma: oyuncu ekranın altından kısa bir roket uçuşuyla yukarı taşınır.
+func _rescue_player(source: StringName) -> void:
+	_player.rescue(_camera.global_position.y + Tuning.VIEW_HEIGHT * 0.5 - Tuning.HEART_RESCUE_RISE, source)
 
 
 func _unhandled_input(input_event: InputEvent) -> void:
