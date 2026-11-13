@@ -19,9 +19,10 @@ static func can_spawn_heart(floor_number: int, last_spawn_floor: int) -> bool:
 	return floor_number - last_spawn_floor >= Tuning.HEART_MIN_FLOOR_GAP
 
 
-## roll: 0..1. Nadirlik Tuning.HEART_SPAWN_CHANCE ile yönetilir.
-static func should_spawn_heart(floor_number: int, last_spawn_floor: int, roll: float) -> bool:
-	return can_spawn_heart(floor_number, last_spawn_floor) and roll < Tuning.HEART_SPAWN_CHANCE
+## roll: 0..1. Nadirlik Tuning.HEART_SPAWN_CHANCE ile yönetilir; chance: etkin olasılık ("Şans" yükseltmesi).
+static func should_spawn_heart(floor_number: int, last_spawn_floor: int, roll: float,
+		chance: float = Tuning.HEART_SPAWN_CHANCE) -> bool:
+	return can_spawn_heart(floor_number, last_spawn_floor) and roll < chance
 
 
 ## Kat old_floor'dan new_floor'a çıkınca geçilen bölüm sayısı (her SECTION_FLOOR_INTERVAL kat bir bölüm).
@@ -32,9 +33,9 @@ static func sections_crossed(old_floor: int, new_floor: int) -> int:
 	return floori(float(maxi(new_floor, 0)) / interval) - floori(float(maxi(old_floor, 0)) / interval)
 
 
-## Kalp ekler; HEART_MAX'ı geçmez.
-static func add_hearts(current: int, amount: int) -> int:
-	return clampi(current + amount, 0, Tuning.HEART_MAX)
+## Kalp ekler; max_hearts'ı geçmez (taban HEART_MAX; "Geniş yürek" yükseltmesi UpgradeRules.heart_max).
+static func add_hearts(current: int, amount: int, max_hearts: int = Tuning.HEART_MAX) -> int:
+	return clampi(current + amount, 0, maxi(max_hearts, 0))
 
 
 ## Bu katta kum saati çıkabilir mi? (Olasılıktan bağımsız ön koşullar.)
@@ -44,9 +45,10 @@ static func can_spawn_hourglass(floor_number: int, last_spawn_floor: int) -> boo
 	return floor_number - last_spawn_floor >= Tuning.HOURGLASS_MIN_FLOOR_GAP
 
 
-## roll: 0..1. Nadirlik Tuning.HOURGLASS_SPAWN_CHANCE ile yönetilir.
-static func should_spawn_hourglass(floor_number: int, last_spawn_floor: int, roll: float) -> bool:
-	return can_spawn_hourglass(floor_number, last_spawn_floor) and roll < Tuning.HOURGLASS_SPAWN_CHANCE
+## roll: 0..1. Nadirlik Tuning.HOURGLASS_SPAWN_CHANCE ile yönetilir; chance: etkin olasılık ("Şans").
+static func should_spawn_hourglass(floor_number: int, last_spawn_floor: int, roll: float,
+		chance: float = Tuning.HOURGLASS_SPAWN_CHANCE) -> bool:
+	return can_spawn_hourglass(floor_number, last_spawn_floor) and roll < chance
 
 
 ## Kum saati etkisinde kamera hızı çarpanı. elapsed: etki başlayalı geçen süre (s). Başta RAMP_TIME içinde

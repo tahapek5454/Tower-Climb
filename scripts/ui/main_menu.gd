@@ -59,6 +59,7 @@ func _build_menu() -> void:
 	var diamonds := DiamondCounter.new(RECORD_VALUE_FONT_SIZE)
 	diamonds.alignment = BoxContainer.ALIGNMENT_CENTER
 	content.add_child(diamonds)
+	_add_boost_badge(diamonds)
 	content.add_child(UiStyle.spacer(6.0))
 
 	var play := UiButton.new("Oyna", true)
@@ -86,6 +87,12 @@ func _build_menu() -> void:
 	var hint: Label = UiStyle.label(HINT_FONT_SIZE, UiStyle.TEXT_DIM, HORIZONTAL_ALIGNMENT_CENTER)
 	hint.text = "←  →  koş      Space  zıpla      Esc  duraklat"
 	content.add_child(hint)
+
+
+## Stoktaki takviyeler (sonraki turun başında kullanılır): elmas sayacının yanında küçük simge + adet.
+func _add_boost_badge(diamonds: DiamondCounter) -> void:
+	if Tuning.SHOP_ENABLED and Tuning.BOOSTS_ENABLED:
+		diamonds.add_child(BoostBadge.new(HINT_FONT_SIZE + 1))
 
 
 ## Rekor satırı: üç sütun (değer + başlık). Hiç rekor yoksa yerine tek bir davet yazısı.

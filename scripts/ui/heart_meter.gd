@@ -16,7 +16,7 @@ var _lose: float = 0.0
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	custom_minimum_size = Vector2(_slot_width() * Tuning.HEART_MAX, 32.0 * ICON_SCALE + 2.0)
+	_update_width()
 	_hearts = GameState.hearts
 	Events.hearts_changed.connect(_on_hearts_changed)
 
@@ -25,8 +25,14 @@ func shown_hearts() -> int:
 	return _hearts
 
 
+## Genişlik o anki kalp sınırına göre ("Geniş yürek" yükseltmesiyle büyür; menüde alınabilir).
+func _update_width() -> void:
+	custom_minimum_size = Vector2(_slot_width() * maxi(Upgrades.heart_max(), _hearts), 32.0 * ICON_SCALE + 2.0)
+
+
 func _on_hearts_changed(hearts: int, change: int) -> void:
 	_hearts = hearts
+	_update_width()
 	if change > 0:
 		_animate(&"_pop", 0.0, 1.0, POP_TIME, Tween.TRANS_BACK)
 	elif change < 0:

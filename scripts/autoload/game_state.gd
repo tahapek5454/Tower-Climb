@@ -182,10 +182,10 @@ func _earn_diamonds(count: int) -> void:
 	Events.diamonds_changed.emit(diamonds)
 
 
-## Kalp kazanıldı (toplanabilir veya bölüm geçişi); HEART_MAX'ı geçmez.
+## Kalp kazanıldı (toplanabilir, bölüm geçişi, yedek kalp takviyesi); sınır HEART_MAX + "Geniş yürek" yükseltmesi.
 func add_hearts(amount: int) -> void:
 	if not is_game_over:
-		hearts = PickupRules.add_hearts(hearts, amount)
+		hearts = PickupRules.add_hearts(hearts, amount, Upgrades.heart_max())
 
 
 ## Oyuncu düştü: kalp varsa biri harcanır ve true döner (oyun sürer); yoksa false.

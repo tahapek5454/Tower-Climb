@@ -1,8 +1,8 @@
 class_name MagnetField
 extends Node
-## Mıknatıs etkisi (main kurar ve başlatır): MAGNET_DURATION boyunca menzildeki elmasları oyuncuya çeker,
-## spawner'ı "elmas avı"na geçirir (yeni katlarda elmas bol) ve alındığı anda üstteki boş platformlara
-## elmas serper. Kurallar MagnetRules'ta; uçuşu ve toplamayı Pickup yapar.
+## Mıknatıs etkisi (main kurar ve başlatır): verilen süre (taban MAGNET_DURATION) boyunca menzildeki elmasları
+## oyuncuya çeker, spawner'ı "elmas avı"na geçirir (yeni katlarda elmas bol) ve alındığı anda üstteki boş
+## platformlara elmas serper. Kurallar MagnetRules'ta; uçuşu ve toplamayı Pickup yapar.
 
 ## Etki bitti (main powerup_ended yayınlar).
 signal ended
@@ -13,8 +13,9 @@ var _time_left: float = 0.0
 
 
 ## Etkiyi başlatır; sürerken yeniden alınırsa süre baştan başlar (serpme yine yapılır).
-func activate() -> void:
-	_time_left = Tuning.MAGNET_DURATION
+## duration: etkin süre (s; "Güçlü mıknatıs" yükseltmesiyle UpgradeRules.magnet_duration).
+func activate(duration: float = Tuning.MAGNET_DURATION) -> void:
+	_time_left = duration
 	if spawner != null:
 		spawner.set_diamond_rush(true)
 		if player != null:
