@@ -722,3 +722,19 @@ const SFX_MAGNET_END_DB: float = -10.0
 const SHOP_ENABLED: bool = true
 ## Bir takviyeden en çok bu kadar stoklanır (her tur başında bir tanesi kendiliğinden kullanılır).
 const SHOP_BOOST_MAX_STOCK: int = 3
+
+# --- Giyilebilir kozmetikler (şapka, tişört, pantolon; CharacterModel + scripts/player/cosmetics) ---
+## false ise şapka takılmaz, tişört/pantolon boyanmaz (karakter hep özgün görünümde).
+const COSMETICS_ENABLED: bool = true
+## Şapka takılırken küçükten büyüyerek belirme süresi (s).
+const HAT_POP_TIME: float = 0.28
+## Pervaneli şapkanın pervanesi (tur/s).
+const HAT_PROPELLER_SPEED: float = 2.2
+## Sallanan parçalar (Noel Baba ucu, fes püskülü): yay sertliği, sönüm, hareketten tepki, üst sınır (radyan),
+## boşta hafif salınım genliği (radyan) ve süresi (s).
+const HAT_SWAY_STIFFNESS: float = 90.0
+const HAT_SWAY_DAMPING: float = 7.0
+const HAT_SWAY_RESPONSE: float = 3.5
+const HAT_SWAY_MAX_ANGLE: float = 0.6
+const HAT_SWAY_IDLE_ANGLE: float = 0.06
+const HAT_SWAY_IDLE_PERIOD: float = 1.9
