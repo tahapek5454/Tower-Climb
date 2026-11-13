@@ -39,7 +39,7 @@ func _unlock(id: StringName) -> void:
 	# Önce kaydet: ödül elması elmas toplamını değiştirip yeniden değer bildirimi tetikleyebilir.
 	_unlocked[String(id)] = true
 	SaveData.save_achievement(id)
-	GameState.add_diamonds(int(AchievementRules.get_def(id).get("reward", 0)))
+	GameState.grant_reward_diamonds(int(AchievementRules.get_def(id).get("reward", 0)))
 	Events.achievement_unlocked.emit(id)
 
 

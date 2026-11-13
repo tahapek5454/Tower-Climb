@@ -116,12 +116,12 @@ func test_tracker_loads_saved_state() -> void:
 	assert_eq(GameState.diamonds, before, "zaten açık başarım ikinci kez ödül vermez")
 
 
-func test_add_diamonds_saves_and_ignores_non_positive() -> void:
+func test_grant_reward_diamonds_saves_and_ignores_non_positive() -> void:
 	GameState.diamonds = 3
-	GameState.add_diamonds(0)
-	GameState.add_diamonds(-2)
+	GameState.grant_reward_diamonds(0)
+	GameState.grant_reward_diamonds(-2)
 	assert_eq(GameState.diamonds, 3)
-	GameState.add_diamonds(4)
+	GameState.grant_reward_diamonds(4)
 	assert_eq(GameState.diamonds, 7)
 	assert_eq(SaveData.load_diamonds(), 7)
 

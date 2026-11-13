@@ -313,6 +313,15 @@ def achievement():
     return out
 
 
+def record_line():
+    # Rekor çizgisi geçildi: kısa, parlak, yükselen iki notalı çan (Sol-Re, yüksek); "record" fanfarından
+    # çok daha küçük ve kısa.
+    out = silence(0.7)
+    mix(out, bell(0.5, 1568.0, 0.14, ((1.0, 1.0), (2.76, 0.2), (5.4, 0.06))), gain=0.7)
+    mix(out, bell(0.6, 2349.3, 0.2, ((1.0, 1.0), (2.76, 0.2), (5.4, 0.06))), start_seconds=0.11, gain=0.8)
+    return out
+
+
 # Yeni sesler sözlüğün SONUNA eklenir: rastgelelik sırası değişmez, eski sesler aynı üretilir.
 SOUNDS = {
     "jump": jump, "land": land, "wall": wall, "combo": combo, "combo_end": combo_end,
@@ -322,6 +331,7 @@ SOUNDS = {
     "diamond": diamond, "heart": heart, "rescue": rescue,
     "hourglass": hourglass, "hourglass_end": hourglass_end,
     "achievement": achievement,
+    "record_line": record_line,
 }
 
 

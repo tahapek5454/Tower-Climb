@@ -59,6 +59,14 @@ signal speed_increased(section: int)
 @warning_ignore("unused_signal")
 signal achievement_unlocked(id: StringName)
 
+## Oyuncu bu turun başındaki rekor katın çizgisini geçti (tur başına bir kez; floor: rekor kat).
+@warning_ignore("unused_signal")
+signal record_line_crossed(floor_number: int)
+
+## Büyük kombo elmas kazandırdı (count: elmas sayısı; GameState ödülü verdikten sonra yayınlar).
+@warning_ignore("unused_signal")
+signal combo_diamonds_earned(count: int)
+
 ## Ekran sarsıntısı iste (0..1 eklenir; kamera dinler).
 @warning_ignore("unused_signal")
 signal screen_shake(trauma: float)

@@ -19,6 +19,8 @@ func _ready() -> void:
 	Events.powerup_started.connect(_on_powerup_started)
 	Events.powerup_ended.connect(_on_powerup_ended)
 	Events.hearts_changed.connect(_on_hearts_changed)
+	Events.record_line_crossed.connect(_on_record_line_crossed)
+	Events.combo_diamonds_earned.connect(_on_combo_diamonds)
 
 
 func _on_player_event(event_name: StringName, data: Dictionary) -> void:
@@ -76,6 +78,16 @@ func _on_pickup_collected(kind: StringName, _world_position: Vector2) -> void:
 				AudioManager.play(&"pickup", 1.0, Tuning.SFX_PICKUP_DB)
 		_:
 			AudioManager.play(&"pickup", 1.0, Tuning.SFX_PICKUP_DB)
+
+
+## Kombo elması: bitiş sesinin üstüne binmesin diye biraz sonra, yüksek perdeyle elmas sesi.
+func _on_combo_diamonds(_count: int) -> void:
+	await get_tree().create_timer(Tuning.COMBO_DIAMOND_SOUND_DELAY).timeout
+	AudioManager.play(&"diamond", Tuning.COMBO_DIAMOND_PITCH, Tuning.SFX_DIAMOND_DB)
+
+
+func _on_record_line_crossed(_floor: int) -> void:
+	AudioManager.play(&"record_line", 1.0, Tuning.SFX_RECORD_LINE_DB)
 
 
 func _on_hearts_changed(_hearts: int, change: int) -> void:

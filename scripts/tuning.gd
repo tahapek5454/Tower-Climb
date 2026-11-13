@@ -596,3 +596,45 @@ const SFX_ACHIEVEMENT_DB: float = -8.0
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25
+
+# --- Rekor çizgisi (scripts/game/record_line_rules.gd, scripts/world/record_line.gd) ---
+## false: çizgi hiç oluşturulmaz.
+const RECORD_LINE_ENABLED: bool = true
+## Kayıtlı en yüksek kat bundan küçükse çizgi gösterilmez (ilk katlarda anlamsız).
+const RECORD_LINE_MIN_FLOOR: int = 5
+## Çizgi: kalınlık (px), kesik uzunluğu ve boşluğu (px), alfa; nefes alırken alfanın oynama payı ve hızı.
+const RECORD_LINE_WIDTH: float = 3.0
+const RECORD_LINE_DASH: float = 18.0
+const RECORD_LINE_GAP: float = 12.0
+const RECORD_LINE_ALPHA: float = 0.5
+const RECORD_LINE_BREATH_AMOUNT: float = 0.18
+const RECORD_LINE_BREATH_SPEED: float = 2.0
+## Arkadaki toplamalı hâle: yüksekliği (px) ve alfası.
+const RECORD_LINE_HALO_HEIGHT: float = 48.0
+const RECORD_LINE_HALO_ALPHA: float = 0.26
+## Etiket (yıldız + kat sayısı): yazı boyutu ve çizginin üstündeki boşluk (px).
+const RECORD_LINE_LABEL_SIZE: int = 15
+const RECORD_LINE_LABEL_GAP: float = 14.0
+## Geçilince: parlayıp sönme süresi (s), parlarkenki alfa, kalınlaşma çarpanı ve parıltı parçacığı sayısı.
+const RECORD_LINE_CELEBRATE_TIME: float = 0.8
+const RECORD_LINE_FLASH_ALPHA: float = 1.0
+const RECORD_LINE_FLASH_WIDTH_SCALE: float = 2.2
+const RECORD_LINE_SPARKS: int = 48
+const SFX_RECORD_LINE_DB: float = -6.0
+
+# --- Kombo elması (scripts/game/combo_diamond_rules.gd; ödül GameState, görüntü ComboPopups/PickupFx) ---
+## false: büyük kombolar elmas vermez.
+const COMBO_DIAMOND_ENABLED: bool = true
+## Bu kadar kat kazandıran kombo 1 elmas verir; sonra her COMBO_DIAMOND_STEP_FLOORS katta +1, en çok COMBO_DIAMOND_MAX.
+const COMBO_DIAMOND_MIN_FLOORS: int = 20
+const COMBO_DIAMOND_STEP_FLOORS: int = 20
+const COMBO_DIAMOND_MAX: int = 3
+## Elmas yazısı: kombo bonus yazısının üstündeki uzaklık (px), simge ölçeği, yazı boyutu, süzülme (px) ve süre (s).
+const COMBO_DIAMOND_POPUP_RAISE: float = 46.0
+const COMBO_DIAMOND_ICON_SCALE: float = 0.8
+const COMBO_DIAMOND_FONT_SIZE: int = 22
+const COMBO_DIAMOND_RISE: float = 30.0
+const COMBO_DIAMOND_LIFETIME: float = 1.3
+## Elmas sesi biraz yüksek perdeyle ve kombo bitiş sesinden bu kadar (s) sonra çalar.
+const COMBO_DIAMOND_PITCH: float = 1.2
+const COMBO_DIAMOND_SOUND_DELAY: float = 0.2
