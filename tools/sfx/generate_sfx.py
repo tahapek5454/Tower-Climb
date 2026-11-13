@@ -302,6 +302,24 @@ def hourglass_end():
     return mix(out, bell(0.3, 1568.0, 0.08), start_seconds=0.26, gain=0.35)
 
 
+def magnet():
+    # Mıknatıs: yumuşak, yukarı süzülen "vuuum" (alçak uğultu, hafif titreşimli) ve üstünde dağılan
+    # ince parıltılar (elmaslar geliyor).
+    out = silence(1.2)
+    mix(out, sweep_tone(0.9, 140, 330, 0.7, 0.06, 0.35, ((1, 1.0), (2, 0.3), (3, 0.08)), vibrato=0.015,
+                        vibrato_rate=7.0, triangle=True), gain=0.55)
+    mix(out, noise_burst(0.6, 400, 1600, 0.2, 0.25), gain=0.18)
+    for i in range(5):
+        mix(out, bell(0.3, rng.uniform(2600, 4200), 0.07), start_seconds=0.35 + i * 0.09, gain=0.2)
+    return out
+
+
+def magnet_end():
+    # Mıknatıs sönüyor: aşağı inen kısa, yumuşak "vuuu" + küçük tok tık.
+    out = sweep_tone(0.45, 330, 150, 0.35, 0.02, 0.16, ((1, 1.0), (2, 0.2)), triangle=True)
+    return mix(out, bell(0.25, 880.0, 0.06), start_seconds=0.3, gain=0.25)
+
+
 # Yeni sesler sözlüğün SONUNA eklenir: rastgelelik sırası değişmez, eski sesler aynı üretilir.
 SOUNDS = {
     "jump": jump, "land": land, "wall": wall, "combo": combo, "combo_end": combo_end,
@@ -310,6 +328,7 @@ SOUNDS = {
     "pickup": pickup, "jetpack": jetpack, "jetpack_end": jetpack_end,
     "diamond": diamond, "heart": heart, "rescue": rescue,
     "hourglass": hourglass, "hourglass_end": hourglass_end,
+    "magnet": magnet, "magnet_end": magnet_end,
 }
 
 

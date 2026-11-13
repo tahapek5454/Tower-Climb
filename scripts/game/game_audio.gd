@@ -5,6 +5,9 @@ extends Node
 
 var player: Player
 var _rng := RandomNumberGenerator.new()
+## Arka arkaya toplanan elmaslar (mıknatıs): zincir sırası ve son elmas sesinin zamanı (s).
+var _diamond_chain: int = 0
+var _last_diamond_time: float = -1000.0
 
 
 func _ready() -> void:
@@ -67,7 +70,7 @@ func _on_game_over(_score: int, _floor: int) -> void:
 func _on_pickup_collected(kind: StringName, _world_position: Vector2) -> void:
 	match kind:
 		Pickup.DIAMOND:
-			_play(&"diamond", 1.0, Tuning.SFX_DIAMOND_DB)
+			_play_diamond()
 		Pickup.HOURGLASS:
 			pass  # yavaşlama sesi powerup_started'da çalar
 		Pickup.HEART:
@@ -89,6 +92,8 @@ func _on_powerup_started(kind: StringName, _duration: float) -> void:
 			AudioManager.play(&"jetpack", 1.0, Tuning.SFX_JETPACK_DB)
 		Pickup.HOURGLASS:
 			AudioManager.play(&"hourglass", 1.0, Tuning.SFX_HOURGLASS_DB)
+		Pickup.MAGNET:
+			AudioManager.play(&"magnet", 1.0, Tuning.SFX_MAGNET_DB)
 
 
 func _on_powerup_ended(kind: StringName) -> void:
@@ -99,6 +104,20 @@ func _on_powerup_ended(kind: StringName) -> void:
 			AudioManager.play(&"jetpack_end", 1.0, Tuning.SFX_JETPACK_END_DB)
 		Pickup.HOURGLASS:
 			AudioManager.play(&"hourglass_end", 1.0, Tuning.SFX_HOURGLASS_END_DB)
+		Pickup.MAGNET:
+			AudioManager.play(&"magnet_end", 1.0, Tuning.SFX_MAGNET_END_DB)
+
+
+## Elmas sesi: kısa aralıkla gelen elmaslar (mıknatıs) perdeyi adım adım yükseltir ("tiriing" merdiveni);
+## çok sık gelenler üst üste binmesin diye atlanır.
+func _play_diamond() -> void:
+	var now: float = Time.get_ticks_msec() / 1000.0
+	var since_last: float = now - _last_diamond_time
+	if since_last < Tuning.MAGNET_SFX_MIN_INTERVAL:
+		return
+	_diamond_chain = MagnetRules.next_chain(_diamond_chain, since_last)
+	_last_diamond_time = now
+	_play(&"diamond", MagnetRules.chain_pitch(_diamond_chain), Tuning.SFX_DIAMOND_DB)
 
 
 ## Sık çalan sesler için küçük rastgele perde sapmasıyla çalar.
