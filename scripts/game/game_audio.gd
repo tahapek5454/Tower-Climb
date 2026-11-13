@@ -19,6 +19,7 @@ func _ready() -> void:
 	Events.powerup_started.connect(_on_powerup_started)
 	Events.powerup_ended.connect(_on_powerup_ended)
 	Events.hearts_changed.connect(_on_hearts_changed)
+	Events.record_line_crossed.connect(_on_record_line_crossed)
 
 
 func _on_player_event(event_name: StringName, data: Dictionary) -> void:
@@ -76,6 +77,10 @@ func _on_pickup_collected(kind: StringName, _world_position: Vector2) -> void:
 				AudioManager.play(&"pickup", 1.0, Tuning.SFX_PICKUP_DB)
 		_:
 			AudioManager.play(&"pickup", 1.0, Tuning.SFX_PICKUP_DB)
+
+
+func _on_record_line_crossed(_floor: int) -> void:
+	AudioManager.play(&"record_line", 1.0, Tuning.SFX_RECORD_LINE_DB)
 
 
 func _on_hearts_changed(_hearts: int, change: int) -> void:

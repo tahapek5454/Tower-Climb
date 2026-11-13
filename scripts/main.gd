@@ -38,6 +38,8 @@ func _ready() -> void:
 	ambient.name = "Ambient"
 	add_child(ambient)
 
+	_add_record_line()
+
 	_spawner = PlatformSpawner.new()
 	_spawner.name = "Platforms"
 	add_child(_spawner)
@@ -131,6 +133,17 @@ func _ready() -> void:
 		_menu.open()
 		_schedule_hop()
 	ScreenFade.reveal()
+
+
+## Rekor çizgisi: tur başındaki kayıtlı en yüksek kata konur (rekor küçükse ya da kapalıysa yok).
+func _add_record_line() -> void:
+	var best: int = int(GameState.records.get(SaveData.BEST_FLOOR, 0))
+	if not RecordLineRules.should_show(best):
+		return
+	var line := RecordLine.new()
+	line.name = "RecordLine"
+	line.best_floor = best
+	add_child(line)
 
 
 func _physics_process(_delta: float) -> void:

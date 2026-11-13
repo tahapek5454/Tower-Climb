@@ -55,6 +55,10 @@ signal powerup_ended(kind: StringName)
 @warning_ignore("unused_signal")
 signal speed_increased(section: int)
 
+## Oyuncu bu turun başındaki rekor katın çizgisini geçti (tur başına bir kez; floor: rekor kat).
+@warning_ignore("unused_signal")
+signal record_line_crossed(floor_number: int)
+
 ## Ekran sarsıntısı iste (0..1 eklenir; kamera dinler).
 @warning_ignore("unused_signal")
 signal screen_shake(trauma: float)
