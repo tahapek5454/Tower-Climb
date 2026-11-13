@@ -119,6 +119,9 @@ func _ready() -> void:
 		screen.link_child(settings, screen.settings_requested)
 		screen.set_settings_available(true)
 
+	if Tuning.ACHIEVEMENTS_ENABLED:
+		_add_achievements()
+
 	var game_over_screen := GameOverScreen.new()
 	game_over_screen.name = "GameOverScreen"
 	game_over_screen.restart_requested.connect(_restart)
@@ -131,6 +134,21 @@ func _ready() -> void:
 		_menu.open()
 		_schedule_hop()
 	ScreenFade.reveal()
+
+
+## Başarımlar: izleyici, bildirim ve ana menüdeki liste ekranı (Tuning.ACHIEVEMENTS_ENABLED ile kapanır).
+func _add_achievements() -> void:
+	var tracker := AchievementTracker.new()
+	tracker.name = "AchievementTracker"
+	add_child(tracker)
+	tracker.watch_player(_player)
+	var toast := AchievementToast.new()
+	toast.name = "AchievementToast"
+	add_child(toast)
+	var achievements_menu := AchievementsMenu.new()
+	achievements_menu.name = "AchievementsMenu"
+	add_child(achievements_menu)
+	_menu.link_child(achievements_menu, _menu.achievements_requested)
 
 
 func _physics_process(_delta: float) -> void:

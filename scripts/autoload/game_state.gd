@@ -151,6 +151,15 @@ func add_diamond() -> void:
 	Events.diamonds_changed.emit(diamonds)
 
 
+## Ödül elmasları (başarım vb.): toplama sayılmaz, bu turun sayacına eklenmez; oyun bitmiş olsa da verilir.
+func add_diamonds(count: int) -> void:
+	if count <= 0:
+		return
+	diamonds += count
+	SaveData.save_diamonds(diamonds)
+	Events.diamonds_changed.emit(diamonds)
+
+
 ## Kalp kazanıldı (toplanabilir veya bölüm geçişi); HEART_MAX'ı geçmez.
 func add_hearts(amount: int) -> void:
 	if not is_game_over:

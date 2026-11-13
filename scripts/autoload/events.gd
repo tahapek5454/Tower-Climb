@@ -55,6 +55,10 @@ signal powerup_ended(kind: StringName)
 @warning_ignore("unused_signal")
 signal speed_increased(section: int)
 
+## Bir başarım açıldı (id: AchievementRules tanım kimliği). Bildirim dinler.
+@warning_ignore("unused_signal")
+signal achievement_unlocked(id: StringName)
+
 ## Ekran sarsıntısı iste (0..1 eklenir; kamera dinler).
 @warning_ignore("unused_signal")
 signal screen_shake(trauma: float)

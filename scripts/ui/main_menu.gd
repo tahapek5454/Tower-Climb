@@ -6,6 +6,7 @@ extends UiScreen
 
 signal play_requested
 signal settings_requested
+signal achievements_requested
 
 const CARD_WIDTH: float = 330.0
 const TITLE_FONT_SIZE: int = 44
@@ -63,6 +64,10 @@ func _build_menu() -> void:
 	play.pressed.connect(func() -> void: play_requested.emit())
 	content.add_child(play)
 	first_focus = play
+	if Tuning.ACHIEVEMENTS_ENABLED:
+		var achievements := UiButton.new("Başarımlar")
+		achievements.pressed.connect(func() -> void: achievements_requested.emit())
+		content.add_child(achievements)
 	_settings_button = UiButton.new("Ayarlar")
 	_settings_button.pressed.connect(func() -> void: settings_requested.emit())
 	content.add_child(_settings_button)

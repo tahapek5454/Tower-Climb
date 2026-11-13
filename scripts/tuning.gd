@@ -584,6 +584,15 @@ const HOURGLASS_VIGNETTE_ALPHA: float = 0.6
 const SFX_HOURGLASS_DB: float = -6.0
 const SFX_HOURGLASS_END_DB: float = -9.0
 
+# --- Başarımlar (scripts/game/achievement_rules.gd: tanımlar, hedefler ve ödüller orada) ---
+## false ise izleyici, bildirim ve ana menü düğmesi hiç kurulmaz.
+const ACHIEVEMENTS_ENABLED: bool = true
+## Bildirim kartının ekranda kalma süresi (s), kayarak girme/çıkma süresi (s), üst kenardan boşluk (px).
+const ACHIEVEMENT_TOAST_HOLD: float = 2.8
+const ACHIEVEMENT_TOAST_SLIDE: float = 0.45
+const ACHIEVEMENT_TOAST_TOP: float = 16.0
+const SFX_ACHIEVEMENT_DB: float = -8.0
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25

@@ -12,6 +12,8 @@ const BEST_COMBO: String = "best_combo"
 const KEYS: Array[String] = [BEST_SCORE, BEST_FLOOR, BEST_COMBO]
 const WALLET_SECTION: String = "wallet"
 const DIAMONDS: String = "diamonds"
+## Açılmış başarımlar ([achievements] bölümü, id = true); rekor sıfırlama bunlara dokunmaz.
+const ACHIEVEMENTS_SECTION: String = "achievements"
 
 ## Dosya yolu (testlerde geçici bir dosyayla değiştirilir).
 static var path: String = "user://save.cfg"
@@ -75,4 +77,26 @@ static func save_diamonds(count: int) -> void:
 	var config := ConfigFile.new()
 	config.load(path)
 	config.set_value(WALLET_SECTION, DIAMONDS, maxi(count, 0))
+	config.save(path)
+
+
+## Açılmış başarımlar: {id (String) -> true}. Bozuk (true olmayan) değerler yok sayılır.
+static func load_achievements() -> Dictionary:
+	var config := ConfigFile.new()
+	config.load(path)
+	var result: Dictionary = {}
+	if not config.has_section(ACHIEVEMENTS_SECTION):
+		return result
+	for key: String in config.get_section_keys(ACHIEVEMENTS_SECTION):
+		var value: Variant = config.get_value(ACHIEVEMENTS_SECTION, key, false)
+		if value is bool and value:
+			result[key] = true
+	return result
+
+
+## Bir başarımı açılmış olarak kaydeder (dosyadaki diğer bölümlere dokunmaz).
+static func save_achievement(id: StringName) -> void:
+	var config := ConfigFile.new()
+	config.load(path)
+	config.set_value(ACHIEVEMENTS_SECTION, String(id), true)
 	config.save(path)

@@ -302,6 +302,17 @@ def hourglass_end():
     return mix(out, bell(0.3, 1568.0, 0.08), start_seconds=0.26, gain=0.35)
 
 
+def achievement():
+    # Başarım bildirimi: üç notalı (Mi-Sol-Do) yumuşak, parlak çan + küçük parıltı; "record"dan çok daha küçük.
+    out = silence(1.0)
+    for i, freq in enumerate((659.3, 784.0, 1046.5)):
+        mix(out, bell(0.55, freq, 0.2), start_seconds=i * 0.09, gain=0.75)
+    mix(out, bell(0.8, 1568.0, 0.35), start_seconds=0.22, gain=0.3)
+    for i in range(3):
+        mix(out, bell(0.25, rng.uniform(3000, 4400), 0.06), start_seconds=0.3 + i * 0.08, gain=0.12)
+    return out
+
+
 # Yeni sesler sözlüğün SONUNA eklenir: rastgelelik sırası değişmez, eski sesler aynı üretilir.
 SOUNDS = {
     "jump": jump, "land": land, "wall": wall, "combo": combo, "combo_end": combo_end,
@@ -310,6 +321,7 @@ SOUNDS = {
     "pickup": pickup, "jetpack": jetpack, "jetpack_end": jetpack_end,
     "diamond": diamond, "heart": heart, "rescue": rescue,
     "hourglass": hourglass, "hourglass_end": hourglass_end,
+    "achievement": achievement,
 }
 
 
