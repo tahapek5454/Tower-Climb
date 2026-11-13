@@ -10,7 +10,8 @@ const SOUNDS: Array[StringName] = [&"jump", &"land", &"wall", &"combo", &"combo_
 		&"pickup", &"jetpack", &"jetpack_end", &"diamond", &"heart", &"rescue",
 		&"hourglass", &"hourglass_end", &"achievement", &"record_line",
 		&"crumble_crack", &"crumble",
-		&"magnet", &"magnet_end"]
+		&"magnet", &"magnet_end",
+		&"shop_buy", &"shop_equip", &"shop_deny"]
 const SFX_BUS: StringName = &"SFX"
 const MUSIC_BUS: StringName = &"Music"
 ## Aynı anda çalabilecek en fazla efekt sayısı.

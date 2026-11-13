@@ -740,3 +740,9 @@ const TRAIL_SPARKLE_SCALE_MIN: float = 0.07
 const TRAIL_SPARKLE_SCALE_MAX: float = 0.16
 const TRAIL_SPARKLE_RADIUS: float = 16.0
 const TRAIL_SPARKLE_ALPHA: float = 0.7
+
+# --- Mağaza ekranı (scripts/ui/shop/) ---
+## Satın alma (parlak arpej + parıltı), kuşanma (küçük tık + çan), yetmiyor (yumuşak, alçak "tık-tık").
+const SFX_SHOP_BUY_DB: float = -6.0
+const SFX_SHOP_EQUIP_DB: float = -9.0
+const SFX_SHOP_DENY_DB: float = -11.0
