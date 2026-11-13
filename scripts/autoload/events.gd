@@ -51,6 +51,7 @@ signal powerup_started(kind: StringName, duration: float)
 signal powerup_ended(kind: StringName)
 
 ## Yeni bölüme geçildi, kamera kalıcı olarak hızlandı (section: ulaşılan bölüm, 1'den başlar).
+## Şu an dinleyen yok (ekran yazısı kullanıcı isteğiyle kaldırıldı); ses/efekt bağlamak için hazır.
 @warning_ignore("unused_signal")
 signal speed_increased(section: int)
 

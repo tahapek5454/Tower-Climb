@@ -1,7 +1,7 @@
 class_name ComboPopups
 extends CanvasLayer
 ## Kombo yazıları: oyuncunun üstünde hafifçe büyüyerek beliren, yükselip solan
-## "x3" (sadece çarpan) ve kombo bitişinde "+144"; bölüm geçişinde ekranın üstünde "HIZLANIYOR!". Ekran koordinatında çizilir. Minimal tutulur.
+## "x3" (sadece çarpan) ve kombo bitişinde "+144". Ekran koordinatında çizilir. Minimal tutulur.
 ## Yeni kombo yazısı öncekinin yerini alır (ekran dolmasın); bonus yazısı ayrıdır.
 
 ## Kombo altın (HUD kombo satırıyla aynı), bonus sıcak turuncu; dış çizgi karakter/platformlarla aynı lacivert.
@@ -11,12 +11,6 @@ const OUTLINE_COLOR := UiStyle.OUTLINE
 const OUTLINE_SIZE: int = 4
 ## Yazının ekran kenarlarına en fazla bu kadar yaklaşmasına izin verilir.
 const SCREEN_MARGIN: float = 24.0
-## Bölüm geçişinde hızlanma uyarısı: ekranın üst ortasında, mercan rengi.
-const SPEED_UP_TEXT: String = "HIZLANIYOR!"
-const SPEED_UP_COLOR := Color(1.0, 0.52, 0.45)
-const SPEED_UP_FONT_SIZE: int = 30
-const SPEED_UP_LIFETIME: float = 1.8
-const SPEED_UP_POINT := Vector2(0.5, 0.24)
 
 ## Yazıların çıkacağı yer bu düğümün ekrandaki konumuna göre hesaplanır.
 var player: Node2D
@@ -27,13 +21,6 @@ var _combo_label: Label
 func _ready() -> void:
 	Events.combo_changed.connect(_on_combo_changed)
 	Events.combo_ended.connect(_on_combo_ended)
-	Events.speed_increased.connect(_on_speed_increased)
-
-
-func _on_speed_increased(_section: int) -> void:
-	if GameFlow.is_playing():
-		_spawn(SPEED_UP_TEXT, SPEED_UP_FONT_SIZE, SPEED_UP_COLOR, SPEED_UP_LIFETIME,
-				Vector2(Tuning.VIEW_WIDTH, Tuning.VIEW_HEIGHT) * SPEED_UP_POINT)
 
 
 func _on_combo_changed(jumps: int, _floors: int) -> void:
@@ -53,8 +40,7 @@ func _on_combo_ended(_jumps: int, floors: int, bonus: int) -> void:
 				BONUS_COLOR, Tuning.BONUS_POPUP_LIFETIME)
 
 
-## at: ekran noktası (verilmezse oyuncunun üstü).
-func _spawn(text: String, font_size: int, color: Color, lifetime: float, at: Vector2 = Vector2.INF) -> Label:
+func _spawn(text: String, font_size: int, color: Color, lifetime: float) -> Label:
 	var label := Label.new()
 	label.text = text
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -66,8 +52,7 @@ func _spawn(text: String, font_size: int, color: Color, lifetime: float, at: Vec
 	add_child(label)
 	label.size = label.get_minimum_size()
 	label.pivot_offset = label.size * 0.5
-	var center: Vector2 = _anchor_point(label.size) if at == Vector2.INF else at
-	label.position = center - label.size * 0.5
+	label.position = _anchor_point(label.size) - label.size * 0.5
 	label.scale = Vector2.ZERO
 	_animate(label, lifetime)
 	return label

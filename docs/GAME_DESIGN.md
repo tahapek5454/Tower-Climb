@@ -102,7 +102,7 @@ Değerler `const` olarak kalır (oyun içi canlı ayar paneli şimdilik yok). İ
 | `CAMERA_START_FLOOR` | 5 | kamera bu katta kaymaya başlar |
 | `CAMERA_START_SPEED` | 40 px/s | |
 | `CAMERA_SPEED_STEP` | +12 px/s her 30 s | |
-| `CAMERA_SECTION_SPEED_BONUS` | +30 px/s her bölüm geçişinde (2 s'de yumuşak) | Aşama 6: seviye atladıkça hızlanma; "HIZLANIYOR!" yazısı |
+| `CAMERA_SECTION_SPEED_BONUS` | +30 px/s her bölüm geçişinde (2 s'de yumuşak) | Aşama 6: seviye atladıkça hızlanma (yazı yok: oyuncu hızı hisseder) |
 | `CAMERA_MAX_SPEED` | 320 px/s | Aşama 6'da 260'tan yükseltildi |
 | `CAMERA_CATCHUP_ZONE` | ekranın üst %30'u | |
 | `COMBO_MIN_FLOORS` | 2 | |
