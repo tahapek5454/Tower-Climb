@@ -73,17 +73,25 @@ func _spawn(floor_number: int) -> void:
 	_platforms.append(platform)
 	_prev_center = center
 	_prev_width = width
+	# Bir katta en fazla bir toplanabilir; roket öncelikli.
 	if JetpackRules.should_spawn(floor_number, _last_jetpack_floor, _rng.randf()):
 		_last_jetpack_floor = floor_number
 		_add_pickup(platform, Pickup.JETPACK)
+	elif PickupRules.should_spawn_diamond(floor_number, _rng.randf()):
+		_add_pickup(platform, Pickup.DIAMOND, PickupRules.is_air_spawn(_rng.randf()))
 
 
-## Toplanabiliri platformun çocuğu olarak, yüzeyin üstüne koyar (platformla birlikte silinir).
-func _add_pickup(platform: Platform, kind: StringName) -> void:
+## Toplanabiliri platformun çocuğu olarak koyar (platformla birlikte silinir). in_air: yüzeyin üstünde
+## değil, bir üst kata giden yolda, kulenin herhangi bir yerinde süzülür.
+func _add_pickup(platform: Platform, kind: StringName, in_air: bool = false) -> void:
 	var pickup := Pickup.new()
 	pickup.setup(kind)
-	pickup.position = Vector2(JetpackRules.pickup_offset_x(platform.width, _rng.randf()),
-			-Tuning.PICKUP_HOVER_HEIGHT)
+	if in_air:
+		pickup.position = Vector2(PickupRules.air_offset_x(platform.position.x, _rng.randf()),
+				-Tuning.PICKUP_AIR_HEIGHT)
+	else:
+		pickup.position = Vector2(JetpackRules.pickup_offset_x(platform.width, _rng.randf()),
+				-Tuning.PICKUP_HOVER_HEIGHT)
 	platform.add_child(pickup)
 
 

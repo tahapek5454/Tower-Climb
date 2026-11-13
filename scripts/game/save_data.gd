@@ -2,6 +2,7 @@ class_name SaveData
 extends RefCounted
 ## Kalıcı rekorlar (user://save.cfg, [records] bölümü; ayarlardan ayrı dosya).
 ## Rekorlar: en iyi skor, en yüksek kat, en uzun kombo (puan kazandıran bir komboda kazanılan kat).
+## Ayrıca biriken elmaslar ([wallet] bölümü; rekor sıfırlama bunlara dokunmaz).
 ## Karşılaştırma/birleştirme saf fonksiyonlar (test edilebilir); dosya işlemleri ayrı.
 
 const SECTION: String = "records"
@@ -9,6 +10,8 @@ const BEST_SCORE: String = "best_score"
 const BEST_FLOOR: String = "best_floor"
 const BEST_COMBO: String = "best_combo"
 const KEYS: Array[String] = [BEST_SCORE, BEST_FLOOR, BEST_COMBO]
+const WALLET_SECTION: String = "wallet"
+const DIAMONDS: String = "diamonds"
 
 ## Dosya yolu (testlerde geçici bir dosyayla değiştirilir).
 static var path: String = "user://save.cfg"
@@ -56,4 +59,20 @@ static func save_records(records: Dictionary) -> void:
 	config.load(path)
 	for key: String in KEYS:
 		config.set_value(SECTION, key, int(records.get(key, 0)))
+	config.save(path)
+
+
+## Biriken elmas sayısı (dosya yoksa veya değer bozuksa 0).
+static func load_diamonds() -> int:
+	var config := ConfigFile.new()
+	config.load(path)
+	var value: Variant = config.get_value(WALLET_SECTION, DIAMONDS, 0)
+	return maxi(int(value), 0) if value is int or value is float else 0
+
+
+## Elmas sayısını kaydeder (dosyadaki diğer bölümlere dokunmaz).
+static func save_diamonds(count: int) -> void:
+	var config := ConfigFile.new()
+	config.load(path)
+	config.set_value(WALLET_SECTION, DIAMONDS, maxi(count, 0))
 	config.save(path)

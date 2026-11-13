@@ -255,12 +255,23 @@ def jetpack_end():
     return mix(out, sweep_tone(0.2, 300, 140, 0.1, 0.004, 0.06, ((1, 1.0), (2, 0.2))), gain=0.8)
 
 
+def diamond():
+    # Elmas: kristal gibi iki notalı parlak "tiriing" (Mi-Si, yüksek), arkasında kısa ince parıltı.
+    out = silence(0.6)
+    mix(out, bell(0.5, 1318.5, 0.12, ((1.0, 1.0), (2.76, 0.25), (5.4, 0.08))), gain=0.7)
+    mix(out, bell(0.55, 1975.5, 0.16, ((1.0, 1.0), (2.76, 0.22), (5.4, 0.07))), start_seconds=0.06, gain=0.8)
+    for i in range(3):
+        mix(out, bell(0.15, rng.uniform(4200, 5600), 0.035), start_seconds=0.1 + i * 0.05, gain=0.12)
+    return out
+
+
 # Yeni sesler sözlüğün SONUNA eklenir: rastgelelik sırası değişmez, eski sesler aynı üretilir.
 SOUNDS = {
     "jump": jump, "land": land, "wall": wall, "combo": combo, "combo_end": combo_end,
     "section": section, "game_over": game_over, "whoosh": whoosh,
     "ui_hover": ui_hover, "ui_click": ui_click, "ui_back": ui_back, "record": record,
     "pickup": pickup, "jetpack": jetpack, "jetpack_end": jetpack_end,
+    "diamond": diamond,
 }
 
 

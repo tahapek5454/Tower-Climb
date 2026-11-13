@@ -117,6 +117,11 @@ Toplanabilir nesneler platformların üstünde hafifçe süzülür (`Pickup`); o
 - **Güvenli bırakma:** süre dolunca roket oyuncuyu üstteki platformlardan birinin (yatayda en yakını) üstüne taşır, yüzeyin biraz üstünde küçük bir sıçrayışla bırakır; boş roket arkaya düşüp kaybolur. Uçarken ekranın altında kalmak mümkün değil (kamera oyuncuyu izler).
 - **HUD:** uçuş sürerken "ROKET" satırı ve yakıt çubuğu.
 
+### Elmas (para)
+- **Çıkış:** nadir. Her katta `DIAMOND_SPAWN_CHANCE` (%6, ≈ 17 katta bir), `DIAMOND_MIN_FLOOR` (3) kattan itibaren. %45 (`PICKUP_AIR_CHANCE`) havada — iki kat arasında, kulenin herhangi bir yerinde — kalanı platformun üstünde. Bir katta tek toplanabilir (roket öncelikli). `DIAMOND_ENABLED = false` kapatır.
+- **Birikim:** toplam kalıcıdır (`user://save.cfg` [wallet]); her alışta kaydedilir; rekor sıfırlama silmez. HUD'da "ELMAS" satırı, ana menüde toplam, oyun sonunda bu oyunda toplanan (+N).
+- **Harcama:** henüz yok (ileride).
+
 ## Juice listesi (Aşama 2)
 - Squash & stretch: zıplarken dikey uzama, inişte yatay ezilme (hıza orantılı).
 - Takla dönüşleri (tween), hareket izi (trail) ve hız çizgileri.

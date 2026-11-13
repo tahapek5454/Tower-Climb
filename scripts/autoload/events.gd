@@ -36,6 +36,10 @@ signal flow_changed(new_state: int, old_state: int)
 @warning_ignore("unused_signal")
 signal pickup_collected(kind: StringName, world_position: Vector2)
 
+## Biriken elmas sayısı değişti (total: kayıtlı toplam).
+@warning_ignore("unused_signal")
+signal diamonds_changed(total: int)
+
 ## Süreli bir güçlendirme başladı / bitti (kind: Pickup türü; duration: saniye). HUD ve ses dinler.
 @warning_ignore("unused_signal")
 signal powerup_started(kind: StringName, duration: float)

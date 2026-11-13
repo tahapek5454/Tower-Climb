@@ -1,7 +1,7 @@
 class_name Hud
 extends CanvasLayer
 ## HUD: kulenin sol dışında, sol üstte küçük bir kart (radyo paneliyle aynı genişlik ve stil, UiStyle).
-## Satırlar: KAT (büyük), SKOR (sayarak artar, bonusla kısa büyür), EN İYİ; kombo sürerken altın
+## Satırlar: KAT (büyük), SKOR (sayarak artar, bonusla kısa büyür), EN İYİ, ELMAS; kombo sürerken altın
 ## renkli kombo satırı ve kalan süre çubuğu açılır. Değerleri GameState/Events'ten okur.
 ## Ana menüde gizli; oyun başlayınca yukarıdan süzülerek belirir.
 
@@ -121,6 +121,9 @@ func _build() -> void:
 	_score_holder.resized.connect(_align_score)
 	score_row.add_child(_score_holder)
 	_best_label = _add_row(column, "EN İYİ", BEST_FONT_SIZE, UiStyle.TEXT_DIM)
+	var diamonds := DiamondCounter.new(SCORE_FONT_SIZE)
+	diamonds.size_flags_horizontal = Control.SIZE_EXPAND | Control.SIZE_SHRINK_END
+	_row(column, "ELMAS").add_child(diamonds)
 
 	_combo_box = VBoxContainer.new()
 	_combo_box.add_theme_constant_override(&"separation", 3)

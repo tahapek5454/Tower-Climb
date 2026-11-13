@@ -54,6 +54,9 @@ var run_time: float = 0.0
 var run_best_combo: int = 0
 ## Son biten oyunda kırılan rekorlar (SaveData.KEYS'ten); oyun sonu ekranı için.
 var new_records: Array[String] = []
+## Biriken elmaslar (para; kalıcı, her alışta kaydedilir) ve bu oyunda toplananlar.
+var diamonds: int = 0
+var run_diamonds: int = 0
 
 var _combo := ComboCounter.new()
 ## Oyuncunun en son indiği kat (zıplanan kat); kazanılan katı hesaplamak için.
@@ -67,6 +70,7 @@ var _skip_combo_landing: bool = false
 func _ready() -> void:
 	records = SaveData.load_records()
 	high_score = records[SaveData.BEST_SCORE]
+	diamonds = SaveData.load_diamonds()
 	_combo.changed.connect(_on_combo_changed)
 	_combo.ended.connect(_on_combo_ended)
 
@@ -125,9 +129,20 @@ func end_flight() -> void:
 	_skip_combo_landing = true
 
 
-## Yeni oyun için her şeyi sıfırlar (en yüksek skor hariç).
+## Elmas alındı: toplam hemen kaydedilir (oyun yarıda kapansa da kaybolmaz).
+func add_diamond() -> void:
+	if is_game_over:
+		return
+	diamonds += 1
+	run_diamonds += 1
+	SaveData.save_diamonds(diamonds)
+	Events.diamonds_changed.emit(diamonds)
+
+
+## Yeni oyun için her şeyi sıfırlar (en yüksek skor ve elmaslar hariç).
 func reset() -> void:
 	is_game_over = false
+	run_diamonds = 0
 	_combo.clear()
 	_current_floor = 0
 	_flying = false

@@ -1,6 +1,6 @@
 class_name MainMenu
 extends UiScreen
-## Ana menü: oyun dünyasının (başlangıç alanı) üstünde, hafif karartmayla. Zıplayan başlık, rekorlar,
+## Ana menü: oyun dünyasının (başlangıç alanı) üstünde, hafif karartmayla. Zıplayan başlık, rekorlar, elmaslar,
 ## Oyna / Ayarlar / Çıkış (web'de Çıkış yok), tuş ipuçları; sağ altta yapımcı kartı (CreatorInfo).
 ## Ayarlar düğmesi ayarlar ekranı gelene kadar (madde 5) pasif.
 
@@ -54,6 +54,9 @@ func _build_menu() -> void:
 	_title = BouncyTitle.new("TOWER CLIMB", TITLE_FONT_SIZE, 6)
 	content.add_child(_title)
 	content.add_child(_build_records())
+	var diamonds := DiamondCounter.new(RECORD_VALUE_FONT_SIZE)
+	diamonds.alignment = BoxContainer.ALIGNMENT_CENTER
+	content.add_child(diamonds)
 	content.add_child(UiStyle.spacer(6.0))
 
 	var play := UiButton.new("Oyna", true)

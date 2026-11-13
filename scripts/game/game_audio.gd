@@ -61,8 +61,12 @@ func _on_game_over(_score: int, _floor: int) -> void:
 		AudioManager.play(&"record", 1.0, Tuning.SFX_RECORD_DB)
 
 
-func _on_pickup_collected(_kind: StringName, _world_position: Vector2) -> void:
-	AudioManager.play(&"pickup", 1.0, Tuning.SFX_PICKUP_DB)
+func _on_pickup_collected(kind: StringName, _world_position: Vector2) -> void:
+	match kind:
+		Pickup.DIAMOND:
+			_play(&"diamond", 1.0, Tuning.SFX_DIAMOND_DB)
+		_:
+			AudioManager.play(&"pickup", 1.0, Tuning.SFX_PICKUP_DB)
 
 
 func _on_powerup_started(kind: StringName, _duration: float) -> void:

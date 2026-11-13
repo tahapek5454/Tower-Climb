@@ -527,6 +527,20 @@ const SFX_PICKUP_DB: float = -6.0
 const SFX_JETPACK_DB: float = -8.0
 const SFX_JETPACK_END_DB: float = -10.0
 
+# --- Elmas (para; Aşama 6; scripts/game/pickup_rules.gd) ---
+## false: elmas hiç çıkmaz.
+const DIAMOND_ENABLED: bool = true
+## NADİRLİK: her katta elmas çıkma olasılığı (0..1). Büyüt = daha sık. 0,06 ≈ 17 katta bir.
+const DIAMOND_SPAWN_CHANCE: float = 0.06
+## Bu kattan önce elmas çıkmaz.
+const DIAMOND_MIN_FLOOR: int = 3
+## Çıkan toplanabilirin havada (iki kat arasında, zıplama yolunda) olma olasılığı; kalanı platformun üstünde.
+const PICKUP_AIR_CHANCE: float = 0.45
+## Havadaki toplanabilirin altındaki platformun yüzeyinden yüksekliği (px) ve duvarlara en yakın mesafesi.
+const PICKUP_AIR_HEIGHT: float = FLOOR_SPACING * 0.55
+const PICKUP_AIR_WALL_MARGIN: float = 60.0
+const SFX_DIAMOND_DB: float = -7.0
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25

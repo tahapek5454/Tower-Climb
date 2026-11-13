@@ -114,6 +114,35 @@ func test_reset_records_clears_saved_and_lowers_high_score() -> void:
 	assert_eq(state.high_score, state.score, "en iyi skor oyundaki skora iner")
 
 
+func test_diamonds_save_and_load_beside_records() -> void:
+	assert_eq(SaveData.load_diamonds(), 0, "dosya yoksa 0")
+	var records: Dictionary = {SaveData.BEST_SCORE: 900, SaveData.BEST_FLOOR: 42, SaveData.BEST_COMBO: 17}
+	SaveData.save_records(records)
+	SaveData.save_diamonds(12)
+	assert_eq(SaveData.load_diamonds(), 12)
+	assert_eq(SaveData.load_records(), records, "elmas kaydı rekorları bozmaz")
+	SaveData.save_records(SaveData.empty())
+	assert_eq(SaveData.load_diamonds(), 12, "rekor kaydı elmasları bozmaz")
+
+
+func test_game_state_collects_and_keeps_diamonds() -> void:
+	SaveData.save_diamonds(5)
+	var state: Node = _new_state()
+	assert_eq(state.diamonds, 5, "toplam kayıttan gelir")
+	state.add_diamond()
+	state.add_diamond()
+	assert_eq(state.diamonds, 7)
+	assert_eq(state.run_diamonds, 2)
+	assert_eq(SaveData.load_diamonds(), 7, "her alışta kaydedilir")
+	state.reset_records()
+	state.reset()
+	assert_eq(state.diamonds, 7, "yeni oyun ve rekor sıfırlama elmasları silmez")
+	assert_eq(state.run_diamonds, 0)
+	state.end_game()
+	state.add_diamond()
+	assert_eq(state.diamonds, 7, "oyun bittikten sonra sayılmaz")
+
+
 func _new_state() -> Node:
 	var state: Node = GameStateScript.new()
 	state.set_physics_process(false)

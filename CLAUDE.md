@@ -107,6 +107,7 @@ Player (CharacterBody2D)      ← scripts/player/player.gd — hareket, çarpı�
 ### Güçlendirmeler (Aşama 6)
 - Toplanabilir nesne = `Pickup` (Area2D, platformun çocuğu); alınınca `Events.pickup_collected(kind, konum)`. Etkiyi `main` oyuncuya uygular; süreli etkiler `Events.powerup_started/ended` ile duyurulur (HUD, ses).
 - Kurallar saf sınıflarda (`JetpackRules`, `JetpackFlight`) + GUT; sayılar `Tuning.JETPACK_*` / `PICKUP_*`. Oyuncunun özel hareket modu `player.gd`'de (`_flight`); görüntüsü `Visual` katmanında (`JetpackFx`, `CharacterModel.set_jetpack_equipped`, `fly` animasyonu).
+- Elmas (para): çıkış/yerleşim `PickupRules` + `Tuning.DIAMOND_*`/`PICKUP_AIR_*`; toplam `GameState.diamonds` → `SaveData.save_diamonds` ([wallet]); gösterim `DiamondCounter`.
 
 ### Ekran ve pencere
 - Tasarım çözünürlüğü **1280 x 720** sabittir (`Tuning.VIEW_WIDTH/HEIGHT`, stretch `canvas_items`, aspect `keep`). Tüm yerleşim ve oynanış sayıları bu koordinatlara göredir; pencere büyüsün diye bu değerleri **değiştirme**.

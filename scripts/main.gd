@@ -60,6 +60,10 @@ func _ready() -> void:
 	game_audio.player = _player
 	add_child(game_audio)
 
+	var pickup_fx := PickupFx.new()
+	pickup_fx.name = "PickupFx"
+	add_child(pickup_fx)
+
 	var hit_stop := HitStop.new()
 	hit_stop.name = "HitStop"
 	add_child(hit_stop)
@@ -194,8 +198,11 @@ func _on_player_event(event_name: StringName, data: Dictionary) -> void:
 
 
 func _on_pickup_collected(kind: StringName, _world_position: Vector2) -> void:
-	if kind == Pickup.JETPACK:
-		_player.start_jetpack()
+	match kind:
+		Pickup.JETPACK:
+			_player.start_jetpack()
+		Pickup.DIAMOND:
+			GameState.add_diamond()
 
 
 func _on_game_over(_final_score: int, _final_floor: int) -> void:

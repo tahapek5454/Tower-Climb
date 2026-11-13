@@ -1,13 +1,13 @@
 # İlerleme
 
-**Aktif aşama:** **Aşama 6 — Ek özellikler** (madde 1 — roket/jetpack yapıldı, kullanıcı testi bekleniyor)
+**Aktif aşama:** **Aşama 6 — Ek özellikler** (madde 1 roket onaylı; madde 2 elmas yapıldı, madde 3 kalp sırada)
 **Durum:** Aşama 1–5 tamam ve onaylı. Aşama 6 2026-11-13'te başladı; kapsam madde madde kullanıcıyla belirleniyor (aşağıda "Aşama 6").
 
 ## ▶ Yeni oturumda buradan devam
 **Durum:** Aşama 1–5 tamam. Sıradaki: **Aşama 6 — Ek özellikler**. Kapsam belirlenmedi; kullanıcıyla netleştirilecek. Altın kural: kullanıcı onaylamadan kod yazma, aşamayı kendiliğinden bitirip bir sonrakine geçme.
 
 0. **Aşama 6 sürüyor:** önce aşağıdaki "Aşama 6" bölümünü oku (yapılan madde, bekleyen kullanıcı onayı).
-1. CLAUDE.md bölüm 0 ortam kontrolünü yap, tabloyla raporla (godot 4.7.2 — mono değil, git, node, `claude mcp list` → godot ✔ / blender ✔ (rea ve playwright bu projede kapalı olabilir), `godot --headless --path . --quit`). Ayrıca GUT testlerini çalıştır: **146 test geçmeli** (`godot --headless --path . -s res://addons/gut/gut_cmdln.gd`).
+1. CLAUDE.md bölüm 0 ortam kontrolünü yap, tabloyla raporla (godot 4.7.2 — mono değil, git, node, `claude mcp list` → godot ✔ / blender ✔ (rea ve playwright bu projede kapalı olabilir), `godot --headless --path . --quit`). Ayrıca GUT testlerini çalıştır: **154 test geçmeli** (`godot --headless --path . -s res://addons/gut/gut_cmdln.gd`).
 2. Oku: bu dosyadaki **"Aşama 6 hazırlığı"** ve **"Aşama 5 sonrası mimari özeti"** bölümleri, `docs/GAME_DESIGN.md` ("Başlangıç ayar değerleri"), ayrıca bu dosyadaki "Aşama 3 model notları" altındaki **"Genişletilebilirlik"** notu (yeni animasyon / kemiğe takılan aksesuar nasıl eklenir).
 3. Kullanıcıya tek cümleyle durumu söyle; ardından **Aşama 6'nın maddelerini ve yaklaşımını kullanıcıyla netleştir** ("Aşama 6 hazırlığı"ndaki sorular). Onay almadan kod yazma. Tek seferde tek madde: bitir → doğrula (GUT + ekran görüntüsü) → commit → bu dosyayı güncelle → kullanıcıya nasıl test edeceğini söyle.
 4. Araç ön koşulları (CLAUDE.md bölüm 2): Aşama 6 için kullanıcının kurması gereken bir şey kapsama göre belirlenir. Yeni 3D model/animasyon gerekirse Blender 5.3 + blender-mcp hazır (`get_addon_status` ile doğrula); Tripo API'de kredi yok, üretim Tripo web sitesinde (ücretsiz plan, **H2.5**) kullanıcı tarafından yapılır. İnternetten asset indirme, ücretli servis ve hesap açma yasak (kullanıcıya bırak).
@@ -31,14 +31,19 @@
 
 ## Aşama 6 — Ek özellikler
 Kapsam madde madde kullanıcıyla belirleniyor (fikir listesi: "Aşama 6 hazırlığı").
-- [x] 1. Roket / jetpack + ortak toplanabilir altyapısı (`Pickup`, `Events.pickup_collected`, `powerup_started/ended`) — **kullanıcı testi/onayı bekleniyor**
-- [ ] Sonraki maddeler belirlenmedi (para, kanat, kum saati, bağımsız objeler… kullanıcıya sor)
+- [x] 1. Roket / jetpack + ortak toplanabilir altyapısı (`Pickup`, `Events.pickup_collected`, `powerup_started/ended`) — kullanıcı onayladı ("iyi çalışıyor")
+- [x] 2. Elmas (para): nadir, platformda ya da havada; kalıcı toplam (`save.cfg` [wallet]); HUD + ana menü + oyun sonu — **kullanıcı testi bekleniyor**
+- [ ] 3. Kalp (can): oyun turu bazlı, bölüm geçişinde +1, ölünce 1 kalp harcanır ve roketle kurtarılır
+- Kanat iptal (kullanıcı: "roket yeterli"). Para harcama (mağaza vb.) sonra; şimdilik sadece birikim.
 
 ### Aşama 6 kararları (2026-11-13)
 - Kullanıcı isteği (roket): arada bir çıksın, nadirliği değişkenle yönetilsin; alınınca karakter süpermen gibi kollarını yukarı diksin, roket sırtına takılsın, alev çıksın; 3 s uçursun; uçarken puan kazanılsın; süre bitince roket kaybolsun ama oyuncuyu öldürmesin (platforma düşebileceği yere bıraksın); nesne hafifçe süzülsün; ses + sarsıntı + HUD çubuğu.
 - Madde 1 uygulama: `JetpackRules` (saf: çıkma koşulu, iniş platformu seçimi, yakıt oranı, geçilen kat), `JetpackFlight` (uçuş evreleri BOOST → APPROACH → DONE; `step` yeni hızı döndürür), `Player.start_jetpack/is_flying/is_jetpack_landing` (uçarken `_fly`; olaylar `jetpack_started/ended`; iniş platformlarını `platforms_above` Callable'ı ile alır — `main` `PlatformSpawner.platforms_above`'u bağlar), `Pickup` + `JetpackArt` (2D çizim ve ortak renkler), `PlatformSpawner._add_pickup` (platformun çocuğu → onunla silinir), `GameState.begin_flight/register_flight_floor/end_flight` (kat puanı var, kombo bonusu yok; kombo süresi uçarken donar, roket inişi kombo için sayılmaz). Görsel: `fly` animasyonu (`eagle_anims.py` `pose_fly`; kollar kısa olduğu için üst kol bu pozda ×1,3 uzar — `_arm_stretch`, üst kol ölçeği her animasyonda anahtarlanır), uçarken model profilden 52° kameraya döner (`AnimationRules.view_angle_degrees`, `CharacterModel.set_view_angle`), sırt roketi `JetpackModel` (hazır şekillerden kodla, `toon_flat.gdshader` + outline; `chest` kemiğine `BoneAttachment3D`, takılırken büyüyerek belirir), `JetpackFx` (memeden jet + dünyada kalan ateş/duman izi + ışık hâlesi + düşen boş roket), kalkışta toz + sarsıntı, uçarken `SmoothTrail` kapalı ve uzama `JETPACK_STRETCH`. HUD "ROKET" satırı + yakıt çubuğu. Sesler `pickup`, `jetpack` (3,4 s gürleme), `jetpack_end`. Debug F7 (`debug_spawn_jetpack`, project.godot'a eklendi): üstteki ilk platforma roket koyar.
 - Doğrulama (2026-11-13): GUT 146 (`test_jetpack_rules.gd` 9, GameState uçuş 2, animasyon 1). Script + ekran görüntüleri: roket alındı, 3 s'de kat 1 → 27–28, yaklaşma ~0,5 s, platformun üstünde bırakıldı, oyuncu indi, oyun bitmedi; poz/roket/alev/HUD çubuğu görüntüde doğrulandı. Sesler dinlenmedi (kullanıcı dinlemeli). Gerçek oyunda doğal çıkış (nadirlik) ve uzun oyunda his denenmedi.
 - Bilinen sınır: iskelette parmak kemiği yok → "yumruk" yapılamıyor (eller açık kalıyor). Kollar kısa; başın üstüne tam uzanmıyor, başın iki yanında "V" duruyor. İstenirse Blender'da parmak kemiği/el modeli gerekir.
+- Kullanıcı isteği (elmas, 2026-11-13): para olsun ama nadir; elmas biçiminde; biriksin ve en yüksek rekor gibi kaydedilsin; aktif elmas gösterilsin; havada da platformda da çıkabilsin; harcama sonra.
+- Madde 2 uygulama: `PickupRules` (saf: `should_spawn_diamond`, `is_air_spawn`, `air_offset_x`), `Tuning.DIAMOND_*` (NADİRLİK `DIAMOND_SPAWN_CHANCE` 0,06 ≈ 17 katta bir; `DIAMOND_MIN_FLOOR` 3) ve `PICKUP_AIR_*` (%45 havada: platformun 70 px üstünde, kulenin herhangi bir x'inde). Bir katta tek toplanabilir, roket öncelikli. `Pickup.DIAMOND` (döner gibi daralıp açılır; renkler `Pickup.glow_color/sparkle_color`), `DiamondArt` (kesme taş çizimi + renkler), `PickupFx` (alınınca türün renginde parıltı patlaması). `GameState.diamonds/run_diamonds/add_diamond` → her alışta `SaveData.save_diamonds` (`[wallet] diamonds`; rekor sıfırlama dokunmaz) + `Events.diamonds_changed`. `DiamondCounter` (simge + sayı, alınca büyür) HUD "ELMAS" satırında ve ana menüde; oyun sonu ekranında "Elmas +N" satırı (toplandıysa). Ses `diamond`.
+- Doğrulama (elmas): GUT 154 (`test_pickup_rules.gd` 6, SaveData/GameState elmas 2). Ekran görüntüsü: platform üstü ve havadaki elmas, toplama parıltısı, HUD ve menü sayacı; kayıt geçici dosyaya yazıldı (kullanıcı `save.cfg`'si değişmedi). Ses dinlenmedi.
 - Tuzak: `-s` doğrulama betiğinde `class_name`'lere (Player, Pickup, FlowRules) doğrudan başvurma — betik derlenmez ve pencere asılı kalır; düğüm adı / `load(...)` kullan. Çıktıyı boruya (`| Select-Object`) bağlama, dosyaya yönlendir (`Start-Process -RedirectStandardOutput` + `WaitForExit(ms)` + `Kill()`): hem asılı kalmaz hem hata görünür.
 
 ## Aşama 5 — Oyun döngüsü ve arayüz (TAMAMLANDI 2026-11-12)

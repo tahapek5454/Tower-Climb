@@ -116,6 +116,9 @@ func _build_rows(records: Array) -> void:
 		["En uzun kombo", GameState.run_best_combo, records.has(SaveData.BEST_COMBO), combo_text],
 		["Süre", int(GameState.run_time), false, time_text],
 	]
+	if GameState.run_diamonds > 0:
+		entries.append(["Elmas", GameState.run_diamonds, false,
+				func(value: int) -> String: return "+%d" % value])
 	for index: int in entries.size():
 		var entry: Array = entries[index]
 		var row := StatRow.new(entry[0], entry[2], entry[3])
