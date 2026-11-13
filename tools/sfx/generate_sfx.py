@@ -361,6 +361,29 @@ def magnet_end():
     return mix(out, bell(0.25, 880.0, 0.06), start_seconds=0.3, gain=0.25)
 
 
+def revive_offer():
+    # Devam kartı açıldı: iki yumuşak, tok kalp atışı ("tuk-tuk") ve üstünde soru sorar gibi hafifçe
+    # yükselen sıcak zil (Do-Mi). Rastgelelik kullanmaz (sözlükteki sırası başka sesleri etkilemez).
+    out = silence(0.9)
+    mix(out, sweep_tone(0.14, 110, 70, 0.1, 0.004, 0.05, ((1, 1.0), (2, 0.15))), gain=0.7)
+    mix(out, sweep_tone(0.14, 110, 70, 0.1, 0.004, 0.05, ((1, 1.0), (2, 0.15))), start_seconds=0.16, gain=0.55)
+    mix(out, bell(0.6, 523.3, 0.22, ((1.0, 1.0), (2.0, 0.2), (3.0, 0.05))), start_seconds=0.3, gain=0.45)
+    mix(out, bell(0.55, 659.3, 0.24, ((1.0, 1.0), (2.0, 0.2), (3.0, 0.05))), start_seconds=0.42, gain=0.5)
+    return out
+
+
+def revive():
+    # Elmasla devam: kalp parlayıp patlıyor — kısa "vuup" yükselişi, parlak dört notalı akor (Do-Mi-Sol-Do)
+    # ve sabit perdeli ince parıltılar. Rastgelelik kullanmaz.
+    out = silence(1.3)
+    mix(out, sweep_tone(0.3, 260, 1040, 0.22, 0.01, 0.12, ((1, 1.0), (2, 0.15)), triangle=True), gain=0.45)
+    for i, freq in enumerate((523.3, 659.3, 784.0, 1046.5)):
+        mix(out, bell(0.9, freq, 0.32), start_seconds=0.12 + i * 0.04, gain=0.5)
+    for i, freq in enumerate((3136.0, 3729.3, 4186.0, 3520.0)):
+        mix(out, bell(0.25, freq, 0.06), start_seconds=0.22 + i * 0.07, gain=0.14)
+    return out
+
+
 # Yeni sesler sözlüğün SONUNA eklenir: rastgelelik sırası değişmez, eski sesler aynı üretilir.
 SOUNDS = {
     "jump": jump, "land": land, "wall": wall, "combo": combo, "combo_end": combo_end,
@@ -373,6 +396,7 @@ SOUNDS = {
     "record_line": record_line,
     "crumble_crack": crumble_crack, "crumble": crumble,
     "magnet": magnet, "magnet_end": magnet_end,
+    "revive_offer": revive_offer, "revive": revive,
 }
 
 

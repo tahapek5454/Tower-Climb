@@ -1,5 +1,5 @@
 extends Node
-## Oyun akışı (autoload): MENU, PLAYING, PAUSED, GAME_OVER. Geçiş kuralları FlowRules'ta (saf).
+## Oyun akışı (autoload): MENU, PLAYING, PAUSED, GAME_OVER, REVIVE (devam kartı; dünya donar). Geçiş kuralları FlowRules'ta (saf).
 ## Durum değişince Events.flow_changed yayınlanır; duraklatmada ağaç donar (arayüz ekranları
 ## PROCESS_MODE_ALWAYS olduğu için çalışmaya devam eder). Oyun bitince Events.game_over'ı dinleyip
 ## kendiliğinden GAME_OVER'a geçer.

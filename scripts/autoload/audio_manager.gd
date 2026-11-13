@@ -10,7 +10,8 @@ const SOUNDS: Array[StringName] = [&"jump", &"land", &"wall", &"combo", &"combo_
 		&"pickup", &"jetpack", &"jetpack_end", &"diamond", &"heart", &"rescue",
 		&"hourglass", &"hourglass_end", &"achievement", &"record_line",
 		&"crumble_crack", &"crumble",
-		&"magnet", &"magnet_end"]
+		&"magnet", &"magnet_end",
+		&"revive_offer", &"revive"]
 const SFX_BUS: StringName = &"SFX"
 const MUSIC_BUS: StringName = &"Music"
 ## Aynı anda çalabilecek en fazla efekt sayısı.
@@ -167,7 +168,8 @@ func _setup_muffle() -> void:
 
 
 func _on_flow_changed(new_state: int, _old_state: int) -> void:
-	set_music_muffled(new_state == FlowRules.State.PAUSED)
+	# Dünya donunca (duraklatma, devam kartı) müzik boğuklaşır.
+	set_music_muffled(FlowRules.freezes_world(new_state))
 
 
 ## Ses kanalı yoksa oluşturur ve Master'a bağlar.

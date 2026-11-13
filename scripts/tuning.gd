@@ -722,3 +722,19 @@ const SFX_MAGNET_END_DB: float = -10.0
 const SHOP_ENABLED: bool = true
 ## Bir takviyeden en çok bu kadar stoklanır (her tur başında bir tanesi kendiliğinden kullanılır).
 const SHOP_BOOST_MAX_STOCK: int = 3
+
+# --- Elmasla devam (oyun sonu kartı; kurallar scripts/game/revive_rules.gd, kart scripts/ui/revive_card.gd) ---
+## false ise kart hiç çıkmaz (SHOP_ENABLED false iken de çıkmaz); kalbi olmayan oyuncu düşünce oyun biter.
+const REVIVE_ENABLED: bool = true
+## Bir turdaki devam fiyatları (elmas), sırayla: dizinin uzunluğu = turdaki hak sayısı.
+const REVIVE_PRICES: Array[int] = [10, 20]
+## Kartın oyuncuyu beklediği süre (s); giriş kilidi bittikten sonra sayılır. Dolarsa oyun biter.
+const REVIVE_OFFER_TIME: float = 3.0
+## Kart açıldıktan sonra girişlerin kapalı kaldığı süre (s): düşerken basılan Space/zıplama satın almasın.
+const REVIVE_INPUT_DELAY: float = 0.45
+## Kabulde kalbin parlayıp patlama süresi (s; dünya bu sürede donuk kalır, sonra kurtarma uçuşu başlar).
+const REVIVE_ACCEPT_TIME: float = 0.5
+## Kalan süre bu oranın altına inince halka kızarır ve kalp hızlı atar.
+const REVIVE_URGENT_RATIO: float = 0.34
+const SFX_REVIVE_OFFER_DB: float = -6.0
+const SFX_REVIVE_DB: float = -4.0
