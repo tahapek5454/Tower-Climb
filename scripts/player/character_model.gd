@@ -14,10 +14,17 @@ const CAMERA_DISTANCE: float = 5.0
 ## Sırt roketinin bağlandığı kemik ve dinlenme pozunda model uzayındaki yeri (+Y yukarı, +Z ön).
 const JETPACK_BONE: StringName = &"chest"
 const JETPACK_POSITION := Vector3(0.0, 0.50, -0.23)
+## Şapkanın bağlandığı kemik (şapka orijini model uzayında; accessories.glb'deki dönüşüm aynen kullanılır).
+const HAT_BONE: StringName = &"head"
 
 var _pivot: Node3D
 var _animation_player: AnimationPlayer
 var _jetpack: JetpackModel
+var _hat: HatModel
+## Karakterin toon malzemeleri (tişört/pantolon boyaması bunlara uygulanır).
+var _toon_materials: Array[ShaderMaterial] = []
+## Kuşanılan kozmetikler (yuva → kimlik); sahneye girmeden önce verilenler kurulunca uygulanır.
+var _cosmetics: Dictionary = {}
 var _target_yaw: float = 0.0
 var _requested: StringName = &""
 var _facing: float = 1.0
@@ -75,8 +82,14 @@ func set_jetpack_equipped(equipped: bool) -> void:
 
 ## Kuşanılan kozmetiği uygular (slot: ShopCatalog.HAT / SHIRT / PANTS; item_id: ShopCatalog kimliği).
 ## Mağaza önizlemesi de bunu çağırır (satın almadan deneme).
-func set_cosmetic(_slot: StringName, _item_id: StringName) -> void:
-	pass
+func set_cosmetic(slot: StringName, item_id: StringName) -> void:
+	_cosmetics[slot] = item_id
+	if slot == ShopCatalog.HAT:
+		if _hat != null:
+			_hat.show_hat(item_id if Tuning.COSMETICS_ENABLED else ShopCatalog.default_of(slot))
+		return
+	for material in _toon_materials:
+		CosmeticPaint.apply(material, slot, item_id)
 
 
 ## Önizleme için modeli verilen açıya çevirir (radyan, Pivot'un Y dönüşü: -PI/2 = tam kameraya dönük,
@@ -142,7 +155,11 @@ func _build() -> void:
 	_animation_player = _find_animation_player(model)
 	_setup_loops()
 	_apply_toon_materials(model)
-	_attach_jetpack(_find_skeleton(model))
+	var skeleton: Skeleton3D = _find_skeleton(model)
+	_attach_jetpack(skeleton)
+	_attach_hat(skeleton)
+	for slot: StringName in _cosmetics:
+		set_cosmetic(slot, _cosmetics[slot])
 
 	_build_camera(viewport)
 
@@ -182,6 +199,8 @@ func _apply_toon_materials(node: Node) -> void:
 			toon.shader = TOON_SHADER
 			if source != null:
 				toon.set_shader_parameter(&"albedo_texture", source.albedo_texture)
+			CosmeticPaint.setup(toon)
+			_toon_materials.append(toon)
 			toon.set_shader_parameter(&"rim_color", Tuning.MODEL_RIM_COLOR)
 			toon.set_shader_parameter(&"rim_strength", Tuning.MODEL_RIM_STRENGTH)
 			toon.set_shader_parameter(&"shadow_tint", Tuning.MODEL_SHADOW_TINT)
@@ -208,6 +227,24 @@ func _attach_jetpack(skeleton: Skeleton3D) -> void:
 	_jetpack.transform = skeleton.get_bone_global_rest(bone).affine_inverse() \
 			* Transform3D(Basis.IDENTITY, JETPACK_POSITION)
 	attachment.add_child(_jetpack)
+
+
+## Şapka yeri kafa kemiğine bağlanır (şapkasız başlar). glb'deki şapka dönüşümü model uzayındadır;
+## kemiğin dinlenme dönüşümünün tersiyle kemik uzayına çevrilir → kafa nasıl dönerse şapka onunla döner.
+func _attach_hat(skeleton: Skeleton3D) -> void:
+	if skeleton == null or not HatModel.is_available():
+		return
+	var bone: int = skeleton.find_bone(HAT_BONE)
+	if bone == -1:
+		return
+	var attachment := BoneAttachment3D.new()
+	attachment.name = "HatAttachment"
+	attachment.bone_name = HAT_BONE
+	skeleton.add_child(attachment)
+	_hat = HatModel.new()
+	_hat.name = "Hat"
+	_hat.transform = skeleton.get_bone_global_rest(bone).affine_inverse()
+	attachment.add_child(_hat)
 
 
 func _find_skeleton(node: Node) -> Skeleton3D:
