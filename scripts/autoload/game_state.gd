@@ -143,10 +143,15 @@ func end_flight() -> void:
 
 ## Elmas alındı: toplam hemen kaydedilir (oyun yarıda kapansa da kaybolmaz).
 func add_diamond() -> void:
-	if is_game_over:
+	add_diamonds(1)
+
+
+## Birden çok elmas alındı (kombo ödülü); tek kayıt ve tek sinyal.
+func add_diamonds(count: int) -> void:
+	if is_game_over or count <= 0:
 		return
-	diamonds += 1
-	run_diamonds += 1
+	diamonds += count
+	run_diamonds += count
 	SaveData.save_diamonds(diamonds)
 	Events.diamonds_changed.emit(diamonds)
 
@@ -237,3 +242,8 @@ func _on_combo_ended(jumps: int, floors: int, bonus: int) -> void:
 		run_best_combo = maxi(run_best_combo, floors)
 	_update_score()
 	Events.combo_ended.emit(jumps, floors, bonus)
+	# Büyük kombo küçük elmas bonusu verir (roketle uçarken kombo işlemediği için o sırada bonus yok).
+	var gems: int = ComboDiamondRules.diamonds_for(floors, bonus)
+	if gems > 0 and not is_game_over:
+		add_diamonds(gems)
+		Events.combo_diamonds_earned.emit(gems)

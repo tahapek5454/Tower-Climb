@@ -8,6 +8,8 @@ extends Node2D
 
 ## Kalp efektinin oyuncunun ayaklarına göre konumu (başın biraz üstü).
 const HEART_OFFSET := Vector2(0.0, -96.0)
+## Kombo elması parıltısının oyuncunun ayaklarına göre konumu (gövde hizası).
+const COMBO_DIAMOND_OFFSET := Vector2(0.0, -52.0)
 const HEART_RISE: float = 56.0
 const HEART_RISE_TIME: float = 0.9
 const HEART_FX_SCALE: float = 1.25
@@ -39,6 +41,7 @@ func _ready() -> void:
 		_pool.append(_make_emitter(dot))
 	Events.pickup_collected.connect(_on_pickup_collected)
 	Events.hearts_changed.connect(_on_hearts_changed)
+	Events.combo_diamonds_earned.connect(_on_combo_diamonds)
 	if player != null:
 		player.event.connect(_on_player_event)
 
@@ -57,6 +60,12 @@ func burst(world_position: Vector2, color: Color) -> void:
 
 func _on_pickup_collected(kind: StringName, world_position: Vector2) -> void:
 	burst(world_position, Pickup.glow_color(kind))
+
+
+## Kombo elması: oyuncunun üstünde elmas renginde küçük parıltı (alınan elmastakiyle aynı patlama).
+func _on_combo_diamonds(_count: int) -> void:
+	if is_instance_valid(player):
+		burst(player.global_position + COMBO_DIAMOND_OFFSET, DiamondArt.GLOW)
 
 
 func _on_hearts_changed(_hearts: int, change: int) -> void:

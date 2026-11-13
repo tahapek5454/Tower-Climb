@@ -612,3 +612,20 @@ const RECORD_LINE_FLASH_ALPHA: float = 1.0
 const RECORD_LINE_FLASH_WIDTH_SCALE: float = 2.2
 const RECORD_LINE_SPARKS: int = 48
 const SFX_RECORD_LINE_DB: float = -6.0
+
+# --- Kombo elması (scripts/game/combo_diamond_rules.gd; ödül GameState, görüntü ComboPopups/PickupFx) ---
+## false: büyük kombolar elmas vermez.
+const COMBO_DIAMOND_ENABLED: bool = true
+## Bu kadar kat kazandıran kombo 1 elmas verir; sonra her COMBO_DIAMOND_STEP_FLOORS katta +1, en çok COMBO_DIAMOND_MAX.
+const COMBO_DIAMOND_MIN_FLOORS: int = 20
+const COMBO_DIAMOND_STEP_FLOORS: int = 20
+const COMBO_DIAMOND_MAX: int = 3
+## Elmas yazısı: kombo bonus yazısının üstündeki uzaklık (px), simge ölçeği, yazı boyutu, süzülme (px) ve süre (s).
+const COMBO_DIAMOND_POPUP_RAISE: float = 46.0
+const COMBO_DIAMOND_ICON_SCALE: float = 0.8
+const COMBO_DIAMOND_FONT_SIZE: int = 22
+const COMBO_DIAMOND_RISE: float = 30.0
+const COMBO_DIAMOND_LIFETIME: float = 1.3
+## Elmas sesi biraz yüksek perdeyle ve kombo bitiş sesinden bu kadar (s) sonra çalar.
+const COMBO_DIAMOND_PITCH: float = 1.2
+const COMBO_DIAMOND_SOUND_DELAY: float = 0.2
