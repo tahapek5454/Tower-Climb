@@ -265,13 +265,33 @@ def diamond():
     return out
 
 
+def heart():
+    # Kalp kazanma: sıcak, yumuşak iki notalı yükselen zil (Sol-Do), altında hafif "tuk-tuk" kalp atışı.
+    out = silence(0.8)
+    mix(out, sweep_tone(0.12, 120, 80, 0.08, 0.004, 0.04), gain=0.5)
+    mix(out, sweep_tone(0.12, 120, 80, 0.08, 0.004, 0.04), start_seconds=0.13, gain=0.4)
+    mix(out, bell(0.6, 784.0, 0.2, ((1.0, 1.0), (2.0, 0.2), (3.0, 0.06))), start_seconds=0.02, gain=0.6)
+    mix(out, bell(0.65, 1046.5, 0.26, ((1.0, 1.0), (2.0, 0.2), (3.0, 0.06))), start_seconds=0.14, gain=0.7)
+    return out
+
+
+def rescue():
+    # Kalple kurtarma: aşağıdan yukarı hızla yükselen yumuşak "vuuup" + parlak, umut veren üç notalı akor.
+    out = silence(1.1)
+    mix(out, noise_burst(0.45, 300, 2600, 0.12, 0.2), gain=0.7)
+    mix(out, sweep_tone(0.45, 220, 880, 0.35, 0.02, 0.18, ((1, 1.0), (2, 0.18)), triangle=True), gain=0.5)
+    for i, freq in enumerate((659.3, 830.6, 987.8)):
+        mix(out, bell(0.7, freq, 0.28), start_seconds=0.28 + i * 0.05, gain=0.55)
+    return out
+
+
 # Yeni sesler sözlüğün SONUNA eklenir: rastgelelik sırası değişmez, eski sesler aynı üretilir.
 SOUNDS = {
     "jump": jump, "land": land, "wall": wall, "combo": combo, "combo_end": combo_end,
     "section": section, "game_over": game_over, "whoosh": whoosh,
     "ui_hover": ui_hover, "ui_click": ui_click, "ui_back": ui_back, "record": record,
     "pickup": pickup, "jetpack": jetpack, "jetpack_end": jetpack_end,
-    "diamond": diamond,
+    "diamond": diamond, "heart": heart, "rescue": rescue,
 }
 
 

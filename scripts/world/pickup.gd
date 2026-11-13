@@ -2,10 +2,11 @@ class_name Pickup
 extends Area2D
 ## Toplanabilir nesne (güçlendirme): bir platformun üstünde hafifçe süzülür; oyuncu dokununca
 ## Events.pickup_collected yayınlar ve büyüyerek kaybolur. Etkiyi dinleyen uygular (main → oyuncu).
-## Yeni tür eklemek: buraya bir sabit + _draw_art'a çizim.
+## Yeni tür eklemek: buraya bir sabit + _draw_art'a çizim + glow_color/sparkle_color.
 
 const JETPACK: StringName = &"jetpack"
 const DIAMOND: StringName = &"diamond"
+const HEART: StringName = &"heart"
 ## Çevresinde dönen küçük parıltıların sayısı, yörünge yarıçapı ve boyutu (px).
 const SPARKLE_COUNT: int = 3
 const SPARKLE_ORBIT := Vector2(27.0, 30.0)
@@ -15,6 +16,9 @@ const SWAY_ANGLE: float = 0.10
 ## Elmas kendi ekseninde yavaşça döner gibi daralıp genişler (tur/s) ve hâlesi daha küçüktür.
 const DIAMOND_SPIN_SPEED: float = 0.55
 const DIAMOND_GLOW_SCALE: float = 0.75
+## Kalp kalp atışı gibi çift vuruşla atar: vuruş aralığı (s) ve büyüme oranı.
+const HEARTBEAT_TIME: float = 1.1
+const HEARTBEAT_SCALE: float = 0.14
 
 var kind: StringName = JETPACK
 var _art: Node2D
@@ -67,6 +71,8 @@ static func glow_color(pickup_kind: StringName) -> Color:
 	match pickup_kind:
 		DIAMOND:
 			return DiamondArt.GLOW
+		HEART:
+			return HeartArt.GLOW
 	return JetpackArt.CAP
 
 
@@ -74,6 +80,8 @@ static func sparkle_color(pickup_kind: StringName) -> Color:
 	match pickup_kind:
 		DIAMOND:
 			return DiamondArt.LIGHT
+		HEART:
+			return HeartArt.SHINE
 	return JetpackArt.BAND
 
 
@@ -88,6 +96,11 @@ func _draw_art() -> void:
 			_art.draw_set_transform(Vector2.ZERO, 0.0, Vector2(0.35 + 0.65 * spin, 1.0))
 			DiamondArt.draw(_art)
 			_art.draw_set_transform(Vector2.ZERO)
+		HEART:
+			# Çift vuruş: döngünün başında iki kısa büyüme ("tuk-tuk"), sonra dinlenme.
+			var beat: float = fmod(_time, HEARTBEAT_TIME) / HEARTBEAT_TIME
+			var pulse: float = maxf(sin(beat * TAU * 4.0), 0.0) if beat < 0.5 else 0.0
+			HeartArt.draw(_art, Vector2.ZERO, 1.0 + HEARTBEAT_SCALE * pulse)
 	_draw_sparkles()
 
 

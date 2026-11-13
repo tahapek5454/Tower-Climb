@@ -15,6 +15,7 @@ Ruh hali: hızlı, akışkan, abartılı ve eğlenceli animasyonlar (takla, sekm
 | Debug yavaş çekim (x0,25) | F4 |
 | Debug: sonraki bölüme ışınlan | F6 |
 | Debug: üstteki platforma roket koy | F7 |
+| Debug: üstteki platforma kalp koy | F8 |
 | Tam ekran aç/kapat | F11 veya Alt+Enter |
 | Tüm sesi kapat/aç | M |
 | Yeniden başla (oyun bitince) | R veya Space |
@@ -121,6 +122,12 @@ Toplanabilir nesneler platformların üstünde hafifçe süzülür (`Pickup`); o
 - **Çıkış:** nadir. Her katta `DIAMOND_SPAWN_CHANCE` (%6, ≈ 17 katta bir), `DIAMOND_MIN_FLOOR` (3) kattan itibaren. %45 (`PICKUP_AIR_CHANCE`) havada — iki kat arasında, kulenin herhangi bir yerinde — kalanı platformun üstünde. Bir katta tek toplanabilir (roket öncelikli). `DIAMOND_ENABLED = false` kapatır.
 - **Birikim:** toplam kalıcıdır (`user://save.cfg` [wallet]); her alışta kaydedilir; rekor sıfırlama silmez. HUD'da "ELMAS" satırı, ana menüde toplam, oyun sonunda bu oyunda toplanan (+N).
 - **Harcama:** henüz yok (ileride).
+
+### Kalp (can)
+- **Oyun turu bazlı:** her oyun `HEART_START` (0) kalple başlar, oyunlar arası birikmez; en fazla `HEART_MAX` (5).
+- **Kazanma:** nadir toplanabilir (`HEART_SPAWN_CHANCE` %2, `HEART_MIN_FLOOR` 10'dan sonra, iki kalp arası en az `HEART_MIN_FLOOR_GAP` 35 kat; havada ya da platformda) ve her bölüm geçişinde (her 100 kat) `HEART_SECTION_BONUS` (+1).
+- **Ölüm:** kalp varken ekranın altına düşülürse 1 kalp harcanır; oyuncu ekranın altında belirir, sırtına roket takılır ve `HEART_RESCUE_FLIGHT_TIME` (1,6 s) uçup roketteki gibi bir platforma bırakılır. Kalp yoksa oyun biter.
+- **HUD:** "CAN" satırında kalpler; kazanınca başın üstünde kalp yükselir, kurtarılınca kalp ikiye kırılır.
 
 ## Juice listesi (Aşama 2)
 - Squash & stretch: zıplarken dikey uzama, inişte yatay ezilme (hıza orantılı).

@@ -18,6 +18,7 @@ func _ready() -> void:
 	Events.pickup_collected.connect(_on_pickup_collected)
 	Events.powerup_started.connect(_on_powerup_started)
 	Events.powerup_ended.connect(_on_powerup_ended)
+	Events.hearts_changed.connect(_on_hearts_changed)
 
 
 func _on_player_event(event_name: StringName, data: Dictionary) -> void:
@@ -36,6 +37,8 @@ func _on_player_event(event_name: StringName, data: Dictionary) -> void:
 				_play(&"land", SfxRules.land_pitch(fall), SfxRules.land_volume_db(fall))
 		&"wall_bounce":
 			_play(&"wall", 1.0, SfxRules.wall_volume_db(data["speed"]))
+		&"rescued":
+			AudioManager.play(&"rescue", 1.0, Tuning.SFX_RESCUE_DB)
 
 
 func _on_combo_changed(jumps: int, _floors: int) -> void:
@@ -65,8 +68,17 @@ func _on_pickup_collected(kind: StringName, _world_position: Vector2) -> void:
 	match kind:
 		Pickup.DIAMOND:
 			_play(&"diamond", 1.0, Tuning.SFX_DIAMOND_DB)
+		Pickup.HEART:
+			# Kalp sesi kalp sayısı artınca çalar (_on_hearts_changed); kalpler doluysa sayı artmaz.
+			if GameState.hearts >= Tuning.HEART_MAX:
+				AudioManager.play(&"pickup", 1.0, Tuning.SFX_PICKUP_DB)
 		_:
 			AudioManager.play(&"pickup", 1.0, Tuning.SFX_PICKUP_DB)
+
+
+func _on_hearts_changed(_hearts: int, change: int) -> void:
+	if change > 0 and GameFlow.is_playing():
+		AudioManager.play(&"heart", 1.0, Tuning.SFX_HEART_DB)
 
 
 func _on_powerup_started(kind: StringName, _duration: float) -> void:

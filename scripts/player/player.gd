@@ -5,7 +5,8 @@ extends CharacterBody2D
 
 signal state_changed(new_state: State, old_state: State)
 ## Olaylar: &"jumped" {speed, run_speed}, &"jump_cut" {}, &"landed" {speed, floor},
-## &"wall_bounce" {speed, normal_x, airborne}, &"jetpack_started" {duration}, &"jetpack_ended" {}.
+## &"wall_bounce" {speed, normal_x, airborne}, &"jetpack_started" {duration}, &"jetpack_ended" {},
+## &"rescued" {} (kalple ölümden kurtuldu; hemen ardından jetpack_started gelir).
 signal event(name: StringName, data: Dictionary)
 
 enum State { IDLE, RUN, JUMP, FALL, LAND, WALL_BOUNCE, FLIP }
@@ -108,12 +109,20 @@ func hop(speed: float) -> void:
 # --- Roket ---
 
 ## Roketi takar ve uçuşu başlatır (uçarken yeniden alınırsa süre baştan başlar).
-func start_jetpack() -> void:
-	_flight = JetpackFlight.new()
+func start_jetpack(duration: float = Tuning.JETPACK_FLIGHT_TIME) -> void:
+	_flight = JetpackFlight.new(duration)
 	_can_cut_jump = false
 	_jump_buffer_timer = 0.0
 	_coyote_timer = 0.0
-	event.emit(&"jetpack_started", {"duration": Tuning.JETPACK_FLIGHT_TIME})
+	event.emit(&"jetpack_started", {"duration": duration})
+
+
+## Kalple kurtarma: düşen oyuncu verilen yükseklikte (ayaklar) durdurulur ve kısa bir roket uçuşu başlar.
+func rescue(feet_y: float) -> void:
+	global_position.y = feet_y
+	velocity = Vector2.ZERO
+	event.emit(&"rescued", {})
+	start_jetpack(Tuning.HEART_RESCUE_FLIGHT_TIME)
 
 
 func is_flying() -> bool:

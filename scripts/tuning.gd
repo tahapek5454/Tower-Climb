@@ -541,6 +541,25 @@ const PICKUP_AIR_HEIGHT: float = FLOOR_SPACING * 0.55
 const PICKUP_AIR_WALL_MARGIN: float = 60.0
 const SFX_DIAMOND_DB: float = -7.0
 
+# --- Kalp (can; oyun turu bazlı, birikmez; scripts/game/pickup_rules.gd) ---
+## false: kalp toplanabiliri hiç çıkmaz (bölüm geçişi kalbi HEART_SECTION_BONUS ile ayrı yönetilir).
+const HEART_ENABLED: bool = true
+## NADİRLİK: uygun her katta kalp çıkma olasılığı (0..1). Elmastan nadir.
+const HEART_SPAWN_CHANCE: float = 0.02
+## Bu kattan önce çıkmaz; bir kalpten sonra en az bu kadar kat boyunca yenisi çıkmaz.
+const HEART_MIN_FLOOR: int = 10
+const HEART_MIN_FLOOR_GAP: int = 35
+## Oyun başındaki kalp, en fazla taşınabilecek kalp ve her bölüm geçişinde (SECTION_FLOOR_INTERVAL) kazanılan.
+const HEART_START: int = 0
+const HEART_MAX: int = 5
+const HEART_SECTION_BONUS: int = 1
+## Kalple kurtarılınca: oyuncu ekranın altından bu kadar yukarıda (px, ayaklar) belirir ve roket bu kadar
+## süre (s) uçurur; sonra roketteki gibi bir platforma bırakır.
+const HEART_RESCUE_RISE: float = 20.0
+const HEART_RESCUE_FLIGHT_TIME: float = 1.6
+const SFX_HEART_DB: float = -6.0
+const SFX_RESCUE_DB: float = -5.0
+
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25

@@ -11,6 +11,32 @@ static func should_spawn_diamond(floor_number: int, roll: float) -> bool:
 	return roll < Tuning.DIAMOND_SPAWN_CHANCE
 
 
+## Bu katta kalp çıkabilir mi? (Olasılıktan bağımsız ön koşullar.)
+## last_spawn_floor: en son kalp çıkan kat (hiç çıkmadıysa çok küçük bir sayı).
+static func can_spawn_heart(floor_number: int, last_spawn_floor: int) -> bool:
+	if not Tuning.HEART_ENABLED or floor_number < Tuning.HEART_MIN_FLOOR:
+		return false
+	return floor_number - last_spawn_floor >= Tuning.HEART_MIN_FLOOR_GAP
+
+
+## roll: 0..1. Nadirlik Tuning.HEART_SPAWN_CHANCE ile yönetilir.
+static func should_spawn_heart(floor_number: int, last_spawn_floor: int, roll: float) -> bool:
+	return can_spawn_heart(floor_number, last_spawn_floor) and roll < Tuning.HEART_SPAWN_CHANCE
+
+
+## Kat old_floor'dan new_floor'a çıkınca geçilen bölüm sayısı (her SECTION_FLOOR_INTERVAL kat bir bölüm).
+static func sections_crossed(old_floor: int, new_floor: int) -> int:
+	if new_floor <= old_floor:
+		return 0
+	var interval: int = Tuning.SECTION_FLOOR_INTERVAL
+	return floori(float(maxi(new_floor, 0)) / interval) - floori(float(maxi(old_floor, 0)) / interval)
+
+
+## Kalp ekler; HEART_MAX'ı geçmez.
+static func add_hearts(current: int, amount: int) -> int:
+	return clampi(current + amount, 0, Tuning.HEART_MAX)
+
+
 ## Toplanabilir havada mı duracak (yoksa platformun üstünde mi)? roll: 0..1.
 static func is_air_spawn(roll: float) -> bool:
 	return roll < Tuning.PICKUP_AIR_CHANCE

@@ -7,11 +7,16 @@ extends RefCounted
 enum Phase { BOOST, APPROACH, DONE }
 
 var phase: Phase = Phase.BOOST
-## BOOST evresinde geçen süre (s).
+## BOOST evresinin süresi (s; roket = JETPACK_FLIGHT_TIME, kalple kurtarma daha kısa) ve geçen süre.
+var duration: float = Tuning.JETPACK_FLIGHT_TIME
 var elapsed: float = 0.0
 ## İnilecek platform (JetpackRules biçimi); APPROACH'ta geçerli.
 var landing: Vector3 = JetpackRules.NO_LANDING
 var _approach_time: float = 0.0
+
+
+func _init(p_duration: float = Tuning.JETPACK_FLIGHT_TIME) -> void:
+	duration = p_duration
 
 
 func is_done() -> bool:
@@ -19,7 +24,7 @@ func is_done() -> bool:
 
 
 func fuel_ratio() -> float:
-	return JetpackRules.fuel_ratio(elapsed)
+	return JetpackRules.fuel_ratio(elapsed, duration)
 
 
 ## Bir fizik adımı: yeni hızı döndürür. input_dir: -1..1 (sol/sağ).
@@ -41,7 +46,7 @@ func _boost(position: Vector2, velocity: Vector2, input_dir: float, delta: float
 	var result := Vector2(
 		move_toward(velocity.x, input_dir * Tuning.JETPACK_STEER_SPEED, Tuning.JETPACK_STEER_ACCEL * delta),
 		move_toward(velocity.y, -Tuning.JETPACK_SPEED, Tuning.JETPACK_ACCEL * delta))
-	if elapsed >= Tuning.JETPACK_FLIGHT_TIME:
+	if elapsed >= duration:
 		_begin_approach(position, platforms_above)
 	return result
 

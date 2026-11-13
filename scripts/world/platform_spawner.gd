@@ -10,8 +10,9 @@ var _prev_center: float = 0.0
 var _prev_width: float = Tuning.TOWER_WIDTH
 ## Aşağıdan yukarıya sıralı (eski olan başta).
 var _platforms: Array[Platform] = []
-## En son roket çıkan kat (başta: ilk uygun katta çıkabilsin diye yeterince geride).
+## En son roket / kalp çıkan kat (başta: ilk uygun katta çıkabilsin diye yeterince geride).
 var _last_jetpack_floor: int = -Tuning.JETPACK_MIN_FLOOR_GAP
+var _last_heart_floor: int = -Tuning.HEART_MIN_FLOOR_GAP
 
 
 func _ready() -> void:
@@ -48,11 +49,11 @@ func platforms_above(world_y: float) -> Array[Vector3]:
 	return result
 
 
-## Debug (F7): oyuncunun üstündeki ilk platforma roket koyar.
-func debug_spawn_jetpack(above_y: float) -> void:
+## Debug (F7 roket, F8 kalp): oyuncunun üstündeki ilk platforma verilen türde toplanabilir koyar.
+func debug_spawn(kind: StringName, above_y: float) -> void:
 	for platform: Platform in _platforms:
 		if platform.position.y < above_y and not PlatformRules.is_section_floor(platform.floor_number):
-			_add_pickup(platform, Pickup.JETPACK)
+			_add_pickup(platform, kind)
 			return
 
 
@@ -73,10 +74,13 @@ func _spawn(floor_number: int) -> void:
 	_platforms.append(platform)
 	_prev_center = center
 	_prev_width = width
-	# Bir katta en fazla bir toplanabilir; roket öncelikli.
+	# Bir katta en fazla bir toplanabilir; öncelik: roket, kalp, elmas.
 	if JetpackRules.should_spawn(floor_number, _last_jetpack_floor, _rng.randf()):
 		_last_jetpack_floor = floor_number
 		_add_pickup(platform, Pickup.JETPACK)
+	elif PickupRules.should_spawn_heart(floor_number, _last_heart_floor, _rng.randf()):
+		_last_heart_floor = floor_number
+		_add_pickup(platform, Pickup.HEART, PickupRules.is_air_spawn(_rng.randf()))
 	elif PickupRules.should_spawn_diamond(floor_number, _rng.randf()):
 		_add_pickup(platform, Pickup.DIAMOND, PickupRules.is_air_spawn(_rng.randf()))
 

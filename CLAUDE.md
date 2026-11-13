@@ -102,12 +102,13 @@ Player (CharacterBody2D)      ← scripts/player/player.gd — hareket, çarpı�
 - Tüm ekranlar (menü, duraklatma, ayarlar, oyun sonu) `UiScreen`'den türer; denetimler `UiButton` / `UiToggle` / `UiSlider`; renk ve stil sadece `UiStyle`'dan. Ekranlar arası geçiş `UiScreen.link_child`. Yeni ekranlarda aynı dili kullan (koyu arduvaz kart, turkuaz vurgu, altın = ödül).
 - Kullanıcıya görünen ayarlar `AudioSettings` / `GameSettings`'e, rekorlar `SaveData`'ya yazılır (`user://`). Testlerde bu sınıfların `path`'ini geçici dosyaya çevir.
 - Katmanlar: HUD 1, UiScreen 40, geri sayım 41, konfeti 45, radyo 50, ScreenFade 95, debug 100.
-- Debug tuşları: F3 overlay, F4 yavaş çekim, F6 sonraki bölüme ışınlan, F7 üstteki platforma roket koy.
+- Debug tuşları: F3 overlay, F4 yavaş çekim, F6 sonraki bölüme ışınlan, F7 üstteki platforma roket koy, F8 kalp koy.
 
 ### Güçlendirmeler (Aşama 6)
 - Toplanabilir nesne = `Pickup` (Area2D, platformun çocuğu); alınınca `Events.pickup_collected(kind, konum)`. Etkiyi `main` oyuncuya uygular; süreli etkiler `Events.powerup_started/ended` ile duyurulur (HUD, ses).
 - Kurallar saf sınıflarda (`JetpackRules`, `JetpackFlight`) + GUT; sayılar `Tuning.JETPACK_*` / `PICKUP_*`. Oyuncunun özel hareket modu `player.gd`'de (`_flight`); görüntüsü `Visual` katmanında (`JetpackFx`, `CharacterModel.set_jetpack_equipped`, `fly` animasyonu).
 - Elmas (para): çıkış/yerleşim `PickupRules` + `Tuning.DIAMOND_*`/`PICKUP_AIR_*`; toplam `GameState.diamonds` → `SaveData.save_diamonds` ([wallet]); gösterim `DiamondCounter`.
+- Kalp (can, oyun turu bazlı): `GameState.hearts/add_hearts/use_heart` + `Events.hearts_changed`; düşünce `main._on_player_fell` → `Player.rescue` (kısa roket uçuşu). Kurallar `PickupRules`, sayılar `Tuning.HEART_*`; görüntü `HeartArt`, `HeartMeter`, `PickupFx`.
 
 ### Ekran ve pencere
 - Tasarım çözünürlüğü **1280 x 720** sabittir (`Tuning.VIEW_WIDTH/HEIGHT`, stretch `canvas_items`, aspect `keep`). Tüm yerleşim ve oynanış sayıları bu koordinatlara göredir; pencere büyüsün diye bu değerleri **değiştirme**.

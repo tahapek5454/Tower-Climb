@@ -40,6 +40,10 @@ signal pickup_collected(kind: StringName, world_position: Vector2)
 @warning_ignore("unused_signal")
 signal diamonds_changed(total: int)
 
+## Bu oyundaki kalp sayısı değişti (change: + kazanıldı, - harcandı; yeni oyunda sıfırlanınca da yayınlanır).
+@warning_ignore("unused_signal")
+signal hearts_changed(hearts: int, change: int)
+
 ## Süreli bir güçlendirme başladı / bitti (kind: Pickup türü; duration: saniye). HUD ve ses dinler.
 @warning_ignore("unused_signal")
 signal powerup_started(kind: StringName, duration: float)

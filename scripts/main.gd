@@ -62,6 +62,7 @@ func _ready() -> void:
 
 	var pickup_fx := PickupFx.new()
 	pickup_fx.name = "PickupFx"
+	pickup_fx.player = _player
 	add_child(pickup_fx)
 
 	var hit_stop := HitStop.new()
@@ -131,7 +132,16 @@ func _physics_process(_delta: float) -> void:
 	if _player.is_flying():
 		# Roketle geçilen katlar da puan kazandırır.
 		GameState.register_flight_floor(JetpackRules.floor_passed(_player.global_position.y))
-	if not GameState.is_game_over and _camera.is_below_screen(_player.global_position.y):
+	elif not GameState.is_game_over and _camera.is_below_screen(_player.global_position.y):
+		_on_player_fell()
+
+
+## Oyuncu ekranın altından düştü: kalp varsa biri harcanır ve roket onu ekranın altından yukarı taşır;
+## yoksa oyun biter.
+func _on_player_fell() -> void:
+	if GameState.use_heart():
+		_player.rescue(_camera.global_position.y + Tuning.VIEW_HEIGHT * 0.5 - Tuning.HEART_RESCUE_RISE)
+	else:
 		GameState.end_game()
 
 
@@ -142,8 +152,11 @@ func _unhandled_input(input_event: InputEvent) -> void:
 		_debug_skip_section()
 		get_viewport().set_input_as_handled()
 	elif input_event.is_action_pressed(&"debug_spawn_jetpack"):
-		# Debug (F7): roketi denemek için oyuncunun üstündeki ilk platforma bir tane koyar.
-		_spawner.debug_spawn_jetpack(_player.global_position.y - Tuning.FLOOR_SPACING * 0.5)
+		# Debug (F7 roket, F8 kalp): denemek için oyuncunun üstündeki ilk platforma bir tane koyar.
+		_spawner.debug_spawn(Pickup.JETPACK, _player.global_position.y - Tuning.FLOOR_SPACING * 0.5)
+		get_viewport().set_input_as_handled()
+	elif input_event.is_action_pressed(&"debug_spawn_heart"):
+		_spawner.debug_spawn(Pickup.HEART, _player.global_position.y - Tuning.FLOOR_SPACING * 0.5)
 		get_viewport().set_input_as_handled()
 
 
@@ -203,6 +216,8 @@ func _on_pickup_collected(kind: StringName, _world_position: Vector2) -> void:
 			_player.start_jetpack()
 		Pickup.DIAMOND:
 			GameState.add_diamond()
+		Pickup.HEART:
+			GameState.add_hearts(1)
 
 
 func _on_game_over(_final_score: int, _final_floor: int) -> void:

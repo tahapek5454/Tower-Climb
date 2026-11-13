@@ -7,7 +7,7 @@ extends Node
 const SFX_DIR: String = "res://assets/audio/sfx/"
 const SOUNDS: Array[StringName] = [&"jump", &"land", &"wall", &"combo", &"combo_end", &"section",
 		&"game_over", &"whoosh", &"ui_hover", &"ui_click", &"ui_back", &"record",
-		&"pickup", &"jetpack", &"jetpack_end", &"diamond"]
+		&"pickup", &"jetpack", &"jetpack_end", &"diamond", &"heart", &"rescue"]
 const SFX_BUS: StringName = &"SFX"
 const MUSIC_BUS: StringName = &"Music"
 ## Aynı anda çalabilecek en fazla efekt sayısı.

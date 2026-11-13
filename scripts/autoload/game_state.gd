@@ -13,13 +13,25 @@ var score: int = 0:
 		if score > high_score:
 			high_score = score
 
-## Ulaşılan en yüksek kat.
+## Ulaşılan en yüksek kat. Yeni bir bölüme geçilince kalp kazanılır.
 var floor_number: int = 0:
 	set(value):
 		if value == floor_number:
 			return
+		var sections: int = PickupRules.sections_crossed(floor_number, value)
 		floor_number = value
 		Events.floor_changed.emit(floor_number)
+		if sections > 0:
+			add_hearts(sections * Tuning.HEART_SECTION_BONUS)
+
+## Bu oyundaki kalpler (can): oyuncu düşünce biri harcanır ve roketle kurtarılır. Oyunlar arası birikmez.
+var hearts: int = Tuning.HEART_START:
+	set(value):
+		if value == hearts:
+			return
+		var change: int = value - hearts
+		hearts = value
+		Events.hearts_changed.emit(hearts, change)
 
 ## En yüksek skor: kayıtlı rekorla başlar, oyun sırasında skor geçerse canlı artar.
 var high_score: int = 0:
@@ -139,10 +151,25 @@ func add_diamond() -> void:
 	Events.diamonds_changed.emit(diamonds)
 
 
+## Kalp kazanıldı (toplanabilir veya bölüm geçişi); HEART_MAX'ı geçmez.
+func add_hearts(amount: int) -> void:
+	if not is_game_over:
+		hearts = PickupRules.add_hearts(hearts, amount)
+
+
+## Oyuncu düştü: kalp varsa biri harcanır ve true döner (oyun sürer); yoksa false.
+func use_heart() -> bool:
+	if is_game_over or hearts <= 0:
+		return false
+	hearts -= 1
+	return true
+
+
 ## Yeni oyun için her şeyi sıfırlar (en yüksek skor ve elmaslar hariç).
 func reset() -> void:
 	is_game_over = false
 	run_diamonds = 0
+	hearts = Tuning.HEART_START
 	_combo.clear()
 	_current_floor = 0
 	_flying = false

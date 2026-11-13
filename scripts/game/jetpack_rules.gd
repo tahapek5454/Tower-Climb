@@ -29,8 +29,8 @@ static func pickup_offset_x(platform_width: float, roll: float) -> float:
 
 
 ## Kalan yakıt oranı (1 = yeni alındı, 0 = bitti); HUD çubuğu için.
-static func fuel_ratio(elapsed: float) -> float:
-	return clampf(1.0 - elapsed / Tuning.JETPACK_FLIGHT_TIME, 0.0, 1.0)
+static func fuel_ratio(elapsed: float, duration: float = Tuning.JETPACK_FLIGHT_TIME) -> float:
+	return clampf(1.0 - elapsed / maxf(duration, 0.001), 0.0, 1.0)
 
 
 ## Bu yükseklikte (ayakların y'si) geçilmiş en yüksek kat: uçarken skor bununla artar.
