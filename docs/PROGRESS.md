@@ -1,12 +1,12 @@
 # İlerleme
 
-**Aktif aşama:** **Aşama 6 — Ek özellikler** (madde 1–3 onaylı; madde 4 kum saati + madde 5 seviyeyle hızlanma yapıldı, kullanıcı testi bekleniyor)
+**Aktif aşama:** **Aşama 6 — Ek özellikler** (madde 1–5 yapıldı ve onaylı; sıradaki madde yeni oturumda kullanıcıyla seçilecek)
 **Durum:** Aşama 1–5 tamam ve onaylı. Aşama 6 2026-11-13'te başladı; kapsam madde madde kullanıcıyla belirleniyor (aşağıda "Aşama 6").
 
 ## ▶ Yeni oturumda buradan devam
-**Durum:** Aşama 1–5 tamam. Sıradaki: **Aşama 6 — Ek özellikler**. Kapsam belirlenmedi; kullanıcıyla netleştirilecek. Altın kural: kullanıcı onaylamadan kod yazma, aşamayı kendiliğinden bitirip bir sonrakine geçme.
+**Durum (2026-11-13 oturum sonu):** Aşama 1–5 tamam. **Aşama 6 sürüyor**: roket, elmas, kalp, kum saati, seviyeyle hızlanma yapıldı ve kullanıcı onayladı ("çok iyi"); kombo yazısı "x3" oldu. Kullanıcı kalan adımları yeni oturuma bıraktı. Altın kural: kullanıcı onaylamadan kod yazma, aşamayı kendiliğinden bitirip bir sonrakine geçme.
 
-0. **Aşama 6 sürüyor:** önce aşağıdaki "Aşama 6" bölümünü oku (yapılan madde, bekleyen kullanıcı onayı).
+0. **Aşama 6 sürüyor:** önce aşağıdaki "Aşama 6" bölümünü oku. Sıradaki madde **seçilmedi**; kullanıcıya şu adayları sun ve seçmesini bekle: **mıknatıs** (birkaç saniye yakındaki elmasları çeker), **yeni platform türleri** (çatlayıp düşen / yana kayan / kaygan buz), **kombo elması** (büyük kombo küçük elmas bonusu verir), **başarımlar** ("100. kata ulaş" vb., ödül elmas), **rekor çizgisi** (kulede en iyi kat hizasında ince çizgi, geçince kutlama). **Elmas mağazası EN SONA** (kullanıcı kararı; kostüm/renk için modelleme gerekecek). Kanat iptal. Aşama 6 bitince CLAUDE.md'deki aşama bildirimi formatı → Aşama 7 (Paylaşım).
 1. CLAUDE.md bölüm 0 ortam kontrolünü yap, tabloyla raporla (godot 4.7.2 — mono değil, git, node, `claude mcp list` → godot ✔ / blender ✔ (rea ve playwright bu projede kapalı olabilir), `godot --headless --path . --quit`). Ayrıca GUT testlerini çalıştır: **170 test geçmeli** (`godot --headless --path . -s res://addons/gut/gut_cmdln.gd`).
 2. Oku: bu dosyadaki **"Aşama 6 hazırlığı"** ve **"Aşama 5 sonrası mimari özeti"** bölümleri, `docs/GAME_DESIGN.md` ("Başlangıç ayar değerleri"), ayrıca bu dosyadaki "Aşama 3 model notları" altındaki **"Genişletilebilirlik"** notu (yeni animasyon / kemiğe takılan aksesuar nasıl eklenir).
 3. Kullanıcıya tek cümleyle durumu söyle; ardından **Aşama 6'nın maddelerini ve yaklaşımını kullanıcıyla netleştir** ("Aşama 6 hazırlığı"ndaki sorular). Onay almadan kod yazma. Tek seferde tek madde: bitir → doğrula (GUT + ekran görüntüsü) → commit → bu dosyayı güncelle → kullanıcıya nasıl test edeceğini söyle.
@@ -34,10 +34,11 @@ Kapsam madde madde kullanıcıyla belirleniyor (fikir listesi: "Aşama 6 hazırl
 - [x] 1. Roket / jetpack + ortak toplanabilir altyapısı (`Pickup`, `Events.pickup_collected`, `powerup_started/ended`) — kullanıcı onayladı ("iyi çalışıyor")
 - [x] 2. Elmas (para): nadir, platformda ya da havada; kalıcı toplam (`save.cfg` [wallet]); HUD + ana menü + oyun sonu — onaylandı ("hepsi olmuş")
 - [x] 3. Kalp (can): oyun turu bazlı, nadir toplanabilir + bölüm geçişinde +1, ölünce 1 kalp harcanır ve roketle kurtarılır — onaylandı
-- [x] 4. Kum saati: kameranın kaymasını 8 s yavaşlatır (×0,35, yumuşak geçiş), ekran kenarında mor-mavi gölge, HUD "YAVAŞ ZAMAN" — kullanıcı: ilk katlarda etkisi hissedilmedi, süre uzun → madde 5'te 5 s / ×0,3 yapıldı
-- [x] 5. Seviye atladıkça hızlanma: her bölüm geçişinde kamera +30 px/s (yumuşak), üst sınır 320 — **kullanıcı testi bekleniyor**. "HIZLANIYOR!" yazısı kullanıcı isteğiyle kaldırıldı ("oyuncu hisseder zaten"); `Events.speed_increased` olayı ileride ses/efekt için duruyor.
+- [x] 4. Kum saati: kameranın kaymasını yavaşlatır (şimdi 5 s, ×0,3, yumuşak geçiş), ekran kenarında mor-mavi gölge, HUD "YAVAŞ ZAMAN" — ilk sürüm (8 s, ×0,35) ilk katlarda hissedilmedi → madde 5 ile düzeltildi; onaylandı
+- [x] 5. Seviye atladıkça hızlanma: her bölüm geçişinde kamera +30 px/s (yumuşak), üst sınır 320 — onaylandı ("çok iyi"). "HIZLANIYOR!" yazısı kullanıcı isteğiyle kaldırıldı ("oyuncu hisseder zaten"); `Events.speed_increased` olayı ileride ses/efekt için duruyor.
 - Kombo yazısı yalnız çarpan ("x3"), "COMBO" kelimesi kaldırıldı (kullanıcı isteği; 22–30 punto).
-- Elmas mağazası en sona (modelleme gerekecek). Diğer öneriler: mıknatıs, yeni platform türleri, kombo elması, başarımlar, rekor çizgisi.
+- [ ] 6+. Sıradaki madde yeni oturumda seçilecek. Adaylar: mıknatıs, yeni platform türleri, kombo elması, başarımlar, rekor çizgisi.
+- [ ] Son madde: elmas mağazası (kostüm/renk; modelleme gerekecek).
 - Kanat iptal (kullanıcı: "roket yeterli"). Para harcama (mağaza vb.) sonra; şimdilik sadece birikim.
 
 ### Aşama 6 kararları (2026-11-13)
