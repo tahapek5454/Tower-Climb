@@ -20,6 +20,8 @@ var _last_hourglass_floor: int = -Tuning.HOURGLASS_MIN_FLOOR_GAP
 var _last_magnet_floor: int = -Tuning.MAGNET_MIN_FLOOR_GAP
 ## Mıknatıs etkisi sürüyor: yeni katlarda elmas olasılığı MAGNET_DIAMOND_CHANCE.
 var _diamond_rush: bool = false
+## "Şans" yükseltme seviyesi; < 0 ise her katta Shop'tan okunur (testler/ölçüm sabit bir seviye verebilir).
+var luck_level: int = -1
 
 
 func _ready() -> void:
@@ -110,17 +112,27 @@ func _spawn(floor_number: int) -> void:
 	_prev_width = width
 	_prev_kind = kind
 	_prev_travel = travel
-	# Bir katta en fazla bir toplanabilir; öncelik: roket, kalp, kum saati, mıknatıs, elmas.
-	if JetpackRules.should_spawn(floor_number, _last_jetpack_floor, _rng.randf()):
+	_spawn_pickup(platform, floor_number)
+
+
+## Bir katta en fazla bir toplanabilir; öncelik: roket, kalp, kum saati, mıknatıs, elmas.
+## Güçlendirmelerin olasılığı "Şans" yükseltmesiyle artar (elmas etkilenmez).
+func _spawn_pickup(platform: Platform, floor_number: int) -> void:
+	var luck: int = luck_level if luck_level >= 0 else Upgrades.luck_level()
+	if JetpackRules.should_spawn(floor_number, _last_jetpack_floor, _rng.randf(),
+			UpgradeRules.spawn_chance(Tuning.JETPACK_SPAWN_CHANCE, luck)):
 		_last_jetpack_floor = floor_number
 		_add_pickup(platform, Pickup.JETPACK)
-	elif PickupRules.should_spawn_heart(floor_number, _last_heart_floor, _rng.randf()):
+	elif PickupRules.should_spawn_heart(floor_number, _last_heart_floor, _rng.randf(),
+			UpgradeRules.spawn_chance(Tuning.HEART_SPAWN_CHANCE, luck)):
 		_last_heart_floor = floor_number
 		_add_pickup(platform, Pickup.HEART, PickupRules.is_air_spawn(_rng.randf()))
-	elif PickupRules.should_spawn_hourglass(floor_number, _last_hourglass_floor, _rng.randf()):
+	elif PickupRules.should_spawn_hourglass(floor_number, _last_hourglass_floor, _rng.randf(),
+			UpgradeRules.spawn_chance(Tuning.HOURGLASS_SPAWN_CHANCE, luck)):
 		_last_hourglass_floor = floor_number
 		_add_pickup(platform, Pickup.HOURGLASS, PickupRules.is_air_spawn(_rng.randf()))
-	elif MagnetRules.should_spawn(floor_number, _last_magnet_floor, _rng.randf()):
+	elif MagnetRules.should_spawn(floor_number, _last_magnet_floor, _rng.randf(),
+			UpgradeRules.spawn_chance(Tuning.MAGNET_SPAWN_CHANCE, luck)):
 		_last_magnet_floor = floor_number
 		_add_pickup(platform, Pickup.MAGNET, PickupRules.is_air_spawn(_rng.randf()))
 	elif MagnetRules.should_spawn_diamond(floor_number, _rng.randf(), _diamond_rush):

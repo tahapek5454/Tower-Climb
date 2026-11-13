@@ -17,9 +17,11 @@ static func can_spawn(floor_number: int, last_spawn_floor: int) -> bool:
 	return floor_number - last_spawn_floor >= Tuning.JETPACK_MIN_FLOOR_GAP
 
 
-## roll: 0..1 rastgele sayı. Nadirlik Tuning.JETPACK_SPAWN_CHANCE ile yönetilir.
-static func should_spawn(floor_number: int, last_spawn_floor: int, roll: float) -> bool:
-	return can_spawn(floor_number, last_spawn_floor) and roll < Tuning.JETPACK_SPAWN_CHANCE
+## roll: 0..1 rastgele sayı. Nadirlik Tuning.JETPACK_SPAWN_CHANCE ile yönetilir; chance: "Şans"
+## yükseltmesiyle etkin olasılık (UpgradeRules.spawn_chance; verilmezse taban).
+static func should_spawn(floor_number: int, last_spawn_floor: int, roll: float,
+		chance: float = Tuning.JETPACK_SPAWN_CHANCE) -> bool:
+	return can_spawn(floor_number, last_spawn_floor) and roll < chance
 
 
 ## Toplanabilirin platform merkezine göre x'i. roll: 0..1. Kenarlara PICKUP_EDGE_MARGIN'den yakın durmaz.

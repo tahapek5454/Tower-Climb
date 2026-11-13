@@ -136,6 +136,7 @@ func _ready() -> void:
 
 	if Tuning.ACHIEVEMENTS_ENABLED:
 		_add_achievements()
+	_add_run_boosts()
 
 	var game_over_screen := GameOverScreen.new()
 	game_over_screen.name = "GameOverScreen"
@@ -164,6 +165,14 @@ func _add_achievements() -> void:
 	achievements_menu.name = "AchievementsMenu"
 	add_child(achievements_menu)
 	_menu.link_child(achievements_menu, _menu.achievements_requested)
+
+
+## Takviyeler: tur başında stoktan kendiliğinden kullanılır (yedek kalp, roketli çıkış). Bkz. RunBoosts.
+func _add_run_boosts() -> void:
+	var boosts := RunBoosts.new()
+	boosts.name = "RunBoosts"
+	boosts.rocket_launch.connect(_player.start_jetpack)
+	add_child(boosts)
 
 
 ## Rekor çizgisi: tur başındaki kayıtlı en yüksek kata konur (rekor küçükse ya da kapalıysa yok).
@@ -268,16 +277,16 @@ func _on_player_event(event_name: StringName, data: Dictionary) -> void:
 func _on_pickup_collected(kind: StringName, _world_position: Vector2) -> void:
 	match kind:
 		Pickup.JETPACK:
-			_player.start_jetpack()
+			_player.start_jetpack(Upgrades.jetpack_time())
 		Pickup.DIAMOND:
 			GameState.add_diamond()
 		Pickup.HEART:
 			GameState.add_hearts(1)
 		Pickup.HOURGLASS:
-			_camera.slow_down()
+			_camera.slow_down(Upgrades.hourglass_duration())
 			Events.powerup_started.emit(Pickup.HOURGLASS, _camera.slow_time_left())
 		Pickup.MAGNET:
-			_magnet.activate()
+			_magnet.activate(Upgrades.magnet_duration())
 			Events.powerup_started.emit(Pickup.MAGNET, _magnet.time_left())
 
 

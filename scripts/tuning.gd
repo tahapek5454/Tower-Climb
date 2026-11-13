@@ -491,14 +491,16 @@ const PICKUP_COLLECT_TIME: float = 0.18
 # --- Roket / jetpack (Aşama 6; scripts/game/jetpack_rules.gd, scripts/player/jetpack_flight.gd) ---
 ## false: roket hiç çıkmaz (özelliği tek satırla kapatır).
 const JETPACK_ENABLED: bool = true
-## NADİRLİK: uygun her platformda roket çıkma olasılığı (0..1). Büyüt = daha sık.
-const JETPACK_SPAWN_CHANCE: float = 0.03
+## NADİRLİK: uygun her platformda roket çıkma olasılığı (0..1). Büyüt = daha sık. Mağaza: 0,03 → 0,022 (taban;
+## "Şans" yükseltmesi UPGRADE_LUCK_STEP ile artırır, seviye 3 ≈ eski değer).
+const JETPACK_SPAWN_CHANCE: float = 0.022
 ## Bu kattan önce roket çıkmaz; bir roketten sonra en az bu kadar kat boyunca yenisi çıkmaz
 ## (uçuşta geçilen kat sayısından büyük olmalı: uçarken ikinci rokete denk gelinmesin).
 const JETPACK_MIN_FLOOR: int = 15
 const JETPACK_MIN_FLOOR_GAP: int = 40
-## Uçuş süresi (s), tırmanma hızı (px/s) ve o hıza çıkış ivmesi (px/s²).
-const JETPACK_FLIGHT_TIME: float = 3.0
+## Uçuş süresi (s), tırmanma hızı (px/s) ve o hıza çıkış ivmesi (px/s²). Süre tabandır (mağaza: 3 → 2,2 s;
+## "Büyük depo" yükseltmesi UPGRADE_JETPACK_STEP ile uzatır).
+const JETPACK_FLIGHT_TIME: float = 2.2
 const JETPACK_SPEED: float = 1100.0
 const JETPACK_ACCEL: float = 4500.0
 ## Uçarken oyuncunun sağa/sola kayma hızı ve ivmesi.
@@ -549,14 +551,15 @@ const SFX_DIAMOND_DB: float = -7.0
 # --- Kalp (can; oyun turu bazlı, birikmez; scripts/game/pickup_rules.gd) ---
 ## false: kalp toplanabiliri hiç çıkmaz (bölüm geçişi kalbi HEART_SECTION_BONUS ile ayrı yönetilir).
 const HEART_ENABLED: bool = true
-## NADİRLİK: uygun her katta kalp çıkma olasılığı (0..1). Elmastan nadir.
-const HEART_SPAWN_CHANCE: float = 0.02
+## NADİRLİK: uygun her katta kalp çıkma olasılığı (0..1). Elmastan nadir. Mağaza: 0,02 → 0,015 (taban).
+const HEART_SPAWN_CHANCE: float = 0.015
 ## Bu kattan önce çıkmaz; bir kalpten sonra en az bu kadar kat boyunca yenisi çıkmaz.
 const HEART_MIN_FLOOR: int = 10
 const HEART_MIN_FLOOR_GAP: int = 35
 ## Oyun başındaki kalp, en fazla taşınabilecek kalp ve her bölüm geçişinde (SECTION_FLOOR_INTERVAL) kazanılan.
+## HEART_MAX tabandır (mağaza: 5 → 3; "Geniş yürek" yükseltmesi UPGRADE_HEARTS_STEP ile artırır).
 const HEART_START: int = 0
-const HEART_MAX: int = 5
+const HEART_MAX: int = 3
 const HEART_SECTION_BONUS: int = 1
 ## Kalple kurtarılınca: oyuncu ekranın altından bu kadar yukarıda (px, ayaklar) belirir ve roket bu kadar
 ## süre (s) uçurur; sonra roketteki gibi bir platforma bırakır.
@@ -569,14 +572,15 @@ const SFX_RESCUE_DB: float = -5.0
 ## Kum saati oyunun asıl baskısını, kameranın kaymasını yavaşlatır (karakter normal hızında kalır);
 ## bu sürede kameranın zamanla hızlanması da yavaşlar.
 const HOURGLASS_ENABLED: bool = true
-## NADİRLİK: uygun her katta kum saati çıkma olasılığı (0..1).
-const HOURGLASS_SPAWN_CHANCE: float = 0.025
+## NADİRLİK: uygun her katta kum saati çıkma olasılığı (0..1). Mağaza: 0,025 → 0,018 (taban).
+const HOURGLASS_SPAWN_CHANCE: float = 0.018
 ## Bu kattan önce çıkmaz (kamera henüz yavaş); iki kum saati arası en az bu kadar kat.
 const HOURGLASS_MIN_FLOOR: int = 30
 const HOURGLASS_MIN_FLOOR_GAP: int = 40
 ## Etkinin süresi (s), kamera hızının çarpanı ve yavaşlama/geri hızlanma geçiş süresi (s).
 ## Kullanıcı: 8 s çok uzun bulundu → 5 s; kısa ama belirgin olsun diye çarpan 0,35 → 0,3.
-const HOURGLASS_DURATION: float = 5.0
+## Mağaza: süre tabandır, 5 → 3,5 s ("İnce kum" yükseltmesi UPGRADE_HOURGLASS_STEP ile uzatır).
+const HOURGLASS_DURATION: float = 3.5
 const HOURGLASS_SCROLL_FACTOR: float = 0.3
 const HOURGLASS_RAMP_TIME: float = 0.6
 ## Etki sürerken ekran kenarlarındaki mavi-mor gölgenin saydamlığı.
@@ -685,13 +689,13 @@ const SFX_CRUMBLE_DB: float = -6.0
 ## Mıknatıs sürerken elmaslar bol çıkar ve menzildekiler oyuncuya uçar: kısa bir "elmas avı" anı.
 ## false: mıknatıs hiç çıkmaz (özelliği tek satırla kapatır).
 const MAGNET_ENABLED: bool = true
-## NADİRLİK: uygun her katta mıknatıs çıkma olasılığı (0..1).
-const MAGNET_SPAWN_CHANCE: float = 0.03
+## NADİRLİK: uygun her katta mıknatıs çıkma olasılığı (0..1). Mağaza: 0,03 → 0,022 (taban).
+const MAGNET_SPAWN_CHANCE: float = 0.022
 ## Bu kattan önce çıkmaz; iki mıknatıs arası en az bu kadar kat (etki sırasında yenisi çıkmasın).
 const MAGNET_MIN_FLOOR: int = 15
 const MAGNET_MIN_FLOOR_GAP: int = 35
-## Etkinin süresi (s).
-const MAGNET_DURATION: float = 7.0
+## Etkinin süresi (s). Mağaza: taban 7 → 5 s ("Güçlü mıknatıs" yükseltmesi UPGRADE_MAGNET_STEP ile uzatır).
+const MAGNET_DURATION: float = 5.0
 ## Çekim menzili (px, oyuncunun gövde ortasından); ~2,5 kat yukarısı ve kulenin büyük kısmı.
 const MAGNET_RADIUS: float = 320.0
 ## Çekilen elmasın hızı: başlangıç (px/s), ivme (px/s²) ve üst sınır. Üst sınır roketin hızından
@@ -722,3 +726,20 @@ const SFX_MAGNET_END_DB: float = -10.0
 const SHOP_ENABLED: bool = true
 ## Bir takviyeden en çok bu kadar stoklanır (her tur başında bir tanesi kendiliğinden kullanılır).
 const SHOP_BOOST_MAX_STOCK: int = 3
+
+# --- Yükseltmeler ve takviyeler (mağaza; scripts/game/shop/upgrade_rules.gd, run_boosts.gd) ---
+## false: satın alınmış yükseltmeler etkisiz (taban değerler geçerli).
+const UPGRADES_ENABLED: bool = true
+## Seviye başına artış (3 seviye; ShopCatalog prices). Seviye 3: roket 3,4 s, kum saati 5,75 s,
+## mıknatıs 8 s, 6 kalp, güçlendirme olasılıkları ×1,45 (≈ mağaza öncesi değerler).
+const UPGRADE_JETPACK_STEP: float = 0.4
+const UPGRADE_HOURGLASS_STEP: float = 0.75
+const UPGRADE_MAGNET_STEP: float = 1.0
+const UPGRADE_HEARTS_STEP: int = 1
+## "Şans": roket / kalp / kum saati / mıknatıs çıkma olasılığı ×(1 + adım × seviye). Elmas etkilenmez.
+const UPGRADE_LUCK_STEP: float = 0.15
+## false: takviyeler tur başında kullanılmaz (stok korunur).
+const BOOSTS_ENABLED: bool = true
+## Tur başladıktan sonra yedek kalbin (s) ve roketli çıkışın (s) devreye girme gecikmesi (ekran açılsın, oyuncu görsün).
+const BOOST_HEART_DELAY: float = 0.35
+const BOOST_ROCKET_DELAY: float = 0.7

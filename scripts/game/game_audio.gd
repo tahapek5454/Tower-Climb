@@ -77,7 +77,7 @@ func _on_pickup_collected(kind: StringName, _world_position: Vector2) -> void:
 			pass  # yavaşlama sesi powerup_started'da çalar
 		Pickup.HEART:
 			# Kalp sesi kalp sayısı artınca çalar (_on_hearts_changed); kalpler doluysa sayı artmaz.
-			if GameState.hearts >= Tuning.HEART_MAX:
+			if GameState.hearts >= Upgrades.heart_max():
 				AudioManager.play(&"pickup", 1.0, Tuning.SFX_PICKUP_DB)
 		_:
 			AudioManager.play(&"pickup", 1.0, Tuning.SFX_PICKUP_DB)

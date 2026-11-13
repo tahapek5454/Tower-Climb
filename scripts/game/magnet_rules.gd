@@ -12,9 +12,10 @@ static func can_spawn(floor_number: int, last_spawn_floor: int) -> bool:
 	return floor_number - last_spawn_floor >= Tuning.MAGNET_MIN_FLOOR_GAP
 
 
-## roll: 0..1. Nadirlik Tuning.MAGNET_SPAWN_CHANCE ile yönetilir.
-static func should_spawn(floor_number: int, last_spawn_floor: int, roll: float) -> bool:
-	return can_spawn(floor_number, last_spawn_floor) and roll < Tuning.MAGNET_SPAWN_CHANCE
+## roll: 0..1. Nadirlik Tuning.MAGNET_SPAWN_CHANCE ile yönetilir; chance: etkin olasılık ("Şans").
+static func should_spawn(floor_number: int, last_spawn_floor: int, roll: float,
+		chance: float = Tuning.MAGNET_SPAWN_CHANCE) -> bool:
+	return can_spawn(floor_number, last_spawn_floor) and roll < chance
 
 
 ## Bu katta elmas çıkar mı? magnet_active: mıknatıs etkisi sürüyor (olasılık MAGNET_DIAMOND_CHANCE olur).

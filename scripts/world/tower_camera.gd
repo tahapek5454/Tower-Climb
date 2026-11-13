@@ -15,8 +15,9 @@ var is_scrolling: bool = false
 var speed: float = 0.0
 var shake := CameraShake.new()
 var _scroll_time: float = 0.0
-## Kum saati: etki başlayalı geçen süre (s); etki yokken < 0.
+## Kum saati: etki başlayalı geçen süre (s; etki yokken < 0) ve etkinin toplam süresi (s).
 var _slow_elapsed: float = -1.0
+var _slow_duration: float = Tuning.HOURGLASS_DURATION
 ## Ulaşılan bölüm (seviye) ve yumuşakça hedefine yaklaşan bölüm ek hızı (px/s).
 var _section: int = 0
 var _section_bonus: float = 0.0
@@ -48,9 +49,11 @@ func _process(delta: float) -> void:
 	offset = shake.update(delta)
 
 
-## Kum saati: kaymayı HOURGLASS_DURATION boyunca yavaşlatır (sürerken yeniden alınırsa süre baştan başlar;
-## zaten yavaşken yeniden yavaşlama geçişi yapmaz).
-func slow_down() -> void:
+## Kum saati: kaymayı duration boyunca yavaşlatır (taban HOURGLASS_DURATION; "İnce kum" yükseltmesiyle
+## UpgradeRules.hourglass_duration). Sürerken yeniden alınırsa süre baştan başlar; zaten yavaşken yeniden
+## yavaşlama geçişi yapmaz.
+func slow_down(duration: float = Tuning.HOURGLASS_DURATION) -> void:
+	_slow_duration = duration
 	if is_slowed():
 		_slow_elapsed = minf(_slow_elapsed, Tuning.HOURGLASS_RAMP_TIME)
 	else:
@@ -63,7 +66,7 @@ func is_slowed() -> bool:
 
 ## Kum saati etkisinin kalan süresi (s); etki yoksa 0.
 func slow_time_left() -> float:
-	return Tuning.HOURGLASS_DURATION - _slow_elapsed if is_slowed() else 0.0
+	return _slow_duration - _slow_elapsed if is_slowed() else 0.0
 
 
 ## Kum saati süresini ilerletir; bu karenin hız çarpanını döndürür.
@@ -71,11 +74,11 @@ func _advance_slow(delta: float) -> float:
 	if not is_slowed():
 		return 1.0
 	_slow_elapsed += delta
-	if _slow_elapsed >= Tuning.HOURGLASS_DURATION:
+	if _slow_elapsed >= _slow_duration:
 		_slow_elapsed = -1.0
 		slow_ended.emit()
 		return 1.0
-	return PickupRules.hourglass_multiplier(_slow_elapsed)
+	return PickupRules.hourglass_multiplier(_slow_elapsed, _slow_duration)
 
 
 ## Kaymayı durdurur (oyun bitince).
