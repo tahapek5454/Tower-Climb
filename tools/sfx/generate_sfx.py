@@ -302,6 +302,27 @@ def hourglass_end():
     return mix(out, bell(0.3, 1568.0, 0.08), start_seconds=0.26, gain=0.35)
 
 
+def crumble_crack():
+    # Çatlayan platforma basıldı: kuru, ufak taş çıtırtısı (üç kısa "çıt") + boğuk gıcırtı.
+    out = silence(0.4)
+    for i in range(3):
+        mix(out, noise_burst(0.05, 5200, 1800, 0.0008, 0.01, highpass=900),
+            start_seconds=i * rng.uniform(0.05, 0.08), gain=0.55 - i * 0.12)
+    mix(out, sweep_tone(0.3, 210, 150, 0.25, 0.02, 0.09, ((1, 1.0), (2, 0.2)), triangle=True), gain=0.35)
+    return out
+
+
+def crumble():
+    # Platform çöküyor: yumuşak, boğuk bir "kürt" (alçak gürültü) + dağılan küçük taş tıkırtıları.
+    out = silence(0.9)
+    mix(out, noise_burst(0.5, 1600, 160, 0.006, 0.16), gain=0.9)
+    mix(out, sweep_tone(0.35, 120, 55, 0.25, 0.004, 0.1, ((1, 1.0), (2, 0.12))), gain=0.5)
+    for i in range(6):
+        mix(out, bell(0.08, rng.uniform(1500, 2600), 0.018, ((1.0, 1.0), (2.3, 0.2))),
+            start_seconds=0.08 + i * rng.uniform(0.05, 0.09), gain=0.18)
+    return out
+
+
 # Yeni sesler sözlüğün SONUNA eklenir: rastgelelik sırası değişmez, eski sesler aynı üretilir.
 SOUNDS = {
     "jump": jump, "land": land, "wall": wall, "combo": combo, "combo_end": combo_end,
@@ -310,6 +331,7 @@ SOUNDS = {
     "pickup": pickup, "jetpack": jetpack, "jetpack_end": jetpack_end,
     "diamond": diamond, "heart": heart, "rescue": rescue,
     "hourglass": hourglass, "hourglass_end": hourglass_end,
+    "crumble_crack": crumble_crack, "crumble": crumble,
 }
 
 

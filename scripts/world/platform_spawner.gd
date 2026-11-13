@@ -8,6 +8,9 @@ var _next_floor: int = 1
 var _prev_center: float = 0.0
 ## Zemin tam genişlikte olduğu için ilk platform her yere konabilir.
 var _prev_width: float = Tuning.TOWER_WIDTH
+## Bir alt katın türü ve (kayıyorsa) salınım genliği: adalet kuralları için.
+var _prev_kind: StringName = PlatformTypeRules.NORMAL
+var _prev_travel: float = 0.0
 ## Aşağıdan yukarıya sıralı (eski olan başta).
 var _platforms: Array[Platform] = []
 ## En son roket / kalp çıkan kat (başta: ilk uygun katta çıkabilsin diye yeterince geride).
@@ -42,10 +45,11 @@ func spawn_through_floor(floor_number: int) -> void:
 
 
 ## Verilen y'nin üstündeki platformlar, aşağıdan yukarıya (JetpackRules biçimi: merkez x, üst y, genişlik).
+## Roket / kalp uçuşunun iniş hedefi olduğu için yalnız güvenli olanlar: çatlayan ve kayan platformlar yok.
 func platforms_above(world_y: float) -> Array[Vector3]:
 	var result: Array[Vector3] = []
 	for platform: Platform in _platforms:
-		if platform.position.y < world_y:
+		if platform.position.y < world_y and platform.is_safe_landing():
 			result.append(Vector3(platform.position.x, platform.position.y, platform.width))
 	return result
 
@@ -66,15 +70,25 @@ func _spawn_up_to(top_y: float) -> void:
 
 func _spawn(floor_number: int) -> void:
 	var width: float = PlatformRules.random_width(floor_number, _rng)
-	var center: float = PlatformRules.next_center(floor_number, _prev_center, _prev_width, width, _rng)
+	var kind: StringName = PlatformTypeRules.pick(floor_number, _rng.randf(), _prev_kind)
+	var travel: float = 0.0
+	if kind == PlatformTypeRules.MOVING:
+		travel = PlatformTypeRules.safe_travel(PlatformTypeRules.moving_travel(floor_number),
+				_prev_width, _prev_travel, width)
+	var center: float = PlatformRules.next_center(floor_number, _prev_center, _prev_width, width, _rng,
+			_prev_travel, travel)
 	var platform := Platform.new()
 	platform.name = "Floor%d" % floor_number
-	platform.setup(floor_number, width)
+	platform.setup(floor_number, width, kind)
+	if kind == PlatformTypeRules.MOVING:
+		platform.set_motion(travel, PlatformTypeRules.moving_period(floor_number), _rng.randf() * TAU)
 	platform.position = Vector2(center, PlatformRules.floor_y(floor_number))
 	add_child(platform)
 	_platforms.append(platform)
 	_prev_center = center
 	_prev_width = width
+	_prev_kind = kind
+	_prev_travel = travel
 	# Bir katta en fazla bir toplanabilir; öncelik: roket, kalp, kum saati, elmas.
 	if JetpackRules.should_spawn(floor_number, _last_jetpack_floor, _rng.randf()):
 		_last_jetpack_floor = floor_number
@@ -92,6 +106,8 @@ func _spawn(floor_number: int) -> void:
 ## Toplanabiliri platformun çocuğu olarak koyar (platformla birlikte silinir). in_air: yüzeyin üstünde
 ## değil, bir üst kata giden yolda, kulenin herhangi bir yerinde süzülür.
 func _add_pickup(platform: Platform, kind: StringName, in_air: bool = false) -> void:
+	# Kayan platformun çocuğu olan havadaki toplanabilir onunla birlikte duvara kayabilirdi.
+	in_air = in_air and PlatformTypeRules.allows_air_pickup(platform.kind)
 	var pickup := Pickup.new()
 	pickup.setup(kind)
 	if in_air:

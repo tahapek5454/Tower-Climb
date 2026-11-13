@@ -587,3 +587,45 @@ const SFX_HOURGLASS_END_DB: float = -9.0
 # --- Debug ---
 ## F4 yavaş çekimde oyun hızı (efektleri incelemek için).
 const DEBUG_SLOW_MOTION_SCALE: float = 0.25
+
+# --- Platform türleri (çatlayan / kayan / buz; scripts/world/platform_type_rules.gd) ---
+## false: tüm platformlar normal (özelliği tek sabitle kapatır).
+const PLATFORM_TYPES_ENABLED: bool = true
+## Toplam özel platform olasılığının üst sınırı (türlerin olasılıkları toplamı bunu aşarsa orantılı küçülür).
+const PLATFORM_TYPE_TOTAL_MAX: float = 0.3
+## Her tür: bu kattan önce çıkmaz; ilk olasılık, bölüm (SECTION_FLOOR_INTERVAL kat) başına artış, üst sınır.
+const PLATFORM_CRUMBLE_MIN_FLOOR: int = 20
+const PLATFORM_CRUMBLE_CHANCE: float = 0.08
+const PLATFORM_CRUMBLE_CHANCE_PER_SECTION: float = 0.03
+const PLATFORM_CRUMBLE_CHANCE_MAX: float = 0.14
+const PLATFORM_MOVING_MIN_FLOOR: int = 40
+const PLATFORM_MOVING_CHANCE: float = 0.08
+const PLATFORM_MOVING_CHANCE_PER_SECTION: float = 0.03
+const PLATFORM_MOVING_CHANCE_MAX: float = 0.14
+const PLATFORM_ICE_MIN_FLOOR: int = 60
+const PLATFORM_ICE_CHANCE: float = 0.07
+const PLATFORM_ICE_CHANCE_PER_SECTION: float = 0.025
+const PLATFORM_ICE_CHANCE_MAX: float = 0.12
+## Çatlayan: üstüne inildikten sonra çökmeye kadar geçen süre (s), titreme genliği (px) ve
+## parçaların düşüş süresi (s) / mesafesi (px).
+const PLATFORM_CRUMBLE_DELAY: float = 0.6
+const PLATFORM_CRUMBLE_SHAKE: float = 2.5
+const PLATFORM_CRUMBLE_FALL_TIME: float = 0.75
+const PLATFORM_CRUMBLE_FALL_DISTANCE: float = 220.0
+## Çatlakların üstüne basılmadan önce görünen oranı (0..1); basınca 1'e büyür.
+const PLATFORM_CRACK_IDLE_LENGTH: float = 0.7
+## Kayan: yatay salınım genliği (px, merkezden bir yana) ve tam tur süresi (s); MIN_FLOOR'da ilk değer,
+## bu kadar kat sonra son değer (genlik ve hız katla biraz artar).
+const PLATFORM_MOVING_TRAVEL_START: float = 60.0
+const PLATFORM_MOVING_TRAVEL_END: float = 110.0
+const PLATFORM_MOVING_PERIOD_START: float = 4.4
+const PLATFORM_MOVING_PERIOD_END: float = 3.6
+const PLATFORM_MOVING_RAMP_FLOORS: int = 400
+## Buz: üstünde yer ivmesi ve sürtünmesinin çarpanı (1 = normal). Sürtünme azaldıkça daha uzun kayar.
+const PLATFORM_ICE_ACCEL_FACTOR: float = 0.45
+const PLATFORM_ICE_FRICTION_FACTOR: float = 0.3
+## Buz parıltısı: kaç saniyede bir platformun üstünden geçer ve geçişin süresi (s).
+const PLATFORM_ICE_GLINT_INTERVAL: float = 2.8
+const PLATFORM_ICE_GLINT_TIME: float = 0.6
+const SFX_CRUMBLE_CRACK_DB: float = -9.0
+const SFX_CRUMBLE_DB: float = -6.0
