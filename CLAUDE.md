@@ -95,14 +95,15 @@ Player (CharacterBody2D)      ← scripts/player/player.gd — hareket, çarpı�
 - `GameState` — skor, kat, kombo, en yüksek skor
 - `WindowManager` — pencere modu; tam ekran aç/kapat (`toggle_fullscreen`: F11, Alt+Enter); seçim kaydedilir
 - `AudioManager` — ses kanalları (Master/SFX/Music), efekt çalma (`play`), müzik çalar (`music`), seviyeler/sustur, duraklatınca müzik süzgeci
-- `GameFlow` — oyun akışı durumu: `MENU, PLAYING, PAUSED, GAME_OVER` (`request(durum)`; kurallar `FlowRules`). **`get_tree().paused`'a doğrudan dokunma**; duraklatmayı sadece `GameFlow` yönetir.
+- `GameFlow` — oyun akışı durumu: `MENU, PLAYING, PAUSED, GAME_OVER, REVIVE` (`request(durum)`; kurallar `FlowRules`; PAUSED ve REVIVE dünyayı dondurur). **`get_tree().paused`'a doğrudan dokunma**; duraklatmayı sadece `GameFlow` yönetir.
 - `ScreenFade` — ekran kararma/açılma geçişi (sahne yenilerken: `await cover()` → yenile → yeni sahne `reveal()`)
+- `Shop` — elmas mağazasının durumu (sahip olunan, kuşanılan, yükseltme seviyesi, takviye stoğu): `buy`, `equip`, `equipped(slot)`, `upgrade_level(id)`, `boost_stock(id)`; testlerde `SaveData.path` değişince `Shop.reload()`
 
 ### Arayüz (Aşama 5)
 - Tüm ekranlar (menü, duraklatma, ayarlar, oyun sonu) `UiScreen`'den türer; denetimler `UiButton` / `UiToggle` / `UiSlider`; renk ve stil sadece `UiStyle`'dan. Ekranlar arası geçiş `UiScreen.link_child`. Yeni ekranlarda aynı dili kullan (koyu arduvaz kart, turkuaz vurgu, altın = ödül).
 - Kullanıcıya görünen ayarlar `AudioSettings` / `GameSettings`'e, rekorlar `SaveData`'ya yazılır (`user://`). Testlerde bu sınıfların `path`'ini geçici dosyaya çevir.
 - Katmanlar: HUD 1, UiScreen 40, geri sayım 41, başarım bildirimi 42, konfeti 45, radyo 50, ScreenFade 95, debug 100.
-- Debug tuşları: F3 overlay, F4 yavaş çekim, F6 sonraki bölüme ışınlan, F7 üstteki platforma roket koy, F8 kalp koy, F9 kum saati koy, F10 mıknatıs koy.
+- Debug tuşları (`DebugKeys`): F3 overlay, F4 yavaş çekim, F6 sonraki bölüme ışınlan, F7 üstteki platforma roket koy, F8 kalp koy, F9 kum saati koy, F10 mıknatıs koy.
 
 ### Güçlendirmeler (Aşama 6)
 - Toplanabilir nesne = `Pickup` (Area2D, platformun çocuğu); alınınca `Events.pickup_collected(kind, konum)`. Etkiyi `main` oyuncuya uygular; süreli etkiler `Events.powerup_started/ended` ile duyurulur (HUD, ses).
@@ -115,6 +116,15 @@ Player (CharacterBody2D)      ← scripts/player/player.gd — hareket, çarpı�
 - Rekor çizgisi: `RecordLine` + `RecordLineRules` (tur başındaki rekor kat; `Tuning.RECORD_LINE_*`).
 - Başarımlar: tanım/hedef/ödül tek tablo `AchievementRules`; izleyici `AchievementTracker` (main'e kodla eklenir, yalnız PLAYING'de sayar); kayıt `SaveData` [achievements] (rekor sıfırlama silmez); `Events.achievement_unlocked`; bildirim `AchievementToast`; liste `AchievementsMenu`.
 - Platform türleri: `Platform` = `AnimatableBody2D` (`kind`: normal / çatlayan / kayan / buz); seçim `PlatformTypeRules`; buz çarpanları `player.gd`'de üstünde durulan platformdan (`_ground`); roket/kalp iniş adayı yalnız `is_safe_landing` platformlar. Yeni tür = `PlatformTypeRules` + `Tuning.PLATFORM_*`; ulaşılabilirlik `PlatformRules.next_center(..., travel)` ile korunmalı.
+
+### Elmas mağazası (Aşama 6)
+- Ürünler, fiyatlar ve renkler tek tabloda: `ShopCatalog` (`scripts/game/shop/`). Türler: kuşanılan yuvalar HAT / SHIRT / PANTS / TRAIL, stoklanan BOOST, seviyeli UPGRADE. Kurallar `ShopRules` (saf), durum `Shop` autoload, kayıt `SaveData` [shop], harcama `GameState.spend_diamonds`; olaylar `Events.shop_purchased / shop_equipped`. Yeni ürün = katalog satırı (+ şapkaysa `accessories.glb`'de aynı adlı nesne).
+- Ekran `scripts/ui/shop/` (`ShopMenu`, yalnız ana menüden): sekmeler, `ShopRow`, canlı önizleme `ShopPreview` (odaklanan kozmetik satın almadan denenir).
+- Görünüm `Visual` katmanında: `PlayerVisual._on_cosmetic_changed` → `CharacterModel.set_cosmetic(slot, id)` (şapka `HatModel`, `head` kemiği; tişört/pantolon maske + `toon_character.gdshader`, `CosmeticPaint`) ve `_apply_trail_cosmetic` (iz / toz / hâle; `TrailCosmetic`). Şapkalar `tools/blender/accessories.py`, maske/konum dokuları `tools/blender/cosmetic_maps.py` ile üretilir.
+- Yükseltmeler: `UpgradeRules` (saf) + `Upgrades` (seviyeyi `Shop`'tan okur); saf kural sınıfları autoload'a dokunmaz, etkin değer parametreyle geçer. Takviyeler: `RunBoosts` (tur başında stoktan birer tane kullanır).
+- Elmasla devam et: `ReviveRules` + `ReviveCard`, akış durumu `REVIVE`, `GameState.revives_used / use_revive`, `Player.rescue(y, source)` (`&"heart"` / `&"revive"`).
+- Kapatma sabitleri: `SHOP_ENABLED` (hepsi), `COSMETICS_ENABLED`, `UPGRADES_ENABLED`, `BOOSTS_ENABLED`, `REVIVE_ENABLED`.
+- "Toplam elmas" başarımları `GameState.lifetime_diamonds`'a bakar (harcama düşürmez).
 
 ### Ekran ve pencere
 - Tasarım çözünürlüğü **1280 x 720** sabittir (`Tuning.VIEW_WIDTH/HEIGHT`, stretch `canvas_items`, aspect `keep`). Tüm yerleşim ve oynanış sayıları bu koordinatlara göredir; pencere büyüsün diye bu değerleri **değiştirme**.

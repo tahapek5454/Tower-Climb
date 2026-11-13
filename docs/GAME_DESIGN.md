@@ -114,8 +114,8 @@ Değerler `const` olarak kalır (oyun içi canlı ayar paneli şimdilik yok). İ
 Toplanabilir nesneler platformların üstünde hafifçe süzülür (`Pickup`); oyuncu dokununca alınır.
 
 ### Roket (jetpack)
-- **Çıkış:** nadir. Uygun her platformda `JETPACK_SPAWN_CHANCE` (%3) olasılık; `JETPACK_MIN_FLOOR` (15) kattan önce ve bölüm platformunda çıkmaz; bir roketten sonra `JETPACK_MIN_FLOOR_GAP` (40) kat boyunca yenisi çıkmaz. Ortalama ~70 katta bir. `JETPACK_ENABLED = false` özelliği kapatır.
-- **Uçuş:** `JETPACK_FLIGHT_TIME` (3 s) boyunca `JETPACK_SPEED` (1100 px/s) ile yukarı (~26 kat). Oyuncu sağa/sola kayabilir; yerçekimi, zıplama ve duvar sekmesi kapalı. Karakter süpermen pozunda (kollar yukarıda), sırtında roket, memeden alev + duman izi.
+- **Çıkış:** nadir. Uygun her platformda `JETPACK_SPAWN_CHANCE` (%2,2; "Şans" yükseltmesiyle artar) olasılık; `JETPACK_MIN_FLOOR` (15) kattan önce ve bölüm platformunda çıkmaz; bir roketten sonra `JETPACK_MIN_FLOOR_GAP` (40) kat boyunca yenisi çıkmaz. Ortalama ~70 katta bir. `JETPACK_ENABLED = false` özelliği kapatır.
+- **Uçuş:** `JETPACK_FLIGHT_TIME` (2,2 s; yükseltmeyle 3,4 s'ye kadar) boyunca `JETPACK_SPEED` (1100 px/s) ile yukarı. Oyuncu sağa/sola kayabilir; yerçekimi, zıplama ve duvar sekmesi kapalı. Karakter süpermen pozunda (kollar yukarıda), sırtında roket, memeden alev + duman izi.
 - **Puan:** uçarken geçilen her kat normal kat puanını kazandırır (kombo bonusu vermez). Aktif kombo uçuş boyunca donar; roketin bıraktığı platforma iniş komboyu ne bozar ne uzatır.
 - **Güvenli bırakma:** süre dolunca roket oyuncuyu üstteki platformlardan birinin (yatayda en yakını) üstüne taşır, yüzeyin biraz üstünde küçük bir sıçrayışla bırakır; boş roket arkaya düşüp kaybolur. Uçarken ekranın altında kalmak mümkün değil (kamera oyuncuyu izler).
 - **HUD:** uçuş sürerken "ROKET" satırı ve yakıt çubuğu.
@@ -123,18 +123,30 @@ Toplanabilir nesneler platformların üstünde hafifçe süzülür (`Pickup`); o
 ### Elmas (para)
 - **Çıkış:** nadir. Her katta `DIAMOND_SPAWN_CHANCE` (%6, ≈ 17 katta bir), `DIAMOND_MIN_FLOOR` (3) kattan itibaren. %45 (`PICKUP_AIR_CHANCE`) havada — iki kat arasında, kulenin herhangi bir yerinde — kalanı platformun üstünde. Bir katta tek toplanabilir (roket öncelikli). `DIAMOND_ENABLED = false` kapatır.
 - **Birikim:** toplam kalıcıdır (`user://save.cfg` [wallet]); her alışta kaydedilir; rekor sıfırlama silmez. HUD'da "ELMAS" satırı, ana menüde toplam, oyun sonunda bu oyunda toplanan (+N).
-- **Harcama:** henüz yok (ileride).
+- **Harcama:** elmas mağazası ve "elmasla devam et" (aşağıda).
 
 ### Kalp (can)
-- **Oyun turu bazlı:** her oyun `HEART_START` (0) kalple başlar, oyunlar arası birikmez; en fazla `HEART_MAX` (5).
-- **Kazanma:** nadir toplanabilir (`HEART_SPAWN_CHANCE` %2, `HEART_MIN_FLOOR` 10'dan sonra, iki kalp arası en az `HEART_MIN_FLOOR_GAP` 35 kat; havada ya da platformda) ve her bölüm geçişinde (her 100 kat) `HEART_SECTION_BONUS` (+1).
+- **Oyun turu bazlı:** her oyun `HEART_START` (0) kalple başlar, oyunlar arası birikmez; en fazla `HEART_MAX` (3; yükseltmeyle 6'ya kadar).
+- **Kazanma:** nadir toplanabilir (`HEART_SPAWN_CHANCE` %1,5, `HEART_MIN_FLOOR` 10'dan sonra, iki kalp arası en az `HEART_MIN_FLOOR_GAP` 35 kat; havada ya da platformda) ve her bölüm geçişinde (her 100 kat) `HEART_SECTION_BONUS` (+1).
 - **Ölüm:** kalp varken ekranın altına düşülürse 1 kalp harcanır; oyuncu ekranın altında belirir, sırtına roket takılır ve `HEART_RESCUE_FLIGHT_TIME` (1,6 s) uçup roketteki gibi bir platforma bırakılır. Kalp yoksa oyun biter.
 - **HUD (kalp):** "CAN" satırında kalpler; kazanınca başın üstünde kalp yükselir, kurtarılınca kalp ikiye kırılır.
 
 ### Kum saati (yavaş zaman)
-- **Çıkış:** nadir (`HOURGLASS_SPAWN_CHANCE` %2,5), `HOURGLASS_MIN_FLOOR` (30) kattan sonra, iki kum saati arası en az 40 kat; havada ya da platformda.
-- **Etki:** `HOURGLASS_DURATION` (5 s) boyunca kameranın kayması `HOURGLASS_SCROLL_FACTOR` (×0,3) hızına yumuşakça iner, sonra yumuşakça döner; bu sürede kameranın zamanla hızlanması da yavaşlar. Karakter normal hızında kalır. Sürerken yeniden alınırsa süre yenilenir.
+- **Çıkış:** nadir (`HOURGLASS_SPAWN_CHANCE` %1,8), `HOURGLASS_MIN_FLOOR` (30) kattan sonra, iki kum saati arası en az 40 kat; havada ya da platformda.
+- **Etki:** `HOURGLASS_DURATION` (3,5 s; yükseltmeyle 5,75 s'ye kadar) boyunca kameranın kayması `HOURGLASS_SCROLL_FACTOR` (×0,3) hızına yumuşakça iner, sonra yumuşakça döner; bu sürede kameranın zamanla hızlanması da yavaşlar. Karakter normal hızında kalır. Sürerken yeniden alınırsa süre yenilenir.
 - **Görsel/ses:** ekran kenarlarında yumuşak mor-mavi gölge, HUD'da "YAVAŞ ZAMAN" çubuğu, yavaşlama ve normale dönme sesleri.
+
+## Elmas mağazası (Aşama 6)
+Yalnız ana menüden açılır. Ürünler ve fiyatlar `scripts/game/shop/shop_catalog.gd` tablosunda.
+- **Kozmetikler** (alınır, kuşanılır; her yuvada tek ürün, mağazada satın almadan denenir):
+  - Şapka (10): kep, bere, parti külahı, hasır, fes, kovboy, pervaneli, silindir, Noel Baba, altın taç (80–400).
+  - Tişört (9): düz renkler, denizci ve arı çizgili, puantiyeli, yıldızlı (30–90). Pantolon (5): kot, haki, zeytin, bordo, krem (30–40).
+  - Efekt (6): koşu izi + iniş tozu + hâle renk takımı; düz renkler, altın toz ve yıldız tozu (ışıltılı), gökkuşağı (40–160).
+- **Takviyeler** (tek kullanımlık, en çok 3 stok; sonraki turun başında kendiliğinden kullanılır): yedek kalp (15), roketli çıkış (25).
+- **Yükseltmeler** (kalıcı, 3 seviye): roket süresi +0,4 s, kum saati +0,75 s, mıknatıs +1 s (60 / 120 / 200); kalp sınırı +1, şans ×(1 + 0,15·seviye) (80 / 160 / 260). Yükseltmesiz güçlendirmeler bilerek kısa ve seyrek; tam seviye eski değerlerin biraz üstü.
+- **Elmasla devam et:** kalpsiz düşünce oyun sonundan önce 3 sn'lik kart; tur başına 2 kez (10, sonra 20 elmas). Kabul edilirse kalp kurtarmasındaki gibi roketle kurtarılır; reddedilir ya da süre dolarsa oyun biter. Kart beklerken dünya donar.
+- Mıknatıs: taban süre 5 s (`MAGNET_DURATION`), çıkma olasılığı %2,2.
+- Her parça tek sabitle kapanır: `SHOP_ENABLED`, `COSMETICS_ENABLED`, `UPGRADES_ENABLED`, `BOOSTS_ENABLED`, `REVIVE_ENABLED`.
 
 ## Juice listesi (Aşama 2)
 - Squash & stretch: zıplarken dikey uzama, inişte yatay ezilme (hıza orantılı).

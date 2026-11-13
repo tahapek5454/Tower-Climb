@@ -106,6 +106,13 @@ func _ready() -> void:
 		radio.name = "Radio"
 		add_child(radio)
 
+	var debug_keys := DebugKeys.new()
+	debug_keys.name = "DebugKeys"
+	debug_keys.player = _player
+	debug_keys.camera = _camera
+	debug_keys.spawner = _spawner
+	add_child(debug_keys)
+
 	var debug_overlay := DebugOverlay.new()
 	debug_overlay.name = "DebugOverlay"
 	debug_overlay.player = _player
@@ -226,40 +233,6 @@ func _on_player_fell() -> void:
 ## Kalp ya da elmasla kurtarma: oyuncu ekranın altından kısa bir roket uçuşuyla yukarı taşınır.
 func _rescue_player(source: StringName) -> void:
 	_player.rescue(_camera.global_position.y + Tuning.VIEW_HEIGHT * 0.5 - Tuning.HEART_RESCUE_RISE, source)
-
-
-func _unhandled_input(input_event: InputEvent) -> void:
-	if not GameFlow.is_playing():
-		return
-	if input_event.is_action_pressed(&"debug_skip_section"):
-		_debug_skip_section()
-		get_viewport().set_input_as_handled()
-	elif input_event.is_action_pressed(&"debug_spawn_jetpack"):
-		# Debug (F7 roket, F8 kalp): denemek için oyuncunun üstündeki ilk platforma bir tane koyar.
-		_spawner.debug_spawn(Pickup.JETPACK, _player.global_position.y - Tuning.FLOOR_SPACING * 0.5)
-		get_viewport().set_input_as_handled()
-	elif input_event.is_action_pressed(&"debug_spawn_heart"):
-		_spawner.debug_spawn(Pickup.HEART, _player.global_position.y - Tuning.FLOOR_SPACING * 0.5)
-		get_viewport().set_input_as_handled()
-	elif input_event.is_action_pressed(&"debug_spawn_hourglass"):
-		_spawner.debug_spawn(Pickup.HOURGLASS, _player.global_position.y - Tuning.FLOOR_SPACING * 0.5)
-		get_viewport().set_input_as_handled()
-	elif input_event.is_action_pressed(&"debug_spawn_magnet"):
-		_spawner.debug_spawn(Pickup.MAGNET, _player.global_position.y - Tuning.FLOOR_SPACING * 0.5)
-		get_viewport().set_input_as_handled()
-
-
-## Debug (F6): oyuncuyu bir sonraki bölüm platformuna (tam genişlik, ortada) ışınlar; kamera
-## başlangıçtaki gibi konumlanır. Temaları 100 kat tırmanmadan görmek için. Skor/kombo da atlar.
-func _debug_skip_section() -> void:
-	var interval: int = Tuning.SECTION_FLOOR_INTERVAL
-	var current: int = floori(ThemeRules.floor_value_at(_player.position.y))
-	var target: int = (floori(float(current) / interval) + 1) * interval
-	_spawner.spawn_through_floor(target)
-	var target_y: float = PlatformRules.floor_y(target)
-	_player.position = Vector2(0.0, target_y)
-	_player.velocity = Vector2.ZERO
-	_camera.position.y = target_y + Tuning.GROUND_SCREEN_MARGIN - Tuning.VIEW_HEIGHT * 0.5
 
 
 func _on_play_requested() -> void:
