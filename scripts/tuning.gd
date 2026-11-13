@@ -200,7 +200,12 @@ const CAMERA_START_SPEED: float = 40.0
 ## Her CAMERA_SPEED_STEP_INTERVAL saniyede hız bu kadar artar.
 const CAMERA_SPEED_STEP: float = 12.0
 const CAMERA_SPEED_STEP_INTERVAL: float = 30.0
-const CAMERA_MAX_SPEED: float = 260.0
+## Seviye atladıkça hızlanma: her bölüm geçişinde (SECTION_FLOOR_INTERVAL kat) kalıcı ek hız (px/s);
+## ek hız CAMERA_SECTION_RAMP_TIME saniyede yumuşakça gelir.
+const CAMERA_SECTION_SPEED_BONUS: float = 30.0
+const CAMERA_SECTION_RAMP_TIME: float = 2.0
+## Zaman + bölüm hızının toplam üst sınırı.
+const CAMERA_MAX_SPEED: float = 320.0
 ## Ekranın üstten bu oranı yakalama bölgesi.
 const CAMERA_CATCHUP_ZONE: float = 0.30
 
@@ -570,8 +575,9 @@ const HOURGLASS_SPAWN_CHANCE: float = 0.025
 const HOURGLASS_MIN_FLOOR: int = 30
 const HOURGLASS_MIN_FLOOR_GAP: int = 40
 ## Etkinin süresi (s), kamera hızının çarpanı ve yavaşlama/geri hızlanma geçiş süresi (s).
-const HOURGLASS_DURATION: float = 8.0
-const HOURGLASS_SCROLL_FACTOR: float = 0.35
+## Kullanıcı: 8 s çok uzun bulundu → 5 s; kısa ama belirgin olsun diye çarpan 0,35 → 0,3.
+const HOURGLASS_DURATION: float = 5.0
+const HOURGLASS_SCROLL_FACTOR: float = 0.3
 const HOURGLASS_RAMP_TIME: float = 0.6
 ## Etki sürerken ekran kenarlarındaki mavi-mor gölgenin saydamlığı.
 const HOURGLASS_VIGNETTE_ALPHA: float = 0.6

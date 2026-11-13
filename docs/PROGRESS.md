@@ -1,13 +1,13 @@
 # İlerleme
 
-**Aktif aşama:** **Aşama 6 — Ek özellikler** (madde 1–3 roket, elmas, kalp onaylı; madde 4 kum saati yapıldı, kullanıcı testi bekleniyor)
+**Aktif aşama:** **Aşama 6 — Ek özellikler** (madde 1–3 onaylı; madde 4 kum saati + madde 5 seviyeyle hızlanma yapıldı, kullanıcı testi bekleniyor)
 **Durum:** Aşama 1–5 tamam ve onaylı. Aşama 6 2026-11-13'te başladı; kapsam madde madde kullanıcıyla belirleniyor (aşağıda "Aşama 6").
 
 ## ▶ Yeni oturumda buradan devam
 **Durum:** Aşama 1–5 tamam. Sıradaki: **Aşama 6 — Ek özellikler**. Kapsam belirlenmedi; kullanıcıyla netleştirilecek. Altın kural: kullanıcı onaylamadan kod yazma, aşamayı kendiliğinden bitirip bir sonrakine geçme.
 
 0. **Aşama 6 sürüyor:** önce aşağıdaki "Aşama 6" bölümünü oku (yapılan madde, bekleyen kullanıcı onayı).
-1. CLAUDE.md bölüm 0 ortam kontrolünü yap, tabloyla raporla (godot 4.7.2 — mono değil, git, node, `claude mcp list` → godot ✔ / blender ✔ (rea ve playwright bu projede kapalı olabilir), `godot --headless --path . --quit`). Ayrıca GUT testlerini çalıştır: **168 test geçmeli** (`godot --headless --path . -s res://addons/gut/gut_cmdln.gd`).
+1. CLAUDE.md bölüm 0 ortam kontrolünü yap, tabloyla raporla (godot 4.7.2 — mono değil, git, node, `claude mcp list` → godot ✔ / blender ✔ (rea ve playwright bu projede kapalı olabilir), `godot --headless --path . --quit`). Ayrıca GUT testlerini çalıştır: **170 test geçmeli** (`godot --headless --path . -s res://addons/gut/gut_cmdln.gd`).
 2. Oku: bu dosyadaki **"Aşama 6 hazırlığı"** ve **"Aşama 5 sonrası mimari özeti"** bölümleri, `docs/GAME_DESIGN.md` ("Başlangıç ayar değerleri"), ayrıca bu dosyadaki "Aşama 3 model notları" altındaki **"Genişletilebilirlik"** notu (yeni animasyon / kemiğe takılan aksesuar nasıl eklenir).
 3. Kullanıcıya tek cümleyle durumu söyle; ardından **Aşama 6'nın maddelerini ve yaklaşımını kullanıcıyla netleştir** ("Aşama 6 hazırlığı"ndaki sorular). Onay almadan kod yazma. Tek seferde tek madde: bitir → doğrula (GUT + ekran görüntüsü) → commit → bu dosyayı güncelle → kullanıcıya nasıl test edeceğini söyle.
 4. Araç ön koşulları (CLAUDE.md bölüm 2): Aşama 6 için kullanıcının kurması gereken bir şey kapsama göre belirlenir. Yeni 3D model/animasyon gerekirse Blender 5.3 + blender-mcp hazır (`get_addon_status` ile doğrula); Tripo API'de kredi yok, üretim Tripo web sitesinde (ücretsiz plan, **H2.5**) kullanıcı tarafından yapılır. İnternetten asset indirme, ücretli servis ve hesap açma yasak (kullanıcıya bırak).
@@ -34,7 +34,10 @@ Kapsam madde madde kullanıcıyla belirleniyor (fikir listesi: "Aşama 6 hazırl
 - [x] 1. Roket / jetpack + ortak toplanabilir altyapısı (`Pickup`, `Events.pickup_collected`, `powerup_started/ended`) — kullanıcı onayladı ("iyi çalışıyor")
 - [x] 2. Elmas (para): nadir, platformda ya da havada; kalıcı toplam (`save.cfg` [wallet]); HUD + ana menü + oyun sonu — onaylandı ("hepsi olmuş")
 - [x] 3. Kalp (can): oyun turu bazlı, nadir toplanabilir + bölüm geçişinde +1, ölünce 1 kalp harcanır ve roketle kurtarılır — onaylandı
-- [x] 4. Kum saati: kameranın kaymasını 8 s yavaşlatır (×0,35, yumuşak geçiş), ekran kenarında mor-mavi gölge, HUD "YAVAŞ ZAMAN" — **kullanıcı testi bekleniyor**
+- [x] 4. Kum saati: kameranın kaymasını 8 s yavaşlatır (×0,35, yumuşak geçiş), ekran kenarında mor-mavi gölge, HUD "YAVAŞ ZAMAN" — kullanıcı: ilk katlarda etkisi hissedilmedi, süre uzun → madde 5'te 5 s / ×0,3 yapıldı
+- [x] 5. Seviye atladıkça hızlanma: her bölüm geçişinde kamera +30 px/s (yumuşak), üst sınır 320, "HIZLANIYOR!" yazısı — **kullanıcı testi bekleniyor**
+- Kombo yazısı yalnız çarpan ("x3"), "COMBO" kelimesi kaldırıldı (kullanıcı isteği; 22–30 punto).
+- Elmas mağazası en sona (modelleme gerekecek). Diğer öneriler: mıknatıs, yeni platform türleri, kombo elması, başarımlar, rekor çizgisi.
 - Kanat iptal (kullanıcı: "roket yeterli"). Para harcama (mağaza vb.) sonra; şimdilik sadece birikim.
 
 ### Aşama 6 kararları (2026-11-13)
@@ -53,6 +56,8 @@ Kapsam madde madde kullanıcıyla belirleniyor (fikir listesi: "Aşama 6 hazırl
 - Madde 4 kararı: "oyunu yavaşlatma" = **kameranın kaymasını** yavaşlatmak (oyunun asıl baskısı). `Engine.time_scale` kullanılmadı: karakter de yavaşlar (oran değişmez) ve HitStop/F4 ile çakışır. Bu sürede kameranın zamanla hızlanması da yavaşlar (`_scroll_time` çarpanla ilerler).
 - Madde 4 uygulama: `PickupRules.can_spawn_hourglass/should_spawn_hourglass/hourglass_multiplier` (başta/sonda `HOURGLASS_RAMP_TIME` yumuşak geçiş), `Tuning.HOURGLASS_*` (NADİRLİK `HOURGLASS_SPAWN_CHANCE` 0,025, `MIN_FLOOR` 30, `MIN_FLOOR_GAP` 40; `DURATION` 8 s, `SCROLL_FACTOR` 0,35). `TowerCamera.slow_down/is_slowed/slow_time_left` + `slow_ended` sinyali (main → `Events.powerup_ended`). Öncelik roket > kalp > kum saati > elmas. `HourglassArt` (ahşap tabla, cam, akan kum; `top_sand_points/bottom_sand_points`), `Pickup.HOURGLASS` (kum sürekli akar), `SlowTimeFx` (CanvasLayer 1, HUD'dan önce: radyal mor-mavi vinyet, `HOURGLASS_VIGNETTE_ALPHA`). HUD güçlendirme satırları genelleştirildi: `PowerupRow` (ROKET, YAVAŞ ZAMAN). Sesler `hourglass`, `hourglass_end`. Debug F9 (`debug_spawn_hourglass`).
 - Doğrulama (kum saati): GUT 168 (`test_hourglass.gd` 5: çıkış, çarpan eğrisi, kamera yavaşlayıp dönüyor, çokgenler). Betik: kamera 40 → 14 px/s, 8 s sonra 40; vinyet ve HUD görüntüde doğrulandı (ilk vinyet çok silikti, 0,6'ya çıkarıldı). Ses dinlenmedi.
+- Analiz (2026-11-13, kullanıcı "kum saati ilk levellerde etkisiz"): kamera yalnız zamanla hızlanıyordu (40 px/s, +12/30 s, üst 260 ≈ 9,5 dk); bölüm hıza etki etmiyordu. Kum saati en erken 30. katta → 40–52 px/s'yi ~15'e indiriyordu (fark < ¼ kat/s); ayrıca iyi oynayan oyuncuyu kamera yakalama bölgesinden izlediği için kayma hızı hissedilmiyor. Çözüm madde 5.
+- Madde 5 uygulama: `CameraRules.scroll_speed(elapsed, section_bonus)` + `section_of` + `section_bonus`; `Tuning.CAMERA_SECTION_SPEED_BONUS` 30, `CAMERA_SECTION_RAMP_TIME` 2 s, `CAMERA_MAX_SPEED` 260 → 320. `TowerCamera` bölümü `floor_changed`'den izler, ek hızı yumuşak ekler, `Events.speed_increased(section)` yayınlar → `ComboPopups` ekranın üst ortasında mercan "HIZLANIYOR!" (ayrı ses yok: bölüm sesi zaten çalıyor). Kum saati `HOURGLASS_DURATION` 8 → 5, `SCROLL_FACTOR` 0,35 → 0,3. Doğrulama: GUT 170; betik: hız 40 → (100. kat) 70 px/s, kum saati 70 → 21, ~5 s; yazı görüntüde doğrulandı.
 - Tuzak: `draw_colored_polygon` kendini kesen çokgende "Invalid polygon data" verir ve çizmez; yeni çizim çokgenlerini `Geometry2D.triangulate_polygon` ile testte doğrula (`test_heart_polygons_are_valid`).
 - Tuzak: `-s` doğrulama betiğinde `class_name`'lere (Player, Pickup, FlowRules) doğrudan başvurma — betik derlenmez ve pencere asılı kalır; düğüm adı / `load(...)` kullan. Çıktıyı boruya (`| Select-Object`) bağlama, dosyaya yönlendir (`Start-Process -RedirectStandardOutput` + `WaitForExit(ms)` + `Kill()`): hem asılı kalmaz hem hata görünür.
 

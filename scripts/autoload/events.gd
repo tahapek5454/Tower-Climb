@@ -50,6 +50,10 @@ signal powerup_started(kind: StringName, duration: float)
 @warning_ignore("unused_signal")
 signal powerup_ended(kind: StringName)
 
+## Yeni bölüme geçildi, kamera kalıcı olarak hızlandı (section: ulaşılan bölüm, 1'den başlar).
+@warning_ignore("unused_signal")
+signal speed_increased(section: int)
+
 ## Ekran sarsıntısı iste (0..1 eklenir; kamera dinler).
 @warning_ignore("unused_signal")
 signal screen_shake(trauma: float)

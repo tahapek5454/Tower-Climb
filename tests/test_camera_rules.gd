@@ -29,6 +29,38 @@ func test_speed_is_capped() -> void:
 	assert_eq(CameraRules.scroll_speed(1.0e6), Tuning.CAMERA_MAX_SPEED)
 
 
+func test_section_adds_speed() -> void:
+	var interval: int = Tuning.SECTION_FLOOR_INTERVAL
+	assert_eq(CameraRules.section_of(interval - 1), 0)
+	assert_eq(CameraRules.section_of(interval), 1)
+	assert_eq(CameraRules.section_of(interval * 3 + 5), 3)
+	assert_eq(CameraRules.section_bonus(0), 0.0)
+	assert_eq(CameraRules.section_bonus(2), Tuning.CAMERA_SECTION_SPEED_BONUS * 2.0)
+	assert_almost_eq(CameraRules.scroll_speed(0.0, CameraRules.section_bonus(1)),
+			Tuning.CAMERA_START_SPEED + Tuning.CAMERA_SECTION_SPEED_BONUS, EPSILON)
+	assert_eq(CameraRules.scroll_speed(1.0e6, CameraRules.section_bonus(50)), Tuning.CAMERA_MAX_SPEED,
+			"toplam üst sınırı aşmaz")
+
+
+func test_camera_speeds_up_on_new_section() -> void:
+	var camera := TowerCamera.new()
+	add_child_autofree(camera)
+	camera.set_physics_process(false)
+	var sections: Array = []
+	var listener := func(section: int) -> void: sections.append(section)
+	Events.speed_increased.connect(listener)
+	Events.floor_changed.emit(Tuning.SECTION_FLOOR_INTERVAL)
+	Events.floor_changed.emit(Tuning.SECTION_FLOOR_INTERVAL + 3)
+	Events.speed_increased.disconnect(listener)
+	assert_eq(sections, [1], "bölüm başına bir kez duyurulur")
+	var dt: float = 1.0 / 60.0
+	camera._physics_process(dt)
+	assert_lt(camera.speed, Tuning.CAMERA_START_SPEED + Tuning.CAMERA_SECTION_SPEED_BONUS, "ek hız yumuşak gelir")
+	for i: int in ceili(Tuning.CAMERA_SECTION_RAMP_TIME / dt) + 2:
+		camera._physics_process(dt)
+	assert_almost_eq(camera.speed, Tuning.CAMERA_START_SPEED + Tuning.CAMERA_SECTION_SPEED_BONUS, 0.5)
+
+
 func test_speed_never_decreases() -> void:
 	var prev: float = 0.0
 	for i in 200:

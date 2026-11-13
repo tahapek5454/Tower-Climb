@@ -1,6 +1,7 @@
 class_name TowerCamera
 extends Camera2D
-## Kule kamerası: CAMERA_START_FLOOR'a kadar bekler, sonra hızlanarak yukarı kayar.
+## Kule kamerası: CAMERA_START_FLOOR'a kadar bekler, sonra hızlanarak yukarı kayar (zamanla ve her bölüm
+## geçişinde; bkz. CameraRules.scroll_speed).
 ## Oyuncu ekranın üst bölgesine çıkarsa onu yakalar. Asla aşağı inmez. Kum saati kaymayı geçici yavaşlatır.
 ## Ekran sarsıntısı sadece `offset`'i değiştirir; oyun mantığı (kayma, oyun sonu) `position` kullanır.
 
@@ -16,6 +17,9 @@ var shake := CameraShake.new()
 var _scroll_time: float = 0.0
 ## Kum saati: etki başlayalı geçen süre (s); etki yokken < 0.
 var _slow_elapsed: float = -1.0
+## Ulaşılan bölüm (seviye) ve yumuşakça hedefine yaklaşan bölüm ek hızı (px/s).
+var _section: int = 0
+var _section_bonus: float = 0.0
 
 
 func _ready() -> void:
@@ -28,10 +32,13 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	var multiplier: float = _advance_slow(delta)
+	var bonus_target: float = CameraRules.section_bonus(_section)
+	_section_bonus = move_toward(_section_bonus, bonus_target,
+			Tuning.CAMERA_SECTION_SPEED_BONUS / maxf(Tuning.CAMERA_SECTION_RAMP_TIME, 0.001) * delta)
 	if is_scrolling:
 		# Kum saati hem kaymayı hem de zamanla hızlanmayı yavaşlatır.
 		_scroll_time += delta * multiplier
-		speed = CameraRules.scroll_speed(_scroll_time) * multiplier
+		speed = CameraRules.scroll_speed(_scroll_time, _section_bonus) * multiplier
 		position.y -= speed * delta
 	if target != null:
 		position.y = minf(position.y, CameraRules.catchup_center_y(target.global_position.y))
@@ -91,6 +98,10 @@ func _add_shake(amount: float) -> void:
 func _on_floor_changed(floor_number: int) -> void:
 	if not is_scrolling and CameraRules.should_start(floor_number):
 		is_scrolling = true
+	var section: int = CameraRules.section_of(floor_number)
+	if section > _section:
+		_section = section
+		Events.speed_increased.emit(section)
 
 
 func _on_combo_ended(_jumps: int, floors: int, bonus: int) -> void:

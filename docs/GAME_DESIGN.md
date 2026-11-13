@@ -102,7 +102,8 @@ Değerler `const` olarak kalır (oyun içi canlı ayar paneli şimdilik yok). İ
 | `CAMERA_START_FLOOR` | 5 | kamera bu katta kaymaya başlar |
 | `CAMERA_START_SPEED` | 40 px/s | |
 | `CAMERA_SPEED_STEP` | +12 px/s her 30 s | |
-| `CAMERA_MAX_SPEED` | 260 px/s | |
+| `CAMERA_SECTION_SPEED_BONUS` | +30 px/s her bölüm geçişinde (2 s'de yumuşak) | Aşama 6: seviye atladıkça hızlanma; "HIZLANIYOR!" yazısı |
+| `CAMERA_MAX_SPEED` | 320 px/s | Aşama 6'da 260'tan yükseltildi |
 | `CAMERA_CATCHUP_ZONE` | ekranın üst %30'u | |
 | `COMBO_MIN_FLOORS` | 2 | |
 | `COMBO_TIMEOUT` | 3.0 s | |
@@ -132,7 +133,7 @@ Toplanabilir nesneler platformların üstünde hafifçe süzülür (`Pickup`); o
 
 ### Kum saati (yavaş zaman)
 - **Çıkış:** nadir (`HOURGLASS_SPAWN_CHANCE` %2,5), `HOURGLASS_MIN_FLOOR` (30) kattan sonra, iki kum saati arası en az 40 kat; havada ya da platformda.
-- **Etki:** `HOURGLASS_DURATION` (8 s) boyunca kameranın kayması `HOURGLASS_SCROLL_FACTOR` (×0,35) hızına yumuşakça iner, sonra yumuşakça döner; bu sürede kameranın zamanla hızlanması da yavaşlar. Karakter normal hızında kalır. Sürerken yeniden alınırsa süre yenilenir.
+- **Etki:** `HOURGLASS_DURATION` (5 s) boyunca kameranın kayması `HOURGLASS_SCROLL_FACTOR` (×0,3) hızına yumuşakça iner, sonra yumuşakça döner; bu sürede kameranın zamanla hızlanması da yavaşlar. Karakter normal hızında kalır. Sürerken yeniden alınırsa süre yenilenir.
 - **Görsel/ses:** ekran kenarlarında yumuşak mor-mavi gölge, HUD'da "YAVAŞ ZAMAN" çubuğu, yavaşlama ve normale dönme sesleri.
 
 ## Juice listesi (Aşama 2)

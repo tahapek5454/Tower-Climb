@@ -8,10 +8,22 @@ static func should_start(floor_number: int) -> bool:
 	return floor_number >= Tuning.CAMERA_START_FLOOR
 
 
-## Kayma başladıktan `elapsed` saniye sonraki hız: basamaklı artar, üst sınırı var.
-static func scroll_speed(elapsed: float) -> float:
+## Kayma başladıktan `elapsed` saniye sonraki hız: zamanla basamaklı artar, üstüne bölüm ek hızı
+## (section_bonus) eklenir; toplamın üst sınırı var.
+static func scroll_speed(elapsed: float, section_bonus: float = 0.0) -> float:
 	var steps: float = floorf(maxf(elapsed, 0.0) / Tuning.CAMERA_SPEED_STEP_INTERVAL)
-	return minf(Tuning.CAMERA_START_SPEED + steps * Tuning.CAMERA_SPEED_STEP, Tuning.CAMERA_MAX_SPEED)
+	return minf(Tuning.CAMERA_START_SPEED + steps * Tuning.CAMERA_SPEED_STEP + maxf(section_bonus, 0.0),
+			Tuning.CAMERA_MAX_SPEED)
+
+
+## Bu kata kadar geçilen bölüm sayısı (seviye).
+static func section_of(floor_number: int) -> int:
+	return floori(float(maxi(floor_number, 0)) / Tuning.SECTION_FLOOR_INTERVAL)
+
+
+## Seviyenin kalıcı ek hızı (px/s).
+static func section_bonus(section: int) -> float:
+	return maxi(section, 0) * Tuning.CAMERA_SECTION_SPEED_BONUS
 
 
 ## Oyuncu ekranın altından tamamen çıktı mı? (player_y: ayakların y'si)
