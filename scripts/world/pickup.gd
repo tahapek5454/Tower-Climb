@@ -8,6 +8,9 @@ const JETPACK: StringName = &"jetpack"
 const DIAMOND: StringName = &"diamond"
 const HEART: StringName = &"heart"
 const HOURGLASS: StringName = &"hourglass"
+const MAGNET: StringName = &"magnet"
+## Tüm toplanabilirlerin grubu (mıknatıs elmasları buradan bulur).
+const GROUP: StringName = &"pickups"
 ## Bekleyen kum saatinde kumun üstten alta akma süresi (s; sonra baştan).
 const HOURGLASS_SAND_CYCLE: float = 5.0
 ## Çevresinde dönen küçük parıltıların sayısı, yörünge yarıçapı ve boyutu (px).
@@ -22,12 +25,24 @@ const DIAMOND_GLOW_SCALE: float = 0.75
 ## Kalp kalp atışı gibi çift vuruşla atar: vuruş aralığı (s) ve büyüme oranı.
 const HEARTBEAT_TIME: float = 1.1
 const HEARTBEAT_SCALE: float = 0.14
+## Bekleyen mıknatısın uçlarındaki çekim yaylarının döngü süresi (s).
+const MAGNET_RING_CYCLE: float = 1.2
+## Mıknatısla çekilen elmasın arkasındaki parıltı izi: nokta sayısı, kalınlık (px) ve saydamlık.
+const TRAIL_POINTS: int = 16
+const TRAIL_WIDTH: float = 5.0
+const TRAIL_ALPHA: float = 0.9
 
 var kind: StringName = JETPACK
 var _art: Node2D
 var _glow: Sprite2D
 var _time: float = 0.0
 var _collected: bool = false
+## Mıknatıs çekimi: hedef (oyuncu), hedefteki nokta (oyuncuya göre), çekim başlayalı geçen süre, iz.
+var _pull_target: Node2D
+var _pull_offset := Vector2.ZERO
+var _pull_elapsed: float = 0.0
+var _trail: Node2D
+var _trail_points := PackedVector2Array()
 
 
 ## add_child'dan önce çağrılır.
@@ -56,6 +71,7 @@ func _ready() -> void:
 
 	# Yan yana nesneler aynı anda sallanmasın.
 	_time = randf() * Tuning.PICKUP_BOB_TIME
+	add_to_group(GROUP)
 	body_entered.connect(_on_body_entered)
 
 
@@ -69,6 +85,51 @@ func _process(delta: float) -> void:
 	_art.queue_redraw()
 
 
+func _physics_process(delta: float) -> void:
+	if _pull_target == null:
+		return
+	if not is_instance_valid(_pull_target):
+		_pull_target = null
+		return
+	if _collected:
+		# Toplandıktan sonra iz kuyruğundan kısalarak kaybolur.
+		if not _trail_points.is_empty():
+			_trail_points.remove_at(0)
+		_trail.queue_redraw()
+		return
+	_pull_elapsed += delta
+	var target: Vector2 = _pull_target.global_position + _pull_offset
+	global_position = MagnetRules.pull_step(global_position, target, _pull_elapsed, delta)
+	_trail_points.append(global_position)
+	if _trail_points.size() > TRAIL_POINTS:
+		_trail_points.remove_at(0)
+	_trail.queue_redraw()
+	if MagnetRules.reached(global_position, target):
+		collect()
+
+
+## Mıknatıs: nesneyi target'a (dünya konumu + offset) doğru hızlanarak uçurur; değince toplanır.
+func attract(target: Node2D, offset: Vector2 = Vector2.ZERO) -> void:
+	if _collected or _pull_target != null:
+		return
+	_pull_target = target
+	_pull_offset = offset
+	_trail = Node2D.new()
+	_trail.top_level = true
+	_trail.material = SoftTextures.additive()
+	_trail.draw.connect(_draw_trail)
+	add_child(_trail)
+	_trail.global_transform = Transform2D.IDENTITY
+
+
+func is_attracted() -> bool:
+	return _pull_target != null
+
+
+func is_collected() -> bool:
+	return _collected
+
+
 ## Türün hâle ve parıltı rengi (toplama efekti de kullanır).
 static func glow_color(pickup_kind: StringName) -> Color:
 	match pickup_kind:
@@ -78,6 +139,8 @@ static func glow_color(pickup_kind: StringName) -> Color:
 			return HeartArt.GLOW
 		HOURGLASS:
 			return HourglassArt.GLOW
+		MAGNET:
+			return MagnetArt.GLOW
 	return JetpackArt.CAP
 
 
@@ -89,6 +152,8 @@ static func sparkle_color(pickup_kind: StringName) -> Color:
 			return HeartArt.SHINE
 		HOURGLASS:
 			return HourglassArt.SPARKLE
+		MAGNET:
+			return MagnetArt.SPARKLE
 	return JetpackArt.BAND
 
 
@@ -110,6 +175,9 @@ func _draw_art() -> void:
 			HeartArt.draw(_art, Vector2.ZERO, 1.0 + HEARTBEAT_SCALE * pulse)
 		HOURGLASS:
 			HourglassArt.draw(_art, 1.0 - fmod(_time / HOURGLASS_SAND_CYCLE, 1.0))
+		MAGNET:
+			MagnetArt.draw_pull_rings(_art, fmod(_time / MAGNET_RING_CYCLE, 1.0))
+			MagnetArt.draw(_art)
 	_draw_sparkles()
 
 
@@ -123,8 +191,30 @@ func _draw_sparkles() -> void:
 				Color(sparkle_color(kind), 0.35 + 0.6 * twinkle))
 
 
+## Çekilen elmasın arkasında, başa doğru kalınlaşan ve parlaklaşan ince iz.
+func _draw_trail() -> void:
+	var count: int = _trail_points.size()
+	if count < 2:
+		return
+	var color: Color = glow_color(kind)
+	var colors := PackedColorArray()
+	var soft := PackedColorArray()
+	for i: int in count:
+		var t: float = float(i + 1) / count
+		colors.append(Color(color, TRAIL_ALPHA * t * t))
+		soft.append(Color(color, TRAIL_ALPHA * 0.35 * t))
+	_trail.draw_polyline_colors(_trail_points, soft, TRAIL_WIDTH * 3.0, true)
+	_trail.draw_polyline_colors(_trail_points, colors, TRAIL_WIDTH, true)
+
+
 func _on_body_entered(body: Node2D) -> void:
-	if _collected or not body is Player or not GameFlow.is_playing():
+	if body is Player:
+		collect()
+
+
+## Toplar: Events.pickup_collected yayınlar, büyüyerek kaybolur. Oyun sürmüyorsa ya da zaten alındıysa bir şey yapmaz.
+func collect() -> void:
+	if _collected or not GameFlow.is_playing():
 		return
 	_collected = true
 	set_deferred(&"monitoring", false)

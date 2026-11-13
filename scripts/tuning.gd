@@ -680,3 +680,39 @@ const PLATFORM_ICE_GLINT_INTERVAL: float = 2.8
 const PLATFORM_ICE_GLINT_TIME: float = 0.6
 const SFX_CRUMBLE_CRACK_DB: float = -9.0
 const SFX_CRUMBLE_DB: float = -6.0
+
+# --- Mıknatıs (elmas avı; Aşama 6; scripts/game/magnet_rules.gd, scripts/game/magnet_field.gd) ---
+## Mıknatıs sürerken elmaslar bol çıkar ve menzildekiler oyuncuya uçar: kısa bir "elmas avı" anı.
+## false: mıknatıs hiç çıkmaz (özelliği tek satırla kapatır).
+const MAGNET_ENABLED: bool = true
+## NADİRLİK: uygun her katta mıknatıs çıkma olasılığı (0..1).
+const MAGNET_SPAWN_CHANCE: float = 0.03
+## Bu kattan önce çıkmaz; iki mıknatıs arası en az bu kadar kat (etki sırasında yenisi çıkmasın).
+const MAGNET_MIN_FLOOR: int = 15
+const MAGNET_MIN_FLOOR_GAP: int = 35
+## Etkinin süresi (s).
+const MAGNET_DURATION: float = 7.0
+## Çekim menzili (px, oyuncunun gövde ortasından); ~2,5 kat yukarısı ve kulenin büyük kısmı.
+const MAGNET_RADIUS: float = 320.0
+## Çekilen elmasın hızı: başlangıç (px/s), ivme (px/s²) ve üst sınır. Üst sınır roketin hızından
+## (JETPACK_SPEED) büyük olmalı: uçarken de elmaslar oyuncuya yetişsin.
+const MAGNET_PULL_START_SPEED: float = 200.0
+const MAGNET_PULL_ACCEL: float = 2600.0
+const MAGNET_PULL_MAX_SPEED: float = 1700.0
+## Elmas oyuncunun gövde ortasına bu kadar yaklaşınca toplanır (px; çarpışma beklenmez).
+const MAGNET_COLLECT_DISTANCE: float = 22.0
+## Etki sürerken yeni katlarda elmas çıkma olasılığı (normalde DIAMOND_SPAWN_CHANCE). Alındığı anda
+## oyuncunun üstünde zaten üretilmiş boş platformlara da aynı olasılıkla elmas serpilir.
+const MAGNET_DIAMOND_CHANCE: float = 0.4
+## Çekim halkası (oyuncunun çevresinde): yarıçap (px), nabız süresi (s) ve saydamlık.
+const MAGNET_AURA_RADIUS: float = 64.0
+const MAGNET_AURA_PULSE_TIME: float = 0.9
+const MAGNET_AURA_ALPHA: float = 0.32
+## Arka arkaya toplanan elmasların sesi: bu süre (s) içinde gelen her elmas perdeyi bir adım yükseltir;
+## adım (yarım ton) ve en fazla adım sayısı. Bu süreden kısa aralıkla gelen elmas sesi çalınmaz.
+const MAGNET_SFX_CHAIN_WINDOW: float = 0.7
+const MAGNET_SFX_CHAIN_SEMITONES: float = 1.0
+const MAGNET_SFX_CHAIN_MAX: int = 7
+const MAGNET_SFX_MIN_INTERVAL: float = 0.06
+const SFX_MAGNET_DB: float = -7.0
+const SFX_MAGNET_END_DB: float = -10.0

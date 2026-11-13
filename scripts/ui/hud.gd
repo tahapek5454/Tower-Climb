@@ -141,6 +141,7 @@ func _build() -> void:
 	column.add_child(_combo_box)
 	_powerup_rows[Pickup.JETPACK] = PowerupRow.new("ROKET", JetpackArt.CAP, JetpackArt.BODY)
 	_powerup_rows[Pickup.HOURGLASS] = PowerupRow.new("YAVAŞ ZAMAN", HourglassArt.GLOW, HourglassArt.SAND)
+	_powerup_rows[Pickup.MAGNET] = PowerupRow.new("MIKNATIS", MagnetArt.GLOW, MagnetArt.SILVER)
 	for row: PowerupRow in _powerup_rows.values():
 		column.add_child(row)
 
