@@ -20,7 +20,7 @@ static func subtitle(new_records: Array) -> String:
 ## Süre "d:ss" biçiminde (ör. 65 → "1:05"); negatif 0 sayılır.
 static func format_time(seconds: float) -> String:
 	var whole: int = maxi(int(seconds), 0)
-	return "%d:%02d" % [whole / 60, whole % 60]
+	return "%d:%02d" % [floori(whole / 60.0), whole % 60]
 
 
 ## Sayarak artan değer: hızlı başlar, hedefe yaklaşırken yavaşlar (ease-out kübik). progress 0..1.

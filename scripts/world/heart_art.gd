@@ -46,7 +46,7 @@ static func draw_half(canvas: CanvasItem, side: float, center: Vector2 = Vector2
 ## eğrinin uçlarıyla aynı nokta olduğu için atlanır (çakışan nokta çokgen hatası verir).
 static func half_points(side: float, center: Vector2 = Vector2.ZERO, scale: float = 1.0) -> PackedVector2Array:
 	var points := PackedVector2Array()
-	var half: int = SEGMENTS / 2
+	var half: int = floori(SEGMENTS / 2.0)
 	for i: int in half + 1:
 		points.append(_curve(PI * i / half, side, center, scale))
 	for j: int in range(1, CRACK.size() - 1):

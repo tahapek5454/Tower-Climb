@@ -9,10 +9,10 @@ static func should_start(floor_number: int) -> bool:
 
 
 ## Kayma başladıktan `elapsed` saniye sonraki hız: zamanla basamaklı artar, üstüne bölüm ek hızı
-## (section_bonus) eklenir; toplamın üst sınırı var.
-static func scroll_speed(elapsed: float, section_bonus: float = 0.0) -> float:
+## (bonus) eklenir; toplamın üst sınırı var.
+static func scroll_speed(elapsed: float, bonus: float = 0.0) -> float:
 	var steps: float = floorf(maxf(elapsed, 0.0) / Tuning.CAMERA_SPEED_STEP_INTERVAL)
-	return minf(Tuning.CAMERA_START_SPEED + steps * Tuning.CAMERA_SPEED_STEP + maxf(section_bonus, 0.0),
+	return minf(Tuning.CAMERA_START_SPEED + steps * Tuning.CAMERA_SPEED_STEP + maxf(bonus, 0.0),
 			Tuning.CAMERA_MAX_SPEED)
 
 

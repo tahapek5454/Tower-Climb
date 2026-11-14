@@ -85,8 +85,8 @@ func _apply_rainbow() -> void:
 		var color: Color = TrailCosmetic.rainbow_color(_clock, -Tuning.TRAIL_RAINBOW_SPREAD * (1.0 - at))
 		var stop := Color(color, Tuning.TRAIL_ALPHA * at)
 		if i < 2:
-			fade.offsets[i] = at
-			fade.colors[i] = stop
+			fade.set_offset(i, at)
+			fade.set_color(i, stop)
 		else:
 			fade.add_point(at, stop)
 	gradient = fade

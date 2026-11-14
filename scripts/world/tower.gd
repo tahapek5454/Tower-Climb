@@ -46,54 +46,54 @@ func _apply_theme() -> void:
 	var colors: Dictionary = _theme.colors
 	_interior_material.set_shader_parameter(&"stone_color", colors[&"interior_stone"])
 	_interior_material.set_shader_parameter(&"joint_color", colors[&"interior_joint"])
-	for material: ShaderMaterial in _wall_materials:
-		material.set_shader_parameter(&"wall_color", colors[&"wall"])
-		material.set_shader_parameter(&"joint_color", colors[&"wall_joint"])
-		material.set_shader_parameter(&"lip_color", colors[&"wall_lip"])
+	for wall_material: ShaderMaterial in _wall_materials:
+		wall_material.set_shader_parameter(&"wall_color", colors[&"wall"])
+		wall_material.set_shader_parameter(&"joint_color", colors[&"wall_joint"])
+		wall_material.set_shader_parameter(&"lip_color", colors[&"wall_lip"])
 
 
 ## Arka duvar: taş deseni shader ile çizilir.
 func _make_interior() -> Polygon2D:
-	var material := ShaderMaterial.new()
-	material.shader = INTERIOR_SHADER
-	material.set_shader_parameter(&"block_size", Tuning.INTERIOR_BLOCK_SIZE)
-	material.set_shader_parameter(&"corner_radius", Tuning.INTERIOR_BLOCK_CORNER_RADIUS)
-	material.set_shader_parameter(&"joint_width", Tuning.INTERIOR_JOINT_WIDTH)
-	material.set_shader_parameter(&"joint_softness", Tuning.INTERIOR_JOINT_SOFTNESS)
-	material.set_shader_parameter(&"block_variation", Tuning.INTERIOR_BLOCK_VARIATION)
-	material.set_shader_parameter(&"bevel_strength", Tuning.INTERIOR_BEVEL_STRENGTH)
-	material.set_shader_parameter(&"half_width", Tuning.TOWER_WIDTH * 0.5)
-	material.set_shader_parameter(&"edge_shade_width", Tuning.INTERIOR_EDGE_SHADE_WIDTH)
-	material.set_shader_parameter(&"edge_shade_strength", Tuning.INTERIOR_EDGE_SHADE_STRENGTH)
-	material.set_shader_parameter(&"parallax_factor", Tuning.INTERIOR_PARALLAX)
-	material.set_shader_parameter(&"rest_top", Tuning.GROUND_SCREEN_MARGIN - Tuning.VIEW_HEIGHT)
+	var interior_material := ShaderMaterial.new()
+	interior_material.shader = INTERIOR_SHADER
+	interior_material.set_shader_parameter(&"block_size", Tuning.INTERIOR_BLOCK_SIZE)
+	interior_material.set_shader_parameter(&"corner_radius", Tuning.INTERIOR_BLOCK_CORNER_RADIUS)
+	interior_material.set_shader_parameter(&"joint_width", Tuning.INTERIOR_JOINT_WIDTH)
+	interior_material.set_shader_parameter(&"joint_softness", Tuning.INTERIOR_JOINT_SOFTNESS)
+	interior_material.set_shader_parameter(&"block_variation", Tuning.INTERIOR_BLOCK_VARIATION)
+	interior_material.set_shader_parameter(&"bevel_strength", Tuning.INTERIOR_BEVEL_STRENGTH)
+	interior_material.set_shader_parameter(&"half_width", Tuning.TOWER_WIDTH * 0.5)
+	interior_material.set_shader_parameter(&"edge_shade_width", Tuning.INTERIOR_EDGE_SHADE_WIDTH)
+	interior_material.set_shader_parameter(&"edge_shade_strength", Tuning.INTERIOR_EDGE_SHADE_STRENGTH)
+	interior_material.set_shader_parameter(&"parallax_factor", Tuning.INTERIOR_PARALLAX)
+	interior_material.set_shader_parameter(&"rest_top", Tuning.GROUND_SCREEN_MARGIN - Tuning.VIEW_HEIGHT)
 
 	var interior_size := Vector2(Tuning.TOWER_WIDTH, Tuning.WALL_HEIGHT)
 	var interior: Polygon2D = make_rect_visual(interior_size, Color.WHITE)
 	interior.name = "Interior"
-	interior.material = material
-	_interior_material = material
+	interior.material = interior_material
+	_interior_material = interior_material
 	return interior
 
 
 ## Yan duvar: çarpışma gövdesi + taş sütun görünümü.
 ## inner_sign: kule içi duvarın sağındaysa +1 (sol duvar), solundaysa -1 (sağ duvar).
 func _make_wall(wall_name: String, center_x: float, inner_sign: float) -> StaticBody2D:
-	var material := ShaderMaterial.new()
-	material.shader = WALL_SHADER
-	material.set_shader_parameter(&"center_x", center_x)
-	material.set_shader_parameter(&"thickness", Tuning.WALL_THICKNESS)
-	material.set_shader_parameter(&"inner_sign", inner_sign)
-	material.set_shader_parameter(&"segment_height", Tuning.WALL_SEGMENT_HEIGHT)
-	material.set_shader_parameter(&"joint_width", Tuning.WALL_JOINT_WIDTH)
-	material.set_shader_parameter(&"lip_width", Tuning.WALL_LIP_WIDTH)
-	material.set_shader_parameter(&"outer_shade", Tuning.WALL_OUTER_SHADE)
+	var wall_material := ShaderMaterial.new()
+	wall_material.shader = WALL_SHADER
+	wall_material.set_shader_parameter(&"center_x", center_x)
+	wall_material.set_shader_parameter(&"thickness", Tuning.WALL_THICKNESS)
+	wall_material.set_shader_parameter(&"inner_sign", inner_sign)
+	wall_material.set_shader_parameter(&"segment_height", Tuning.WALL_SEGMENT_HEIGHT)
+	wall_material.set_shader_parameter(&"joint_width", Tuning.WALL_JOINT_WIDTH)
+	wall_material.set_shader_parameter(&"lip_width", Tuning.WALL_LIP_WIDTH)
+	wall_material.set_shader_parameter(&"outer_shade", Tuning.WALL_OUTER_SHADE)
 
 	var size := Vector2(Tuning.WALL_THICKNESS, Tuning.WALL_HEIGHT)
 	var body: StaticBody2D = _make_body(wall_name, Vector2(center_x, 0.0), size)
 	var visual: Polygon2D = make_rect_visual(size, Color.WHITE)
-	visual.material = material
-	_wall_materials.append(material)
+	visual.material = wall_material
+	_wall_materials.append(wall_material)
 	body.add_child(visual)
 	return body
 

@@ -32,10 +32,10 @@ func _ready() -> void:
 	set_sparkle_color(Color.WHITE)
 
 
-func set_sparkle_color(color: Color) -> void:
+func set_sparkle_color(tint: Color) -> void:
 	var ramp := Gradient.new()
-	ramp.set_color(0, Color(color, Tuning.TRAIL_SPARKLE_ALPHA))
-	ramp.set_color(1, Color(color, 0.0))
+	ramp.set_color(0, Color(tint, Tuning.TRAIL_SPARKLE_ALPHA))
+	ramp.set_color(1, Color(tint, 0.0))
 	color_ramp = ramp
 
 

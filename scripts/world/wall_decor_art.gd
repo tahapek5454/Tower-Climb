@@ -86,7 +86,7 @@ static func _arched(rect: Rect2) -> PackedVector2Array:
 
 
 ## Sancak: demir çubuktan sarkan, alt ucu çatallı kumaş; ortasında arma; rüzgârda hafif dalgalanır.
-static func banner(canvas: CanvasItem, theme: int, rng: RandomNumberGenerator, time: float, lights: Array) -> void:
+static func banner(canvas: CanvasItem, theme: int, rng: RandomNumberGenerator, time: float, _lights: Array) -> void:
 	var palette: Array = CLOTH_COLORS[posmod(theme, CLOTH_COLORS.size())]
 	var cloth_color: Color = palette[rng.randi_range(0, 1)]
 	var width: float = rng.randf_range(30.0, 40.0)

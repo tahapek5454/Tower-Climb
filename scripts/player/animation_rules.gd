@@ -18,14 +18,14 @@ const TWIST: StringName = &"twist"
 
 ## on_floor: yerde mi; velocity: px/s (yukarı = -y); flipping: takla sürüyor mu;
 ## landing: iniş animasyonunun süresi dolmadı mı; flapping: kanat çırpma süresi dolmadı mı;
-## flip_animation: bu takla için seçilmiş poz (TUCK ya da STAR); flying: roketle uçuyor mu.
+## flip_pose: bu takla için seçilmiş poz (TUCK ya da STAR); flying: roketle uçuyor mu.
 static func pick(on_floor: bool, velocity: Vector2, flipping: bool, landing: bool,
-		flapping: bool, flip_animation: StringName = TUCK, flying: bool = false) -> StringName:
+		flapping: bool, flip_pose: StringName = TUCK, flying: bool = false) -> StringName:
 	if flying:
 		return FLY
 	if not on_floor:
 		if flipping:
-			return flip_animation
+			return flip_pose
 		if velocity.y > Tuning.MODEL_FALL_ANIM_MIN_SPEED:
 			return FALL
 		return FLAP if flapping else JUMP

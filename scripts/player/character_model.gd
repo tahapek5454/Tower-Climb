@@ -101,8 +101,8 @@ func set_cosmetic(slot: StringName, item_id: StringName) -> void:
 		if _hat != null:
 			_hat.show_hat(item_id if Tuning.COSMETICS_ENABLED else ShopCatalog.default_of(slot))
 		return
-	for material in _toon_materials:
-		CosmeticPaint.apply(material, slot, item_id)
+	for toon: ShaderMaterial in _toon_materials:
+		CosmeticPaint.apply(toon, slot, item_id)
 
 
 ## Önizleme için modeli verilen açıya çevirir (radyan, Pivot'un Y dönüşü: -PI/2 = tam kameraya dönük,

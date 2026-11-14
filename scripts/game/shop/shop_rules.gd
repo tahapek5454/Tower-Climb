@@ -28,17 +28,17 @@ static func sanitized(raw: Dictionary) -> Dictionary:
 	var levels: Dictionary = _dict(raw.get(LEVELS))
 	for key: Variant in levels:
 		var id := StringName(str(key))
-		var level: int = clampi(_int(levels[key]), 0, ShopCatalog.max_level(id))
-		if level > 0:
-			state[LEVELS][str(key)] = level
-	var stock: Dictionary = _dict(raw.get(STOCK))
-	for key: Variant in stock:
-		var count: int = clampi(_int(stock[key]), 0, Tuning.SHOP_BOOST_MAX_STOCK)
+		var item_level: int = clampi(_int(levels[key]), 0, ShopCatalog.max_level(id))
+		if item_level > 0:
+			state[LEVELS][str(key)] = item_level
+	var stocks: Dictionary = _dict(raw.get(STOCK))
+	for key: Variant in stocks:
+		var count: int = clampi(_int(stocks[key]), 0, Tuning.SHOP_BOOST_MAX_STOCK)
 		if count > 0 and ShopCatalog.get_item(StringName(str(key))).get("category", &"") == ShopCatalog.BOOST:
 			state[STOCK][str(key)] = count
-	var equipped: Dictionary = _dict(raw.get(EQUIPPED))
+	var equipped_map: Dictionary = _dict(raw.get(EQUIPPED))
 	for slot: StringName in ShopCatalog.SLOTS:
-		var id := StringName(str(equipped.get(String(slot), "")))
+		var id := StringName(str(equipped_map.get(String(slot), "")))
 		if ShopCatalog.get_item(id).get("category", &"") == slot and is_owned(state, id):
 			state[EQUIPPED][String(slot)] = String(id)
 	return state
