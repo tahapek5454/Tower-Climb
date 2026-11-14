@@ -79,12 +79,10 @@ func test_fly_overrides_everything_while_jetpack_is_on() -> void:
 	assert_eq(AnimationRules.view_angle_degrees(AnimationRules.RUN), Tuning.MODEL_VIEW_ANGLE_DEGREES)
 
 
-func test_back_and_twist_styles_use_their_own_pose() -> void:
+func test_twist_style_uses_its_own_pose() -> void:
 	for from_wall: bool in [false, true]:
 		for roll: float in [0.0, 0.999]:
-			assert_eq(AnimationRules.flip_animation(roll, from_wall, FlipRules.BACK), AnimationRules.BACK_TUCK)
 			assert_eq(AnimationRules.flip_animation(roll, from_wall, FlipRules.TWIST), AnimationRules.TWIST)
 	assert_eq(AnimationRules.flip_animation(0.0, false, FlipRules.FRONT), AnimationRules.STAR)
 	assert_false(AnimationRules.faces_camera(AnimationRules.TWIST))
-	assert_false(AnimationRules.faces_camera(AnimationRules.BACK_TUCK))
 	assert_lt(AnimationRules.blend_time(AnimationRules.TWIST), AnimationRules.blend_time(AnimationRules.RUN))

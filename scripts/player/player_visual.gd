@@ -216,10 +216,10 @@ func _land_strength(fall_speed: float) -> float:
 
 # --- Takla ---
 
-## Rastgele bir takla çeşidi (öne / ters / silindirik) seçer; süre ve tur sayısı yukarı hıza göre.
+## Rastgele bir takla çeşidi (öne / silindirik) seçer; süre ve tur sayısı yukarı hıza göre.
 ## direction: gidilen yön (+1 sağ).
 func _start_flip(up_speed: float, direction: float, from_wall: bool = false) -> void:
-	var style: StringName = FlipRules.pick_style(randf(), from_wall)
+	var style: StringName = FlipRules.pick_style(randf())
 	if _animator != null:
 		_animator.on_flip_started(from_wall, style)
 	_flip.start(style, direction, FlipRules.duration_for(up_speed))

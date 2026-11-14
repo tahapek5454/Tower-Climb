@@ -133,36 +133,6 @@ for _s in (".L", ".R"):
     STAR_POSE["foot" + _s] = dict(rx=20.0)
 
 
-# Ters takla (geriye salto): önce gövde geriye kavislenir, kollar geriye savrulur (itiş; yandan
-# bakışta yüzü kapatmasın diye yukarı değil);
-# sonra dizler göğse çekilir, eller baldırları tutar, baş hafif geride kalır (gidilen yöne bakar).
-BACK_ARCH_POSE = {
-    "spine": dict(rx=-12.0),
-    "chest": dict(rx=-8.0),
-    "head": dict(rx=-14.0),
-    "tail": dict(rx=25.0),
-    "tail_tip": dict(rx=15.0),
-}
-BACK_TUCK_POSE = {
-    "spine": dict(rx=22.0),
-    "chest": dict(rx=16.0),
-    "head": dict(rx=-14.0),
-    "tail": dict(rx=-28.0),
-    "tail_tip": dict(rx=-20.0),
-}
-for _s in (".L", ".R"):
-    BACK_ARCH_POSE["upper_arm" + _s] = dict(side=32.0, rx=58.0)
-    BACK_ARCH_POSE["forearm" + _s] = dict(rx=-12.0)
-    BACK_ARCH_POSE["thigh" + _s] = dict(rx=12.0)
-    BACK_ARCH_POSE["shin" + _s] = dict(rx=14.0)
-    BACK_ARCH_POSE["foot" + _s] = dict(rx=30.0)
-    BACK_TUCK_POSE["thigh" + _s] = dict(rx=-100.0)
-    BACK_TUCK_POSE["shin" + _s] = dict(rx=115.0)
-    BACK_TUCK_POSE["foot" + _s] = dict(rx=15.0)
-    BACK_TUCK_POSE["upper_arm" + _s] = dict(rx=-58.0, side=-6.0)
-    BACK_TUCK_POSE["forearm" + _s] = dict(rx=-72.0)
-
-
 # Silindirik dönüş (dikey eksende burgu): kollar önce açık (dönüşü başlatan savruluş), sonra
 # göğse kapanır (buz patencisi gibi); dizler kırık, biri daha yukarıda (simetrik durmasın).
 TWIST_OPEN_POSE = {
@@ -364,15 +334,13 @@ def build() -> None:
     _make("flap", list(range(0, 17)), lambda f: pose_flap(f / 16.0))
     _make("star", [0, 10], lambda f: STAR_POSE)
     _make("fly", list(range(0, 13)), lambda f: pose_fly(f / 12.0))
-    _make("back_tuck", [0, 2, 4, 6, 8, 12],
-          lambda f: _blend(BACK_ARCH_POSE, BACK_TUCK_POSE, _smooth((f - 1.0) / 6.0)))
     _make("twist", [0, 2, 4, 6, 10],
           lambda f: _blend(TWIST_OPEN_POSE, TWIST_POSE, _smooth(f / 5.0)))
 
     # Dışa aktarım için her action bir NLA şeridine konur.
     rig.animation_data.action = None
     for name in ("idle", "run", "jump", "fall", "land", "tuck", "flap", "star", "fly",
-                 "back_tuck", "twist"):
+                 "twist"):
         act = bpy.data.actions[name]
         track = rig.animation_data.nla_tracks.new()
         track.name = name

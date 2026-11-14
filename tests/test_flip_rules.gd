@@ -42,33 +42,14 @@ func test_twist_turn_time_param() -> void:
 
 
 func test_pick_style_follows_weights() -> void:
-	var total: float = Tuning.FLIP_STYLE_WEIGHT_FRONT + Tuning.FLIP_STYLE_WEIGHT_BACK \
-			+ Tuning.FLIP_STYLE_WEIGHT_TWIST
+	var total: float = Tuning.FLIP_STYLE_WEIGHT_FRONT + Tuning.FLIP_STYLE_WEIGHT_TWIST
 	var front_end: float = Tuning.FLIP_STYLE_WEIGHT_FRONT / total
-	var back_end: float = (Tuning.FLIP_STYLE_WEIGHT_FRONT + Tuning.FLIP_STYLE_WEIGHT_BACK) / total
 	if Tuning.FLIP_STYLE_WEIGHT_FRONT > 0.0:
 		assert_eq(FlipRules.pick_style(0.0), FlipRules.FRONT)
 		assert_eq(FlipRules.pick_style(front_end - 0.001), FlipRules.FRONT)
-	if Tuning.FLIP_STYLE_WEIGHT_BACK > 0.0:
-		assert_eq(FlipRules.pick_style(front_end + 0.001, true), FlipRules.BACK)
 	if Tuning.FLIP_STYLE_WEIGHT_TWIST > 0.0:
-		assert_eq(FlipRules.pick_style(back_end + 0.001), FlipRules.TWIST)
+		assert_eq(FlipRules.pick_style(front_end + 0.001), FlipRules.TWIST)
 		assert_eq(FlipRules.pick_style(1.0), FlipRules.TWIST)
-
-
-func test_pick_style_reaches_every_enabled_style() -> void:
-	var seen: Dictionary = {}
-	for i in 101:
-		seen[FlipRules.pick_style(i / 100.0, true)] = true
-	assert_eq(seen.has(FlipRules.FRONT), Tuning.FLIP_STYLE_WEIGHT_FRONT > 0.0)
-	assert_eq(seen.has(FlipRules.BACK), Tuning.FLIP_STYLE_WEIGHT_BACK > 0.0)
-	assert_eq(seen.has(FlipRules.TWIST), Tuning.FLIP_STYLE_WEIGHT_TWIST > 0.0)
-
-
-func test_back_flip_spins_against_movement() -> void:
-	assert_eq(FlipRules.spin_direction(FlipRules.FRONT, 1.0), 1.0)
-	assert_eq(FlipRules.spin_direction(FlipRules.BACK, 1.0), -1.0)
-	assert_eq(FlipRules.spin_direction(FlipRules.BACK, -1.0), 1.0)
 
 
 func test_twist_turns_face_toward_camera_first() -> void:
@@ -76,16 +57,3 @@ func test_twist_turns_face_toward_camera_first() -> void:
 	assert_eq(FlipRules.twist_direction(1.0), -1.0)
 	assert_eq(FlipRules.twist_direction(-1.0), 1.0)
 
-
-func test_back_flip_only_from_wall_when_enabled() -> void:
-	var total: float = Tuning.FLIP_STYLE_WEIGHT_FRONT + Tuning.FLIP_STYLE_WEIGHT_BACK 			+ Tuning.FLIP_STYLE_WEIGHT_TWIST
-	var back_roll: float = (Tuning.FLIP_STYLE_WEIGHT_FRONT + Tuning.FLIP_STYLE_WEIGHT_BACK * 0.5) / total
-	if Tuning.FLIP_STYLE_WEIGHT_BACK <= 0.0:
-		pass_test("ters takla kapalı")
-		return
-	assert_eq(FlipRules.pick_style(back_roll, true), FlipRules.BACK)
-	var expected: StringName = FlipRules.FRONT if Tuning.FLIP_BACK_ONLY_FROM_WALL else FlipRules.BACK
-	assert_eq(FlipRules.pick_style(back_roll, false), expected)
-	# Platformda silindirik dönüşün payı değişmez.
-	if Tuning.FLIP_STYLE_WEIGHT_TWIST > 0.0:
-		assert_eq(FlipRules.pick_style(1.0, false), FlipRules.TWIST)

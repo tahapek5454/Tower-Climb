@@ -1,6 +1,6 @@
 class_name FlipMotion
 extends RefCounted
-## Takla hareketi (görsel): ekran düzleminde dönüş (Spin.rotation: öne / ters takla) ve
+## Takla hareketi (görsel): ekran düzleminde dönüş (Spin.rotation: öne takla) ve
 ## silindirik dönüş (twist açısı: model dikey ekseninde döner, gövde dik kalır).
 ## Tween'leri sahibinin (PlayerVisual) üzerinde kurar; twist açısını geri çağırımla bildirir.
 
@@ -42,7 +42,7 @@ func start(style: StringName, direction: float, duration: float) -> void:
 		_tween.tween_property(_spin, ^"rotation", 0.0, Tuning.FLIP_LAND_RESET_TIME)
 	else:
 		var turns: int = FlipRules.turns_for(duration)
-		var spin_to: float = spin_from + FlipRules.spin_direction(style, direction) * turns * TAU
+		var spin_to: float = spin_from + direction * turns * TAU
 		_tween.tween_property(_spin, ^"rotation", spin_to, duration) \
 				.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		_tween.tween_method(_set_twist, twist_from, 0.0, Tuning.FLIP_LAND_RESET_TIME)

@@ -235,14 +235,10 @@ const FLIP_MAX_TURNS: int = 3
 ## Takla bitmeden inilirse gövdenin dik konuma dönme süresi.
 const FLIP_LAND_RESET_TIME: float = 0.08
 ## Takla çeşitleri (zıplama ve havada duvar sekmesi; her taklada rastgele, FlipRules.pick_style):
-## öne takla (topak / yıldız), ters takla (geriye salto), silindirik dönüş (dikey eksende burgu).
+## öne takla (topak / yıldız) ve silindirik dönüş (dikey eksende burgu).
 ## Ağırlıklar görelidir; 0 yapılan çeşit hiç çıkmaz (hepsi 0 → hep öne takla).
-const FLIP_STYLE_WEIGHT_FRONT: float = 0.4
-const FLIP_STYLE_WEIGHT_BACK: float = 0.3
+const FLIP_STYLE_WEIGHT_FRONT: float = 0.7
 const FLIP_STYLE_WEIGHT_TWIST: float = 0.3
-## true: ters takla yalnız duvar sekmesinde çıkar (geriye salto için mesafe gerekir); platform
-## zıplamasında onun payı öne taklaya geçer. false: her iki durumda da çıkar.
-const FLIP_BACK_ONLY_FROM_WALL: bool = true
 ## Silindirik dönüşte bir tur süresi (kollar göğüste kapalı: öne taklaya göre biraz hızlı döner).
 const FLIP_TWIST_TURN_TIME: float = 0.35
 ## Silindirik dönüşte gövdenin çevresinde beliren silik burgu çizgileri (false: hiç çizilmez).
