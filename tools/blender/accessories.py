@@ -305,19 +305,24 @@ def hat_top():
 
 def hat_santa():
     p, n = _hat("hat_santa")
-    fur = [(0.20, 0.0), (0.24, 0.035), (0.20, 0.07), (0.16, 0.035)]
-    p.lathe(fur, "fur", at=(0.0, CENTER_Y, BASE_Z - 0.035), scale=(1, 0.9, 1), closed=True, segments=24)
-    body = [(0.0, BASE_Z), (0.205, BASE_Z), (0.17, BASE_Z + 0.10), (0.10, BASE_Z + 0.19), (0.06, BASE_Z + 0.22),
-            (0.0, BASE_Z + 0.225)]
-    p.lathe(body, "santa", at=C, scale=(1, 0.9, 1), rot=_rot_x(-12))
+    # Kafa tüyleri aşağı doğru genişler: şapka kafadan belirgin geniş olmalı, kürk bandı kalın bir simit
+    # gibi kafayı sarmalı (dar olunca tüyler bandın altından taşıyor ve şapka kafaya gömülü görünüyor).
+    base = BASE_Z + 0.01
+    ring, tube = 0.232, 0.058
+    fur = [(ring + tube * math.cos(2.0 * math.pi * i / 8), tube + tube * math.sin(2.0 * math.pi * i / 8))
+           for i in range(8)]
+    p.lathe(fur, "fur", at=(0.0, CENTER_Y, base - tube), scale=(1, 0.92, 1), closed=True, segments=24)
+    body = [(0.0, base), (0.245, base), (0.225, base + 0.09), (0.16, base + 0.20), (0.085, base + 0.265),
+            (0.0, base + 0.27)]
+    p.lathe(body, "santa", at=C, scale=(1, 0.92, 1), rot=_rot_x(-10))
     hat = _finish(p, n)
     # Sarkan uç + ponpon: orijin gövdenin tepesinde, geriye ve aşağı sarkar; sallanır.
     tip = Part()
     rot = _rot_x(-125)
-    tip.lathe([(0.07, -0.03), (0.055, 0.07), (0.028, 0.18), (0.0, 0.19)], "santa", rot=rot)
-    end = rot @ Vector((0.0, 0.0, 0.19))
-    tip.sphere(0.065, "fur", at=end, segments=14)
-    top = _rot_x(-12) @ Vector((0.0, 0.0, BASE_Z + 0.20))
+    tip.lathe([(0.09, -0.04), (0.07, 0.07), (0.035, 0.19), (0.0, 0.20)], "santa", rot=rot)
+    end = rot @ Vector((0.0, 0.0, 0.20))
+    tip.sphere(0.075, "fur", at=end, segments=14)
+    top = _rot_x(-10) @ Vector((0.0, 0.0, base + 0.245))
     tip.to_object("hat_santa_sway", parent=hat, location=(0.0, CENTER_Y + top.y, top.z))
     return hat
 
