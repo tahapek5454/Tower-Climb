@@ -31,6 +31,8 @@ func _init() -> void:
 	if CreatorInfo.ENABLED:
 		_badge = CreatorBadge.new()
 		add_free(_badge)
+	if VersionLabel.ENABLED:
+		add_free(VersionLabel.new())
 
 
 func open() -> void:

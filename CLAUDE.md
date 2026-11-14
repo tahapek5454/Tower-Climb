@@ -103,7 +103,8 @@ Player (CharacterBody2D)      ← scripts/player/player.gd — hareket, çarpı�
 - Tüm ekranlar (menü, duraklatma, ayarlar, oyun sonu) `UiScreen`'den türer; denetimler `UiButton` / `UiToggle` / `UiSlider`; renk ve stil sadece `UiStyle`'dan. Ekranlar arası geçiş `UiScreen.link_child`. Yeni ekranlarda aynı dili kullan (koyu arduvaz kart, turkuaz vurgu, altın = ödül).
 - Kullanıcıya görünen ayarlar `AudioSettings` / `GameSettings`'e, rekorlar `SaveData`'ya yazılır (`user://`). Testlerde bu sınıfların `path`'ini geçici dosyaya çevir.
 - Katmanlar: HUD 1, UiScreen 40, geri sayım 41, başarım bildirimi 42, konfeti 45, radyo 50, ScreenFade 95, debug 100.
-- Debug tuşları (`DebugKeys`): F3 overlay, F4 yavaş çekim, F6 sonraki bölüme ışınlan, F7 üstteki platforma roket koy, F8 kalp koy, F9 kum saati koy, F10 mıknatıs koy.
+- Debug tuşları (`DebugKeys` + `DebugOverlay`): F3 overlay, F4 yavaş çekim, F6 sonraki bölüme ışınlan, F7 üstteki platforma roket koy, F8 kalp koy, F9 kum saati koy, F10 mıknatıs koy. **Yalnız debug yapıda** (editör, debug dışa aktarım) kurulur: `BuildInfo.debug_tools_enabled()` = `OS.is_debug_build()`; yayın (release) dışa aktarımında hiç yok (hile olmasın). Yeni debug tuşu da bu kapıdan geçmeli.
+- Sürüm: tek kaynak `project.godot` → `application/config/version` (`BuildInfo.version()`); ana menünün sol altında `VersionLabel`. Şu an **1.0.0**.
 
 ### Güçlendirmeler (Aşama 6)
 - Toplanabilir nesne = `Pickup` (Area2D, platformun çocuğu); alınınca `Events.pickup_collected(kind, konum)`. Etkiyi `main` oyuncuya uygular; süreli etkiler `Events.powerup_started/ended` ile duyurulur (HUD, ses).

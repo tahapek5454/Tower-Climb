@@ -11,7 +11,7 @@ Ruh hali: hızlı, akışkan, abartılı ve eğlenceli animasyonlar (takla, sekm
 | Sola / sağa | ← → veya A D |
 | Zıpla | Space, ↑ veya W |
 | Duraklat | Esc |
-| Debug overlay | F3 |
+| Debug overlay (yalnız debug yapıda; yayın sürümünde F3–F10 yok) | F3 |
 | Debug yavaş çekim (x0,25) | F4 |
 | Debug: sonraki bölüme ışınlan | F6 |
 | Debug: üstteki platforma roket koy | F7 |

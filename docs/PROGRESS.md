@@ -1,9 +1,19 @@
 # İlerleme
 
-**Aktif aşama:** **Aşama 6 — Ek özellikler** — tüm maddeler (1–11) yapıldı ve onaylı; aşama bildirimi yapıldı (2026-11-14), kullanıcının **"devam"** demesi bekleniyor → sonra Aşama 7 (Paylaşım)
+**Aktif aşama:** **Aşama 7 — Paylaşım** (başlanmadı; kullanıcı 2026-11-14: "oyun ilk versiyon için hazır", yayınlama işlemleri yeni oturumda). Aşama 6 tamam ve onaylı. Sürüm **v1.0.0**.
 **Durum:** Aşama 1–5 tamam ve onaylı. Aşama 6'da madde 1–10 onaylı. Elmas mağazası (kozmetikler, devam et kartı, takviyeler, yükseltmeler, efektler) 2026-11-14'te `main`'de birleşti; kullanıcı mağazayı denedi: "genel olarak iyi / güzel duruyor", tek düzeltme isteği Noel Baba şapkasıydı (yapıldı). GUT **269** test.
 
 ## ▶ Yeni oturumda buradan devam
+**Durum (2026-11-14 oturum sonu):** Kullanıcı oyunu ilk sürüm için hazır buldu; **Aşama 7 (Paylaşım)** yeni oturumda başlayacak. Bu oturumun son işleri: sürüm **1.0.0** (`project.godot` → `application/config/version`, `BuildInfo`, ana menünün sol altında `VersionLabel`), debug tuşları (F3, F4, F6–F10) **yalnız debug yapıda** kuruluyor (`BuildInfo.debug_tools_enabled()` = `OS.is_debug_build()`; kod duruyor, yayın sürümünde yok). Gelecek işler `docs/FUTURE_WORK.md`'de.
+
+**Aşama 7 için yapılacaklar (sırayla, kullanıcıyla):**
+1. Ortam kontrolü + ön koşullar: **Godot Export Templates** (Editor → Manage Export Templates; `%APPDATA%\Godot\export_templates` şu an boş), dağıtım yeri (itch.io ve/veya GitHub Pages — hesap kullanıcıda; Claude hesap açmaz). Eksikse dur ve söyle.
+2. Dışa aktarım ayarları (`export_presets.cfg` henüz yok): Windows (release, `.exe`; simge/ürün adı/sürüm 1.0.0) ve Web (HTML5). `build/` git dışında.
+3. **Yayın sürümünde doğrula:** release `.exe`'de F3/F4/F6–F10 hiçbir şey yapmıyor (debug araçları kurulmuyor), sol altta "v1.0.0" görünüyor, kayıt dosyası `user://` altında çalışıyor.
+4. Web doğrulaması (madde 4'teki liste): SubViewport + şeffaf arka plan + MSAA + `next_pass` outline WebGL2'de; şapka/tişört maskesi ve konum dokusu (`toon_character.gdshader`); radyo yok, Çıkış düğmesi gizli.
+5. README (oyun tanıtımı, kontroller, nasıl çalıştırılır, ekran görüntüleri), `CREDITS.md` kontrolü (sesler/modeller kendi üretimimiz; Godot, GUT, yazı tipi), lisans (MIT), ekran görüntüleri.
+6. Aşama bildirimi (CLAUDE.md formatı) ve kullanıcının onayı.
+
 **Durum (2026-11-14):** Elmas mağazası yapıldı ve birleşti (ayrıntı: "Aşama 6 kararları (madde 11: elmas mağazası)"). Kullanıcı mağazayı onayladı; Aşama 6 bildirimi yapıldı. Sıradaki adım: kullanıcı **"devam"** yazınca Aşama 7 (Paylaşım) — önce ön koşulları denetle: Godot Export Templates (`%APPDATA%\Godot\export_templates` boştu), itch.io ya da GitHub Pages hesabı; aşağıdaki madde 4'teki web doğrulama listesi. Mağazadaki küçük açık sorular (denge, şapka kenarları vb.) o bölümün sonunda; kullanıcı oynadıkça dönebilir. Aşağıdaki 2026-11-13 notları mağazadan önceki hazırlıktır.
 
 **Önceki durum (2026-11-13 oturum sonu):** Aşama 6'nın madde 1–10'u onaylı. Sıradaki iş **elmas mağazası** (Aşama 6'nın son maddesi; kullanıcı kararıyla en sona bırakılmıştı, "büyük bir geliştirme"). Mağaza bitince CLAUDE.md'deki aşama bildirimi formatı → Aşama 7 (Paylaşım). Altın kural: kullanıcı onaylamadan kod yazma; aşamayı kendiliğinden bitirip sonrakine geçme.
@@ -13,6 +23,11 @@
 2. Oku: bu dosyada **"Elmas mağazası hazırlığı"**, **"Aşama 6 kararları"** (madde 1–5 ve 6–10), **"Aşama 5 sonrası mimari özeti"**, "Aşama 3 model notları" → **"Genişletilebilirlik"** (kemiğe takılan aksesuar, yeni animasyon); `docs/GAME_DESIGN.md`.
 3. Araç ön koşulları: kostüm/aksesuar modellemesi gerekirse Blender 5.3 + blender-mcp hazır (`get_addon_status` ile doğrula); kullanıcıdan `assets/models/source/eagle_hero.blend`'i açmasını iste. Tripo API'de kredi yok; yeni model gerekirse kullanıcı Tripo web sitesinde (ücretsiz plan, **H2.5**) üretir. İnternetten asset indirme, ücretli servis ve hesap açma yasak (kullanıcıya bırak).
 4. Web doğrulaması ertelendi: export şablonları kurulu değil (`%APPDATA%\Godot\export_templates` boş) — Aşama 7'nin ön koşulu. Aşama 7'de kontrol et: SubViewport + şeffaf arka plan + MSAA + `next_pass` outline WebGL2'de çalışıyor mu; web'de `MusicLibrary.is_available()` false (radyo yok), Çıkış düğmesi gizli (`OS.has_feature("web")`).
+
+### Sürüm ve yayın hazırlığı (2026-11-14)
+- Kullanıcı: "debug etmek için F tuşlarına atama yapmıştık … bunlar oyun çıktığında olmamalı, hile olur"; kodlar kaldırılmasın, yalnız yayın sürümünde olmasın. Çözüm: `main._add_debug_tools()` yalnız `BuildInfo.debug_tools_enabled()` (`OS.is_debug_build()`) iken çağrılır → `DebugKeys` (F6 bölüm atlama, F7 roket, F8 kalp, F9 kum saati, F10 mıknatıs) ve `DebugOverlay` (F3 panel, F4 yavaş çekim) yayın dışa aktarımında hiç kurulmaz. Girdi eylemleri `project.godot`'ta durur (zararsız: dinleyen yok). Editörde ve debug dışa aktarımda çalışmaya devam eder. Yayın sürümünde gerçek doğrulama Aşama 7'de (export şablonları gerekli).
+- Kullanıcı: "oyuna versiyon ver, versiyon numarası sol altta yazsın". Sürüm **1.0.0** (ilk yayın; anlamlı sürümleme MAJOR.MINOR.PATCH). `BuildInfo.version()/version_text()`, `VersionLabel` (ana menüde, ekranın sol alt köşesi, radyo panelinin altı; silik, 11 punto; `ENABLED = false` kaldırır; menüyle birlikte belirir/kaybolur). Görüntüde doğrulandı. GUT 272 (`test_build_info.gd` 3).
+- Gelecek işler `docs/FUTURE_WORK.md`.
 
 ### Elmas mağazası hazırlığı (2026-11-13)
 Kullanıcının bilinen istekleri: elmas biriksin, harcama mağazada olsun; ürünler **kostüm/renk** gibi görünüm şeyleri ("modelleme gerekecek"). Kapsam henüz netleşmedi. Sorulacaklar:

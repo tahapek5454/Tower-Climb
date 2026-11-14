@@ -106,18 +106,8 @@ func _ready() -> void:
 		radio.name = "Radio"
 		add_child(radio)
 
-	var debug_keys := DebugKeys.new()
-	debug_keys.name = "DebugKeys"
-	debug_keys.player = _player
-	debug_keys.camera = _camera
-	debug_keys.spawner = _spawner
-	add_child(debug_keys)
-
-	var debug_overlay := DebugOverlay.new()
-	debug_overlay.name = "DebugOverlay"
-	debug_overlay.player = _player
-	debug_overlay.camera = _camera
-	add_child(debug_overlay)
+	if BuildInfo.debug_tools_enabled():
+		_add_debug_tools()
 
 	_menu = MainMenu.new()
 	_menu.name = "MainMenu"
@@ -184,6 +174,21 @@ func _add_achievements() -> void:
 	achievements_menu.name = "AchievementsMenu"
 	add_child(achievements_menu)
 	_menu.link_child(achievements_menu, _menu.achievements_requested)
+
+
+## Debug araçları (F3 panel + F4 yavaş çekim, F6–F10 tuşları); yayın sürümünde hiç kurulmaz (BuildInfo).
+func _add_debug_tools() -> void:
+	var debug_keys := DebugKeys.new()
+	debug_keys.name = "DebugKeys"
+	debug_keys.player = _player
+	debug_keys.camera = _camera
+	debug_keys.spawner = _spawner
+	add_child(debug_keys)
+	var debug_overlay := DebugOverlay.new()
+	debug_overlay.name = "DebugOverlay"
+	debug_overlay.player = _player
+	debug_overlay.camera = _camera
+	add_child(debug_overlay)
 
 
 ## Elmas mağazası: yalnız ana menüden açılır (Tuning.SHOP_ENABLED ile kapanır).
