@@ -32,8 +32,17 @@ static func direction_for(velocity_x: float, facing: float) -> float:
 	return signf(facing) if facing != 0.0 else 1.0
 
 
-## Takla çeşidini ağırlıklara göre seçer. roll: 0..1 rastgele sayı.
-static func pick_style(roll: float) -> StringName:
+## Takla çeşidini ağırlıklara göre seçer. roll: 0..1 rastgele sayı; from_wall: duvar sekmesi mi.
+## FLIP_BACK_ONLY_FROM_WALL açıkken platform zıplamasında ters takla payı öne taklaya geçer
+## (silindirik dönüşün olasılığı değişmez).
+static func pick_style(roll: float, from_wall: bool = false) -> StringName:
+	var style: StringName = _weighted_style(roll)
+	if style == BACK and Tuning.FLIP_BACK_ONLY_FROM_WALL and not from_wall:
+		return FRONT
+	return style
+
+
+static func _weighted_style(roll: float) -> StringName:
 	var front: float = maxf(Tuning.FLIP_STYLE_WEIGHT_FRONT, 0.0)
 	var back: float = maxf(Tuning.FLIP_STYLE_WEIGHT_BACK, 0.0)
 	var twist: float = maxf(Tuning.FLIP_STYLE_WEIGHT_TWIST, 0.0)

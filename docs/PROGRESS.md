@@ -7,6 +7,7 @@
 **Ara iş (2026-11-14, Aşama 7'den önce, kullanıcı isteği):** iki yeni takla animasyonu — kullanıcı oyunda test edecek, onay bekleniyor.
 - **Ters takla** (`FlipRules.BACK`): 2D dönüş hareketin tersine; poz `back_tuck` (kavis + kollar geriye savrulur → dizler göğüste topak; kollar yukarı değil geriye: profilde yüzü kapatıyordu).
 - **Silindirik dönüş** (`FlipRules.TWIST`): gövde dik, model dikey ekseninde döner (`CharacterModel.set_twist`; açı yön görünümüne eklenir, bitişte tam tura denk gelir); poz `twist` (kollar açık → göğüste kapanır, dizler kırık, biri daha yukarıda). Yüz önce kameraya döner. Bir tur `FLIP_TWIST_TURN_TIME`. Kutu gövdede enine daralmayla taklit edilir. Silik burgu çizgileri `TwistSwirl` (`TWIST_SWIRL_ENABLED`).
+- Kullanıcı testi: silindirik dönüş "bayıldım, çok güzel — dokunma"; ters takla platformdan "mesafe lazım, hissiyatı hoşuma gitmedi" → `FLIP_BACK_ONLY_FROM_WALL = true`: ters takla yalnız duvar sekmesinde; platformda payı öne taklaya geçer (silindirik olasılığı değişmedi). Duvardan ters takla henüz test edilmedi.
 - Seçim: `FlipRules.pick_style` (ağırlıklar `FLIP_STYLE_WEIGHT_FRONT/BACK/TWIST` = 0.4/0.3/0.3; 0 = o çeşit kapalı). Platform zıplaması ve havada duvar sekmesinde. Takla hareketi `FlipMotion`'a taşındı (PlayerVisual büyümesin); iniş ve roket iki ekseni de toplar.
 - Blender: `eagle_anims.py`'ye `BACK_ARCH/BACK_TUCK_POSE`, `TWIST_OPEN/TWIST_POSE`; glb yeniden dışa aktarıldı (11 animasyon). GUT 278.
 

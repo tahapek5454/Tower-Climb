@@ -70,7 +70,7 @@ Zıplamayı oyuncu yapar (otomatik zıplama yok). Gamepad desteği sonra ekleneb
 - Görsel bir ödül; fizikle ilgili değil (`Visual` katmanında).
 - Tetikleyiciler: büyük zıplama (dikey hız eşiği aşılınca), duvar sekmesi, kombo zıplayışları.
 - Dönüş yönü yatay hareket yönüne göre; havada kalma süresine göre 1 veya daha fazla tur; inişte açı sıfırlanır.
-- Üç çeşit (her taklada rastgele, ağırlıklar `Tuning.FLIP_STYLE_WEIGHT_*`): **öne takla** (topak ya da yıldız), **ters takla** (geriye salto: kavis → topak), **silindirik dönüş** (gövde dik kalır, model dikey ekseninde döner; dizler kırık, kollar göğüse kapanır; çevresinde silik burgu çizgileri). Platform zıplaması ve duvar sekmesinde de.
+- Üç çeşit (her taklada rastgele, ağırlıklar `Tuning.FLIP_STYLE_WEIGHT_*`): **öne takla** (topak ya da yıldız), **ters takla** (geriye salto: kavis → topak), **silindirik dönüş** (gövde dik kalır, model dikey ekseninde döner; dizler kırık, kollar göğüse kapanır; çevresinde silik burgu çizgileri). Silindirik dönüş platform zıplaması ve duvar sekmesinde; ters takla yalnız duvar sekmesinde (`FLIP_BACK_ONLY_FROM_WALL`).
 
 ## Başlangıç ayar değerleri (`scripts/tuning.gd`)
 Bunlar başlangıç noktasıdır; oynayarak ayarlanacak.
