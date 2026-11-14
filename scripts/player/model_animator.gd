@@ -21,9 +21,9 @@ func on_jumped(strength: float) -> void:
 		_flap_time_left = _model.animation_length(AnimationRules.FLAP)
 
 
-## Takla başlarken çağrılır; bu taklanın pozunu (topak / yıldız) rastgele seçer.
-func on_flip_started(from_wall: bool) -> void:
-	_flip_animation = AnimationRules.flip_animation(randf(), from_wall)
+## Takla başlarken çağrılır; pozu çeşide göre seçer (öne taklada topak / yıldız rastgele).
+func on_flip_started(from_wall: bool, style: StringName = FlipRules.FRONT) -> void:
+	_flip_animation = AnimationRules.flip_animation(randf(), from_wall, style)
 
 
 func on_landed(fall_speed: float) -> void:

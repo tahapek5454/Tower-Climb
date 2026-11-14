@@ -133,6 +133,75 @@ for _s in (".L", ".R"):
     STAR_POSE["foot" + _s] = dict(rx=20.0)
 
 
+# Ters takla (geriye salto): önce gövde geriye kavislenir, kollar geriye savrulur (itiş; yandan
+# bakışta yüzü kapatmasın diye yukarı değil);
+# sonra dizler göğse çekilir, eller baldırları tutar, baş hafif geride kalır (gidilen yöne bakar).
+BACK_ARCH_POSE = {
+    "spine": dict(rx=-12.0),
+    "chest": dict(rx=-8.0),
+    "head": dict(rx=-14.0),
+    "tail": dict(rx=25.0),
+    "tail_tip": dict(rx=15.0),
+}
+BACK_TUCK_POSE = {
+    "spine": dict(rx=22.0),
+    "chest": dict(rx=16.0),
+    "head": dict(rx=-14.0),
+    "tail": dict(rx=-28.0),
+    "tail_tip": dict(rx=-20.0),
+}
+for _s in (".L", ".R"):
+    BACK_ARCH_POSE["upper_arm" + _s] = dict(side=32.0, rx=58.0)
+    BACK_ARCH_POSE["forearm" + _s] = dict(rx=-12.0)
+    BACK_ARCH_POSE["thigh" + _s] = dict(rx=12.0)
+    BACK_ARCH_POSE["shin" + _s] = dict(rx=14.0)
+    BACK_ARCH_POSE["foot" + _s] = dict(rx=30.0)
+    BACK_TUCK_POSE["thigh" + _s] = dict(rx=-100.0)
+    BACK_TUCK_POSE["shin" + _s] = dict(rx=115.0)
+    BACK_TUCK_POSE["foot" + _s] = dict(rx=15.0)
+    BACK_TUCK_POSE["upper_arm" + _s] = dict(rx=-58.0, side=-6.0)
+    BACK_TUCK_POSE["forearm" + _s] = dict(rx=-72.0)
+
+
+# Silindirik dönüş (dikey eksende burgu): kollar önce açık (dönüşü başlatan savruluş), sonra
+# göğse kapanır (buz patencisi gibi); dizler kırık, biri daha yukarıda (simetrik durmasın).
+TWIST_OPEN_POSE = {
+    "spine": dict(rx=-4.0),
+    "head": dict(rx=-8.0),
+    "tail": dict(rx=10.0),
+    "thigh.L": dict(rx=-30.0),
+    "shin.L": dict(rx=45.0),
+    "thigh.R": dict(rx=-8.0),
+    "shin.R": dict(rx=20.0),
+    "foot.L": dict(rx=20.0),
+    "foot.R": dict(rx=25.0),
+}
+TWIST_POSE = {
+    "spine": dict(rx=4.0),
+    "chest": dict(rx=2.0),
+    "head": dict(rx=-6.0),
+    "tail": dict(rx=-6.0, rz=12.0),
+    "tail_tip": dict(rx=-6.0, rz=10.0),
+    "thigh.L": dict(rx=-88.0),
+    "shin.L": dict(rx=118.0),
+    "foot.L": dict(rx=22.0),
+    "thigh.R": dict(rx=-32.0),
+    "shin.R": dict(rx=78.0),
+    "foot.R": dict(rx=28.0),
+}
+# Kapanan kollar: üst kol öne ve içe, ön kol dirsekten bükülüp göğsün önünde içe döner.
+# rz yanlara göre ters işaretlidir (ön kollar ortada buluşsun).
+TWIST_ARM_SIDE = -35.0
+TWIST_ARM_RX = -48.0
+TWIST_FOREARM_RX = -70.0
+TWIST_FOREARM_RZ = 95.0
+for _s, _rz in ((".L", -1.0), (".R", 1.0)):
+    TWIST_OPEN_POSE["upper_arm" + _s] = dict(side=58.0, rx=-8.0)
+    TWIST_OPEN_POSE["forearm" + _s] = dict(rx=-18.0)
+    TWIST_POSE["upper_arm" + _s] = dict(side=TWIST_ARM_SIDE, rx=TWIST_ARM_RX)
+    TWIST_POSE["forearm" + _s] = dict(rx=TWIST_FOREARM_RX, rz=_rz * TWIST_FOREARM_RZ)
+
+
 def pose_fly(t: float) -> dict:
     """Roketle uçuş (süpermen): kollar yukarı dik, gövde gergin, bacaklar bitişik; hafif titreşim döngüsü."""
     p = 2.0 * math.pi * t
@@ -295,10 +364,15 @@ def build() -> None:
     _make("flap", list(range(0, 17)), lambda f: pose_flap(f / 16.0))
     _make("star", [0, 10], lambda f: STAR_POSE)
     _make("fly", list(range(0, 13)), lambda f: pose_fly(f / 12.0))
+    _make("back_tuck", [0, 2, 4, 6, 8, 12],
+          lambda f: _blend(BACK_ARCH_POSE, BACK_TUCK_POSE, _smooth((f - 1.0) / 6.0)))
+    _make("twist", [0, 2, 4, 6, 10],
+          lambda f: _blend(TWIST_OPEN_POSE, TWIST_POSE, _smooth(f / 5.0)))
 
     # Dışa aktarım için her action bir NLA şeridine konur.
     rig.animation_data.action = None
-    for name in ("idle", "run", "jump", "fall", "land", "tuck", "flap", "star", "fly"):
+    for name in ("idle", "run", "jump", "fall", "land", "tuck", "flap", "star", "fly",
+                 "back_tuck", "twist"):
         act = bpy.data.actions[name]
         track = rig.animation_data.nla_tracks.new()
         track.name = name

@@ -34,3 +34,44 @@ func test_direction_follows_movement() -> void:
 	assert_eq(FlipRules.direction_for(500.0, -1.0), 1.0, "sağa gidiyor → saat yönü")
 	assert_eq(FlipRules.direction_for(-500.0, 1.0), -1.0)
 	assert_eq(FlipRules.direction_for(0.0, -1.0), -1.0, "duruyorsa bakılan yön")
+
+
+func test_twist_turn_time_param() -> void:
+	assert_eq(FlipRules.turns_for(Tuning.FLIP_TWIST_TURN_TIME * 2.0 + 0.01, Tuning.FLIP_TWIST_TURN_TIME), 2)
+	assert_eq(FlipRules.turns_for(0.0, Tuning.FLIP_TWIST_TURN_TIME), 1)
+
+
+func test_pick_style_follows_weights() -> void:
+	var total: float = Tuning.FLIP_STYLE_WEIGHT_FRONT + Tuning.FLIP_STYLE_WEIGHT_BACK \
+			+ Tuning.FLIP_STYLE_WEIGHT_TWIST
+	var front_end: float = Tuning.FLIP_STYLE_WEIGHT_FRONT / total
+	var back_end: float = (Tuning.FLIP_STYLE_WEIGHT_FRONT + Tuning.FLIP_STYLE_WEIGHT_BACK) / total
+	if Tuning.FLIP_STYLE_WEIGHT_FRONT > 0.0:
+		assert_eq(FlipRules.pick_style(0.0), FlipRules.FRONT)
+		assert_eq(FlipRules.pick_style(front_end - 0.001), FlipRules.FRONT)
+	if Tuning.FLIP_STYLE_WEIGHT_BACK > 0.0:
+		assert_eq(FlipRules.pick_style(front_end + 0.001), FlipRules.BACK)
+	if Tuning.FLIP_STYLE_WEIGHT_TWIST > 0.0:
+		assert_eq(FlipRules.pick_style(back_end + 0.001), FlipRules.TWIST)
+		assert_eq(FlipRules.pick_style(1.0), FlipRules.TWIST)
+
+
+func test_pick_style_reaches_every_enabled_style() -> void:
+	var seen: Dictionary = {}
+	for i in 101:
+		seen[FlipRules.pick_style(i / 100.0)] = true
+	assert_eq(seen.has(FlipRules.FRONT), Tuning.FLIP_STYLE_WEIGHT_FRONT > 0.0)
+	assert_eq(seen.has(FlipRules.BACK), Tuning.FLIP_STYLE_WEIGHT_BACK > 0.0)
+	assert_eq(seen.has(FlipRules.TWIST), Tuning.FLIP_STYLE_WEIGHT_TWIST > 0.0)
+
+
+func test_back_flip_spins_against_movement() -> void:
+	assert_eq(FlipRules.spin_direction(FlipRules.FRONT, 1.0), 1.0)
+	assert_eq(FlipRules.spin_direction(FlipRules.BACK, 1.0), -1.0)
+	assert_eq(FlipRules.spin_direction(FlipRules.BACK, -1.0), 1.0)
+
+
+func test_twist_turns_face_toward_camera_first() -> void:
+	# Sağa giderken model -Y yönünde döner (yön görünümü -25° → önden görünüm -90°).
+	assert_eq(FlipRules.twist_direction(1.0), -1.0)
+	assert_eq(FlipRules.twist_direction(-1.0), 1.0)

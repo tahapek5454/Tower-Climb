@@ -29,7 +29,8 @@ var _stretch_velocity: float = 0.0
 ## Son efektin gücüne göre seçilen yay (zayıf efekt = yumuşak, yavaş yay).
 var _spring_stiffness: float = Tuning.SQUASH_SPRING_STIFFNESS
 var _spring_damping: float = Tuning.SQUASH_SPRING_DAMPING
-var _flip_tween: Tween
+var _flip: FlipMotion
+var _swirl: TwistSwirl
 var _bursts: ParticleBursts
 var _jetpack_fx: JetpackFx
 var _aura: PlayerAura
@@ -55,6 +56,9 @@ func _process(delta: float) -> void:
 	if _animator != null:
 		_animator.update(delta, _player.is_on_floor(), _player.velocity, is_flipping(), _player.is_flying())
 	_update_squash(delta)
+	if _swirl != null:
+		_swirl.position.x = _spin.position.x
+		_swirl.track(_flip.twist, delta)
 	_jetpack_fx.facing = _facing
 	_jetpack_fx.body_offset_x = _spin.position.x
 	if _trail_rainbow:
@@ -62,7 +66,7 @@ func _process(delta: float) -> void:
 
 
 func is_flipping() -> bool:
-	return _flip_tween != null and _flip_tween.is_running()
+	return _flip != null and _flip.is_running()
 
 
 func _build() -> void:
@@ -78,6 +82,7 @@ func _build() -> void:
 	_squash.name = "Squash"
 	_squash.position = Vector2(0.0, half_height)
 	_spin.add_child(_squash)
+	_flip = FlipMotion.new(self, _spin, _on_twist)
 
 	if use_model:
 		_model = CharacterModel.new()
@@ -130,6 +135,13 @@ func _build_effects() -> void:
 		add_child(effects[i])
 		move_child(effects[i], i)
 
+	# Burgu çizgileri gövdenin önünde (arkada kalan yay kısmı daha silik çizilir).
+	if Tuning.TWIST_SWIRL_ENABLED:
+		_swirl = TwistSwirl.new()
+		_swirl.name = "TwistSwirl"
+		_swirl.visible = false
+		add_child(_swirl)
+
 
 func _update_facing() -> void:
 	var vx: float = _player.velocity.x
@@ -170,10 +182,12 @@ func _update_squash(delta: float) -> void:
 	_apply_stretch()
 
 
-## Gövde alanı korunur: boy (1 + s), en 1 / boy.
+## Gövde alanı korunur: boy (1 + s), en 1 / boy. Kutu gövdede silindirik dönüş enine daralmayla
+## taklit edilir (modelde dönüşü 3D model kendisi yapar).
 func _apply_stretch() -> void:
 	var height_scale: float = 1.0 + clampf(_stretch, -Tuning.SQUASH_LIMIT, Tuning.SQUASH_LIMIT)
-	_squash.scale = Vector2(1.0 / height_scale, height_scale)
+	var twist_scale: float = cos(_flip.twist) if _model == null else 1.0
+	_squash.scale = Vector2(twist_scale / height_scale, height_scale)
 
 
 ## Uzamayı anında bu değere ayarlar; yay oradan geri döndürür.
@@ -202,35 +216,24 @@ func _land_strength(fall_speed: float) -> float:
 
 # --- Takla ---
 
-## Gövdeyi `direction` yönünde, yukarı hıza göre belirlenen süre ve tur sayısıyla döndürür.
+## Rastgele bir takla çeşidi (öne / ters / silindirik) seçer; süre ve tur sayısı yukarı hıza göre.
+## direction: gidilen yön (+1 sağ).
 func _start_flip(up_speed: float, direction: float, from_wall: bool = false) -> void:
+	var style: StringName = FlipRules.pick_style(randf())
 	if _animator != null:
-		_animator.on_flip_started(from_wall)
-	var duration: float = FlipRules.duration_for(up_speed)
-	var turns: int = FlipRules.turns_for(duration)
-	_kill_flip()
-	var start: float = wrapf(_spin.rotation, -PI, PI)
-	_spin.rotation = start
-	_flip_tween = create_tween()
-	_flip_tween.tween_property(_spin, ^"rotation", start + direction * turns * TAU, duration) \
-			.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		_animator.on_flip_started(from_wall, style)
+	_flip.start(style, direction, FlipRules.duration_for(up_speed))
 
 
 ## İnişte açı sıfırlanır: takla bitmediyse en yakın dik konuma hızla döner.
 func _reset_flip_on_landing() -> void:
-	_kill_flip()
-	var angle: float = wrapf(_spin.rotation, -PI, PI)
-	_spin.rotation = angle
-	if is_zero_approx(angle):
-		return
-	_flip_tween = create_tween()
-	_flip_tween.tween_property(_spin, ^"rotation", 0.0, Tuning.FLIP_LAND_RESET_TIME)
+	_flip.settle()
 
 
-func _kill_flip() -> void:
-	if _flip_tween != null:
-		_flip_tween.kill()
-		_flip_tween = null
+## Silindirik dönüş açısı değişti (FlipMotion bildirir).
+func _on_twist(angle: float) -> void:
+	if _model != null:
+		_model.set_twist(angle)
 
 
 # --- Olaylar ---

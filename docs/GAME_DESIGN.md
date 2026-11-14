@@ -70,6 +70,7 @@ Zıplamayı oyuncu yapar (otomatik zıplama yok). Gamepad desteği sonra ekleneb
 - Görsel bir ödül; fizikle ilgili değil (`Visual` katmanında).
 - Tetikleyiciler: büyük zıplama (dikey hız eşiği aşılınca), duvar sekmesi, kombo zıplayışları.
 - Dönüş yönü yatay hareket yönüne göre; havada kalma süresine göre 1 veya daha fazla tur; inişte açı sıfırlanır.
+- Üç çeşit (her taklada rastgele, ağırlıklar `Tuning.FLIP_STYLE_WEIGHT_*`): **öne takla** (topak ya da yıldız), **ters takla** (geriye salto: kavis → topak), **silindirik dönüş** (gövde dik kalır, model dikey ekseninde döner; dizler kırık, kollar göğüse kapanır; çevresinde silik burgu çizgileri). Platform zıplaması ve duvar sekmesinde de.
 
 ## Başlangıç ayar değerleri (`scripts/tuning.gd`)
 Bunlar başlangıç noktasıdır; oynayarak ayarlanacak.
@@ -159,7 +160,7 @@ Yalnız ana menüden açılır. Ürünler ve fiyatlar `scripts/game/shop/shop_ca
 
 ## Görsel yön (Aşama 4'te yapıldı)
 - Karakter (Aşama 3'te yapıldı): chibi **kartal maskotu** — beyaz kafa, turuncu gaga ve ayaklar, düz gri tişört, koyu pantolon, siyah tüylü kollar, beyaz kuyruk. Tripo ile üretilmiş 3D model; yan kamerayla şeffaf bir katmanda çizilir, toon shader + açık renkli dış çizgi. Ekranda ~94 px; hitbox 32x48 sabit.
-- Karakter animasyonları: bekleme, koşu (hız koşu hızına bağlı), zıplama, kanat çırpma, düşme, iniş; taklada rastgele **topak** ya da **yıldız** (yan takla).
+- Karakter animasyonları: bekleme, koşu (hız koşu hızına bağlı), zıplama, kanat çırpma, düşme, iniş; taklada rastgele **topak** ya da **yıldız** (yan takla), **ters takla** (`back_tuck`) ya da **silindirik dönüş** (`twist`).
 - Karakter siyah-beyaz-turuncu olduğu için **kule içi orta tonda** olmalı (siyah ve beyazdan uzak).
 - Dünya: kodla/shader ile üretilen şık bir kule; parallax katmanlar; her 100 katta tema değişimi.
 - Duvarların dışındaki boşluklar (dekor alanı): dış çevre — doğa, bulutlar vb. (Aşama 4). Kule genişliği değişirse dekor kalan alana kendiliğinden uymalı.

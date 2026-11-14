@@ -234,6 +234,27 @@ const FLIP_TURN_TIME: float = 0.4
 const FLIP_MAX_TURNS: int = 3
 ## Takla bitmeden inilirse gövdenin dik konuma dönme süresi.
 const FLIP_LAND_RESET_TIME: float = 0.08
+## Takla çeşitleri (zıplama ve havada duvar sekmesi; her taklada rastgele, FlipRules.pick_style):
+## öne takla (topak / yıldız), ters takla (geriye salto), silindirik dönüş (dikey eksende burgu).
+## Ağırlıklar görelidir; 0 yapılan çeşit hiç çıkmaz (hepsi 0 → hep öne takla).
+const FLIP_STYLE_WEIGHT_FRONT: float = 0.4
+const FLIP_STYLE_WEIGHT_BACK: float = 0.3
+const FLIP_STYLE_WEIGHT_TWIST: float = 0.3
+## Silindirik dönüşte bir tur süresi (kollar göğüste kapalı: öne taklaya göre biraz hızlı döner).
+const FLIP_TWIST_TURN_TIME: float = 0.35
+## Silindirik dönüşte gövdenin çevresinde beliren silik burgu çizgileri (false: hiç çizilmez).
+const TWIST_SWIRL_ENABLED: bool = true
+## Çizgilerin rengi (silik beyaz), kalınlığı (px) ve yay uzunluğu (radyan).
+const TWIST_SWIRL_COLOR: Color = Color(1.0, 1.0, 1.0, 0.55)
+const TWIST_SWIRL_WIDTH: float = 3.0
+const TWIST_SWIRL_ARC: float = 2.6
+## Elips yarıçapları (px; yatay geniş, dikey basık: yandan bakılan halka) ve ayaklardan yükseklikler.
+const TWIST_SWIRL_RADIUS: Vector2 = Vector2(36.0, 9.0)
+const TWIST_SWIRL_HEIGHTS: Array[float] = [26.0, 58.0]
+## Dönüş hızı (rad/s) bu değerdeyken çizgiler tam görünür; yavaşladıkça silinir.
+const TWIST_SWIRL_FULL_SPEED: float = 14.0
+## Görünürlüğün yumuşama hızı (büyük = daha ani belirip kaybolur).
+const TWIST_SWIRL_FADE_RATE: float = 12.0
 
 # --- Juice: squash & stretch (görsel) ---
 # Uzama değeri: + dikey uzama, - dikey ezilme. Gövde alanı korunur (en = 1 / boy).

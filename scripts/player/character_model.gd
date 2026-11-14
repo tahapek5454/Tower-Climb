@@ -26,6 +26,10 @@ var _toon_materials: Array[ShaderMaterial] = []
 ## Kuşanılan kozmetikler (yuva → kimlik); sahneye girmeden önce verilenler kurulunca uygulanır.
 var _cosmetics: Dictionary = {}
 var _target_yaw: float = 0.0
+## Yön görünümüne yumuşakça dönen açı; Pivot'un açısı = bu + _twist.
+var _base_yaw: float = 0.0
+## Silindirik dönüşün eklediği açı (radyan; PlayerVisual sürer).
+var _twist: float = 0.0
 var _requested: StringName = &""
 var _facing: float = 1.0
 var _front_view: bool = false
@@ -47,7 +51,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	var weight: float = 1.0 - exp(-Tuning.MODEL_TURN_RATE * delta)
-	_pivot.rotation.y = lerp_angle(_pivot.rotation.y, _target_yaw, weight)
+	_base_yaw = lerp_angle(_base_yaw, _target_yaw, weight)
+	_pivot.rotation.y = _base_yaw + _twist
 
 
 ## direction: +1 sağa, -1 sola bakar. Model kameraya doğru hafif dönük durur.
@@ -55,7 +60,15 @@ func set_facing(direction: float, instant: bool = false) -> void:
 	_facing = 1.0 if direction >= 0.0 else -1.0
 	_update_target_yaw()
 	if instant:
-		_pivot.rotation.y = _target_yaw
+		_base_yaw = _target_yaw
+		_pivot.rotation.y = _base_yaw + _twist
+
+
+## Silindirik dönüş: model dikey ekseninde, yön görünümüne ek olarak bu açıyla döner (0 = dönüş yok).
+func set_twist(angle: float) -> void:
+	_twist = angle
+	if _pivot != null:
+		_pivot.rotation.y = _base_yaw + _twist
 
 
 ## true: model tam kameraya döner (önden görünüm); false: yön görünümüne geri döner.
@@ -98,7 +111,8 @@ func set_preview_yaw(yaw: float, instant: bool = true) -> void:
 	_preview_yaw_enabled = true
 	_target_yaw = yaw
 	if instant:
-		_pivot.rotation.y = yaw
+		_base_yaw = yaw
+		_pivot.rotation.y = yaw + _twist
 
 
 func _update_target_yaw() -> void:

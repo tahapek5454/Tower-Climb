@@ -12,6 +12,10 @@ const FLAP: StringName = &"flap"
 const STAR: StringName = &"star"
 ## Roketle uçuş: kollar yukarıda (süpermen).
 const FLY: StringName = &"fly"
+## Ters takla: kavis → topak (FlipRules.BACK).
+const BACK_TUCK: StringName = &"back_tuck"
+## Silindirik dönüş: dizler kırık, kollar göğüste kapalı (FlipRules.TWIST).
+const TWIST: StringName = &"twist"
 
 
 ## on_floor: yerde mi; velocity: px/s (yukarı = -y); flipping: takla sürüyor mu;
@@ -33,8 +37,13 @@ static func pick(on_floor: bool, velocity: Vector2, flipping: bool, landing: boo
 	return RUN if speed > Tuning.RUN_STATE_MIN_SPEED else IDLE
 
 
-## Yeni başlayan takla için poz seçer. roll: 0..1 rastgele sayı.
-static func flip_animation(roll: float, from_wall: bool) -> StringName:
+## Yeni başlayan takla için poz seçer. roll: 0..1 rastgele sayı; style: FlipRules çeşidi.
+## Öne takla topak ya da yıldız (yıldız yalnız platformdan); ters takla ve burgu kendi pozuyla.
+static func flip_animation(roll: float, from_wall: bool, style: StringName = FlipRules.FRONT) -> StringName:
+	if style == FlipRules.BACK:
+		return BACK_TUCK
+	if style == FlipRules.TWIST:
+		return TWIST
 	if not from_wall and roll < Tuning.MODEL_STAR_FLIP_CHANCE:
 		return STAR
 	return TUCK
@@ -59,6 +68,6 @@ static func run_speed_scale(run_speed: float) -> float:
 
 ## Bu animasyona geçerken kullanılacak harmanlama süresi (ani olaylar hızlı girer).
 static func blend_time(animation: StringName) -> float:
-	if animation in [TUCK, STAR, LAND, JUMP, FLAP, FLY]:
+	if animation in [TUCK, STAR, BACK_TUCK, TWIST, LAND, JUMP, FLAP, FLY]:
 		return Tuning.MODEL_ANIM_BLEND_TIME_FAST
 	return Tuning.MODEL_ANIM_BLEND_TIME
