@@ -309,21 +309,24 @@ def hat_santa():
     # gibi kafayı sarmalı (dar olunca tüyler bandın altından taşıyor ve şapka kafaya gömülü görünüyor).
     base = BASE_Z + 0.01
     ring, tube = 0.232, 0.058
-    fur = [(ring + tube * math.cos(2.0 * math.pi * i / 8), tube + tube * math.sin(2.0 * math.pi * i / 8))
+    fur = [(ring + tube * math.cos(2.0 * math.pi * i / 8), tube * math.sin(2.0 * math.pi * i / 8))
            for i in range(8)]
-    p.lathe(fur, "fur", at=(0.0, CENTER_Y, base - tube), scale=(1, 0.92, 1), closed=True, segments=24)
-    body = [(0.0, base), (0.245, base), (0.225, base + 0.09), (0.16, base + 0.20), (0.085, base + 0.265),
-            (0.0, base + 0.27)]
-    p.lathe(body, "santa", at=C, scale=(1, 0.92, 1), rot=_rot_x(-10))
+    p.lathe(fur, "fur", at=(0.0, CENTER_Y, base - 0.02), scale=(1, 0.92, 1), closed=True, segments=24)
+    # Gövde simidin iç yamacından çıkar (yüzeyler çakışmasın: kırmızı ile beyaz iç içe geçmesin) ve
+    # yükseldikçe geriye yatar. Döndürme yok: taban düz kalır, arkada bandın içine batmaz.
+    lean = lambda x, y, z: (x, y + 1.6 * max(z - base, 0.0) ** 2, z)  # noqa: E731
+    body = [(0.0, base - 0.03), (0.205, base - 0.03), (0.205, base + 0.02), (0.185, base + 0.10),
+            (0.135, base + 0.20), (0.075, base + 0.265), (0.0, base + 0.27)]
+    p.lathe(body, "santa", at=C, scale=(1, 0.92, 1), deform=lean)
     hat = _finish(p, n)
     # Sarkan uç + ponpon: orijin gövdenin tepesinde, geriye ve aşağı sarkar; sallanır.
     tip = Part()
     rot = _rot_x(-125)
-    tip.lathe([(0.09, -0.04), (0.07, 0.07), (0.035, 0.19), (0.0, 0.20)], "santa", rot=rot)
+    tip.lathe([(0.075, -0.03), (0.062, 0.07), (0.035, 0.19), (0.0, 0.20)], "santa", rot=rot)
     end = rot @ Vector((0.0, 0.0, 0.20))
     tip.sphere(0.075, "fur", at=end, segments=14)
-    top = _rot_x(-10) @ Vector((0.0, 0.0, base + 0.245))
-    tip.to_object("hat_santa_sway", parent=hat, location=(0.0, CENTER_Y + top.y, top.z))
+    top_z = base + 0.245
+    tip.to_object("hat_santa_sway", parent=hat, location=(0.0, CENTER_Y + 1.6 * 0.245 ** 2, top_z))
     return hat
 
 
