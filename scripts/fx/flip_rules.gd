@@ -43,5 +43,10 @@ static func pick_style(roll: float) -> StringName:
 
 ## Silindirik dönüşün yönü (modelin dikey ekseni, Pivot.rotation.y): yüz önce kameraya döner,
 ## sonra sırt görünür. Sağa giderken model -Y yönünde (kameraya doğru) döner.
-static func twist_direction(direction: float) -> float:
+## facing: dönüş başlarken bakılan yön (0 = bilinmiyor). Karakter yön değiştirecekse (duvar sekmesi)
+## model yeni yönüne ~130° dönerken burgu da aynı yönde döner: iki dönüş toplanır. Ters yönde
+## olsalar birbirini götürür ve görünen dönüş tam turdan kısa kalır (~230°).
+static func twist_direction(direction: float, facing: float = 0.0) -> float:
+	if facing != 0.0 and signf(facing) != signf(direction):
+		return direction
 	return -direction

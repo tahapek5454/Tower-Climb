@@ -26,7 +26,8 @@ func is_running() -> bool:
 
 ## Taklayı başlatır. style: FlipRules çeşidi; direction: gidilen yön (+1 sağ); duration: saniye.
 ## Öteki eksende yarım kalmış dönüş varsa hızla dik konuma toplanır.
-func start(style: StringName, direction: float, duration: float) -> void:
+## facing: başlarken bakılan yön (yön değişecekse burgu yön dönüşüyle aynı yönde döner).
+func start(style: StringName, direction: float, duration: float, facing: float = 0.0) -> void:
 	_kill()
 	var spin_from: float = wrapf(_spin.rotation, -PI, PI)
 	_spin.rotation = spin_from
@@ -36,7 +37,7 @@ func start(style: StringName, direction: float, duration: float) -> void:
 	if style == FlipRules.TWIST:
 		var turns: int = FlipRules.turns_for(duration, Tuning.FLIP_TWIST_TURN_TIME)
 		# Bitiş tam tura denk gelir: model yine yön görünümünde durur.
-		var twist_to: float = FlipRules.twist_direction(direction) * turns * TAU
+		var twist_to: float = FlipRules.twist_direction(direction, facing) * turns * TAU
 		_tween.tween_method(_set_twist, twist_from, twist_to, duration) \
 				.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		_tween.tween_property(_spin, ^"rotation", 0.0, Tuning.FLIP_LAND_RESET_TIME)

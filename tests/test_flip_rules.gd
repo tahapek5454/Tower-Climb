@@ -57,3 +57,12 @@ func test_twist_turns_face_toward_camera_first() -> void:
 	assert_eq(FlipRules.twist_direction(1.0), -1.0)
 	assert_eq(FlipRules.twist_direction(-1.0), 1.0)
 
+
+
+func test_twist_adds_to_facing_turn_on_wall_bounce() -> void:
+	# Aynı yöne devam: yüz önce kameraya (eski davranış).
+	assert_eq(FlipRules.twist_direction(1.0, 1.0), -1.0)
+	assert_eq(FlipRules.twist_direction(-1.0, -1.0), 1.0)
+	# Yön değişiyor (sağ duvardan sola seke): model sola dönerken (-) burgu da (-) döner.
+	assert_eq(FlipRules.twist_direction(-1.0, 1.0), -1.0)
+	assert_eq(FlipRules.twist_direction(1.0, -1.0), 1.0)

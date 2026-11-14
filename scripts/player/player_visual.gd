@@ -222,7 +222,8 @@ func _start_flip(up_speed: float, direction: float, from_wall: bool = false) -> 
 	var style: StringName = FlipRules.pick_style(randf())
 	if _animator != null:
 		_animator.on_flip_started(from_wall, style)
-	_flip.start(style, direction, FlipRules.duration_for(up_speed))
+	# _facing henüz eski yön (_process'te güncellenir): yön değişimi burada anlaşılır.
+	_flip.start(style, direction, FlipRules.duration_for(up_speed), _facing)
 
 
 ## İnişte açı sıfırlanır: takla bitmediyse en yakın dik konuma hızla döner.
